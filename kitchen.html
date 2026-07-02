@@ -40,8 +40,9 @@
     .empty { text-align:center; color:#6b7886; padding:80px 20px; font-size:1.2rem; }
     .empty .em { font-size:4rem; display:block; margin-bottom:14px; }
 
-    .ord { background:var(--card); border-radius:14px; border-left:7px solid #3a3aa0; overflow:hidden; display:flex; flex-direction:column; }
-    .ord.cooking { border-left-color:var(--gold); }
+    /* Цвета статусов: синий — принят, оранжевый — готовится, зелёный — готов/выдан */
+    .ord { background:var(--card); border-radius:14px; border-left:7px solid #5b8def; overflow:hidden; display:flex; flex-direction:column; }
+    .ord.cooking { border-left-color:#e58e26; }
     .ord.late { box-shadow:0 0 0 3px var(--red); animation:pulse 1.5s infinite; }
     @keyframes pulse { 0%,100%{box-shadow:0 0 0 3px var(--red)} 50%{box-shadow:0 0 0 6px rgba(192,37,28,.5)} }
     .oh { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:12px 16px 8px; }
@@ -54,6 +55,18 @@
     .bdg { font-size:.72rem; font-weight:800; padding:3px 9px; border-radius:50px; }
     .bdg.paid{background:#10351f;color:#46d17f} .bdg.wait{background:#3a2f12;color:#ffce4d} .bdg.cash{background:#22304a;color:#9ec3ff}
     .bdg.delivery{background:#22304a;color:#9ec3ff} .bdg.pickup{background:#2a2313;color:var(--gold)}
+    .bdg.st-accepted{background:#1c2f55;color:#8fb3ff} .bdg.st-cooking{background:#3a2c10;color:#ffb340}
+    .bdg.st-ready{background:#10351f;color:#46d17f}
+
+    /* «Готовы / выданы сегодня» — зелёная зона под очередью, статусы можно переключать */
+    .ready-wrap { padding-top:0; }
+    .ready-title { font-size:.82rem; font-weight:800; color:#46d17f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:10px; }
+    .ready-row { display:flex; gap:10px; flex-wrap:wrap; }
+    .ready-card { background:var(--card); border:1px solid var(--line); border-left:6px solid var(--green); border-radius:11px; padding:10px 14px; display:flex; align-items:center; gap:12px; }
+    .ready-card .rc-no { font-weight:900; font-size:1.05rem; }
+    .ready-card .rc-lbl { font-size:.78rem; font-weight:800; color:#46d17f; }
+    .ready-card .rc-btn { border:none; border-radius:7px; padding:7px 11px; font-weight:700; font-size:.78rem; cursor:pointer; background:#243041; color:#cfe0f0; }
+    .ready-card .rc-btn.fin { background:var(--green); color:#fff; }
     .ocmt { margin:0 16px 10px; background:#2a2113; color:#ffe1a6; border-radius:8px; padding:9px 12px; font-size:1rem; font-weight:700; }
     .ozone { margin:0 16px 10px; color:#9ec3ff; font-size:1.05rem; font-weight:900; }
     .items { padding:4px 16px 8px; flex:1; }
@@ -399,6 +412,11 @@
   <div class="daystats" id="daystats"></div>
   <div class="summary" id="summary" style="display:none"></div>
   <div class="wrap"><div class="grid" id="grid"></div></div>
+  <!-- Заказы в статусе «Выдан курьеру / Готов к выдаче» — можно вернуть в работу или завершить -->
+  <div class="wrap ready-wrap" id="ready-wrap" style="display:none">
+    <div class="ready-title">✅ Готовы / выданы сегодня</div>
+    <div class="ready-row" id="ready-row"></div>
+  </div>
   <div class="upd" id="upd"></div>
 
   <!-- Стоп-лист -->
@@ -708,6 +726,14 @@
     }
     function doneLabel(o){ return isPickup(o) ? 'Готово → к выдаче' : 'Готово → курьеру'; }
 
+    /* Бейдж текущего статуса на карточке: синий «Принят» / оранжевый «Готовится» */
+    function statusBadge(o){
+      var t=o.track||'accepted';
+      if(t==='cooking') return '<span class="bdg st-cooking">🍳 Готовится</span>';
+      return '<span class="bdg st-accepted">🕓 Принят</span>';
+    }
+    function readyLabel(o){ return isPickup(o) ? '🏃 Готов к выдаче' : '🛵 Выдан курьеру'; }
+
     function setWayFilter(w){
       wayFilter=w;
       document.querySelectorAll('.fbtn').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-way')===w); });
@@ -780,7 +806,7 @@
         return '<div class="ord '+((o.track||'accepted')==='cooking'?'cooking':'')+' '+(left<0?'late':'')+'">'+
           '<div class="oh"><span class="onum">#'+o.id+(o.name?' · '+esc(o.name):'')+'</span>'+
             '<span class="otime '+tcls+'"><div class="big">'+min+' мин</div><div class="sub">'+sub+'</div></span></div>'+
-          '<div class="obadges">'+fulfillBadge(o)+payBadge(o)+'</div>'+
+          '<div class="obadges">'+statusBadge(o)+fulfillBadge(o)+payBadge(o)+'</div>'+
           (!isPickup(o)&&o.zone?'<div class="ozone">📍 '+esc(o.zone)+'</div>':'')+
           (o.comment?'<div class="ocmt">📝 '+esc(o.comment)+'</div>':'')+
           '<div class="items">'+itemsHtml+'</div>'+
@@ -829,6 +855,35 @@
       });
       var now=new Date(); var p=function(n){return (n<10?'0':'')+n;};
       document.getElementById('upd').textContent='Обновлено '+p(now.getHours())+':'+p(now.getMinutes())+':'+p(now.getSeconds());
+      renderReady();
+    }
+
+    /* Зелёная зона: сегодняшние заказы «Выдан курьеру / Готов к выдаче».
+       Можно вернуть в работу (оранжевый) или завершить (доставлен/получен). */
+    function renderReady(){
+      var wrap=document.getElementById('ready-wrap');
+      var row=document.getElementById('ready-row');
+      if(!wrap||!row) return;
+      var today=new Date().toDateString();
+      var ready=orders.filter(function(o){
+        return (o.track||'')==='delivering' && new Date(o.createdAt).toDateString()===today;
+      }).sort(function(a,b){ return new Date(b.updatedAt||b.createdAt)-new Date(a.updatedAt||a.createdAt); });
+      if(!ready.length){ wrap.style.display='none'; row.innerHTML=''; return; }
+      wrap.style.display='block';
+      row.innerHTML=ready.map(function(o){
+        return '<div class="ready-card">'+
+          '<div><div class="rc-no">#'+o.id+(o.name?' · '+esc(o.name):'')+'</div>'+
+          '<div class="rc-lbl">'+readyLabel(o)+'</div></div>'+
+          '<button class="rc-btn" data-ready-back="'+o.id+'" title="Вернуть в готовку">↩ В работу</button>'+
+          '<button class="rc-btn fin" data-ready-done="'+o.id+'">'+(isPickup(o)?'✓ Вручён':'✓ Доставлен')+'</button>'+
+        '</div>';
+      }).join('');
+      row.querySelectorAll('button[data-ready-back]').forEach(function(b){
+        b.addEventListener('click', function(){ setTrack(b.getAttribute('data-ready-back'),'cooking'); });
+      });
+      row.querySelectorAll('button[data-ready-done]').forEach(function(b){
+        b.addEventListener('click', function(){ setTrack(b.getAttribute('data-ready-done'),'delivered'); });
+      });
     }
 
     function setTrack(id, stage){

@@ -214,7 +214,7 @@
     background: linear-gradient(135deg, var(--red), #ff7a3c); color: #fff; border-radius: 14px;
     padding: 18px 20px; margin-bottom: 18px; box-shadow: 0 10px 26px rgba(244,81,81,.3);
   }
-  .acct-card-no { font-size: 1.35rem; font-weight: 900; letter-spacing: 1px; margin: 4px 0 10px; }
+  /* Номер карты больше не показываем — вместо него QR-код (см. .acct-qr) */
   .acct-card-row { display: flex; justify-content: space-between; font-size: .88rem; opacity: .95; }
   .acct-hist-item {
     display: flex; justify-content: space-between; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line);
@@ -226,6 +226,53 @@
   .acct-error { color: var(--red); font-size: .85rem; margin-top: 8px; display: none; }
   .acct-msg { font-size: .85rem; margin-top: 8px; display: none; }
   .acct-logout { width: 100%; margin-top: 6px; }
+
+  /* ── ЛК: QR-код карты ── */
+  .acct-qr-wrap { display: flex; gap: 14px; align-items: center; margin: 10px 0 12px; }
+  .acct-qr { background: #fff; border-radius: 12px; padding: 8px; width: 132px; height: 132px; flex: none; display: grid; place-items: center; overflow: hidden; }
+  .acct-qr svg { display: block; width: 116px; height: 116px; }
+  .acct-qr-none { font-size: .78rem; color: #8a4a44; text-align: center; }
+  .acct-qr-hint { font-size: .82rem; opacity: .95; line-height: 1.45; }
+  .acct-edit-btn {
+    width: 100%; margin-top: 12px; background: transparent; border: 1.5px solid var(--line);
+    color: var(--text); border-radius: 10px; padding: 12px; font-weight: 700; cursor: pointer;
+  }
+  .acct-edit-btn:hover { border-color: var(--red); color: var(--red); }
+  #acct-edit { margin-top: 14px; border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--bg3); }
+  .acct-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .acct-back { background: none; border: none; color: var(--red); font-weight: 700; cursor: pointer; padding: 0 0 14px; font-size: .95rem; }
+  .acct-track-guest-btn {
+    width: 100%; margin-top: 14px; background: var(--bg3); border: 1.5px solid var(--line);
+    color: var(--text); border-radius: 10px; padding: 13px; font-weight: 700; cursor: pointer;
+  }
+  .acct-track-guest-btn:hover { border-color: var(--red); }
+
+  /* ── ЛК: шаги отслеживания заказа (тёмная тема) ── */
+  .tk-head { font-weight: 800; color: var(--white); margin-bottom: 2px; }
+  .tk-steps { display: flex; flex-direction: column; margin: 14px 0 4px; }
+  .tk-step { display: flex; gap: 13px; position: relative; padding-bottom: 20px; }
+  .tk-step:last-child { padding-bottom: 0; }
+  .tk-step .dot { width: 32px; height: 32px; border-radius: 50%; background: var(--bg3); color: #6f6566; display: grid; place-items: center; flex: none; z-index: 1; font-size: 1rem; }
+  .tk-step:not(:last-child)::before { content: ''; position: absolute; left: 15px; top: 32px; bottom: 0; width: 2px; background: var(--line); }
+  .tk-step.done:not(:last-child)::before { background: var(--green); }
+  .tk-step.done .dot { background: var(--green); color: #06270a; }
+  .tk-step.current .dot { background: var(--red); color: #fff; box-shadow: 0 0 0 5px rgba(244,81,81,.18); }
+  .tk-step .t1 { font-weight: 800; font-size: .98rem; color: var(--white); padding-top: 4px; }
+  .tk-step.pending .t1 { color: #6f6566; }
+  .tk-step .t2 { font-size: .8rem; color: var(--muted); }
+  .tk-canceled { text-align: center; padding: 14px; background: rgba(244,81,81,.12); color: var(--red); border-radius: 12px; font-weight: 700; }
+  .tk-meta { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 8px; font-size: .85rem; color: var(--muted); flex-wrap: wrap; }
+  .tk-meta b { color: var(--white); }
+  .tk-upd { font-size: .72rem; color: #6f6566; text-align: center; margin-top: 10px; }
+  .tk-other { background: none; border: none; color: var(--red); font-weight: 700; cursor: pointer; padding: 8px 0; font-size: .88rem; }
+
+  /* ── ЛК: история заказов ── */
+  .acct-hist-items { color: var(--muted); font-size: .8rem; margin-top: 2px; }
+  .acct-hist-status { font-size: .74rem; font-weight: 800; border-radius: 999px; padding: 2px 8px; display: inline-block; margin-top: 4px; }
+  .hs-accepted { background: rgba(91,141,239,.15); color: #8fb3ff; }
+  .hs-cooking { background: rgba(255,179,64,.12); color: #ffb340; }
+  .hs-delivering, .hs-delivered { background: rgba(94,248,69,.1); color: var(--green); }
+  .hs-canceled { background: rgba(244,81,81,.12); color: #ff8095; }
 
   .promo-strip { background: linear-gradient(90deg, var(--red), #ff7a3c); color: #fff; text-align: center; padding: 11px 16px; font-weight: 700; font-size: .95rem; }
 
@@ -385,12 +432,6 @@
   .delivery-row-text { color: var(--muted); font-size: .94rem; }
   .freedel-bar { margin-top: 10px; height: 9px; border-radius: 999px; background: var(--line); overflow: hidden; }
   .freedel-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--red), #ff8a4c); }
-
-  /* ============================================================
-     ОТСЛЕДИТЬ
-  ============================================================ */
-  #trackorder { background: var(--bg2) !important; }
-  #trackorder .order-form-wrap { max-width: 540px; }
 
   /* ============================================================
      ОТЗЫВЫ
@@ -585,7 +626,7 @@
     <nav id="site-nav" aria-label="Навигация по странице">
       <a href="#menu">Меню</a>
       <a href="#delivery">Доставка</a>
-      <a href="#trackorder">Отследить</a>
+      <a href="#" onclick="Account.open('track'); return false;">Отследить</a>
       <a href="#reviews">Отзывы</a>
       <a href="#contacts">Контакты</a>
       <a href="tel:+74951204567" class="nav-phone js-tel" onclick="trackPhone('nav')">📞 <span class="js-phone">+7 (495) 120-45-67</span></a>
@@ -849,30 +890,8 @@
 </section>
 
 
-<!-- ============================================================
-     ОТСЛЕДИТЬ ЗАКАЗ
-============================================================ -->
-<section id="trackorder" class="section" aria-label="Отследить заказ" style="background:var(--light)">
-  <div class="container" style="max-width:560px;">
-    <h2 class="section-title">Отследить заказ 📦</h2>
-    <p class="section-sub">Введите номер заказа и телефон — покажем статус доставки</p>
-    <div style="background:var(--bg2); border:1px solid var(--line); border-radius:var(--radius-lg); box-shadow:var(--shadow); overflow:hidden;">
-      <div style="background:var(--red); color:#fff; padding:16px 22px; font-weight:800; font-size:1.05rem; display:flex; align-items:center; gap:10px;">
-        <span style="width:34px; height:34px; border-radius:10px; background:rgba(255,255,255,.18); display:grid; place-items:center; font-size:1.1rem; flex:none;">📦</span>
-        Где мой заказ?
-      </div>
-      <div style="padding:26px;">
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <input id="to-id" class="form-input" inputmode="numeric" placeholder="Номер заказа" style="flex:1; min-width:120px;">
-          <input id="to-phone" class="form-input" type="tel" inputmode="tel" placeholder="Телефон" style="flex:1.4; min-width:150px;">
-        </div>
-        <button class="btn btn-red" style="width:100%; margin-top:14px;" onclick="lookupOrder()">Отследить заказ</button>
-        <div id="to-error" class="form-error" style="text-align:center; margin-top:12px;"></div>
-        <p style="text-align:center; color:var(--muted); font-size:.82rem; margin-top:12px;">Номер заказа есть на экране после оформления.</p>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- Секция «Отследить заказ» перенесена в личный кабинет (панель справа, вкладка «Заказ»).
+     Ссылка «Отследить» в шапке открывает её и для гостей, и для вошедших. -->
 
 
 <!-- ============================================================
@@ -1207,19 +1226,72 @@
         <p class="form-note">Кабинет — это ваша бонусная карта и история заказов. Логин — номер телефона.</p>
       </div>
 
-      <!-- Вошёл: карта + история -->
+      <!-- Вошёл: вкладки «Карта» / «Заказ» (трекинг) / «История» -->
       <div id="account-inner" style="display:none">
-        <div class="acct-card">
-          <div style="font-size:.85rem; opacity:.9">Бонусная карта</div>
-          <div class="acct-card-no" id="acct-card-no">—</div>
-          <div class="acct-card-row"><span id="acct-tier-name">—</span><span id="acct-points">0 баллов</span></div>
+        <div class="acct-tabs">
+          <button type="button" class="acct-tab active" id="acct-itab-card" onclick="Account.showInnerTab('card')">💳 Карта</button>
+          <button type="button" class="acct-tab" onclick="Account.showScreen('track')">📦 Заказ</button>
+          <button type="button" class="acct-tab" id="acct-itab-history" onclick="Account.showInnerTab('history')">🧾 История</button>
         </div>
-        <div id="acct-next-tier" class="form-note" style="text-align:left; margin-top:0"></div>
 
-        <h4 style="margin:18px 0 6px; color:var(--white); font-size:1.02rem">История заказов</h4>
-        <div id="acct-history"></div>
+        <!-- Вкладка «Карта»: QR вместо номера + редактирование (автопополнение) -->
+        <div id="acct-pane-card">
+          <div class="acct-card">
+            <div style="font-size:.85rem; opacity:.9">Бонусная карта</div>
+            <div class="acct-qr-wrap">
+              <div class="acct-qr" id="acct-qr"></div>
+              <div class="acct-qr-hint">Покажите QR-код на кассе или продиктуйте его номер оператору — искать номер карты вручную больше не нужно.</div>
+            </div>
+            <div class="acct-card-row"><span id="acct-tier-name">—</span><span id="acct-points">0 баллов</span></div>
+          </div>
+          <div id="acct-next-tier" class="form-note" style="text-align:left; margin-top:0"></div>
+
+          <button type="button" class="acct-edit-btn" id="acct-edit-btn" onclick="Account.toggleEdit()">✏️ Редактировать карту</button>
+          <div id="acct-edit" style="display:none">
+            <label class="pay-method" style="margin-bottom:12px">
+              <input type="checkbox" id="acct-at-enabled">
+              <span>🔄 Автопополнение баланса</span>
+            </label>
+            <div class="acct-edit-grid">
+              <div class="form-group" style="margin-bottom:12px">
+                <label class="form-label" for="acct-at-amount">Сумма пополнения, ₽</label>
+                <input type="number" id="acct-at-amount" class="form-input" min="50" step="50" placeholder="500">
+              </div>
+              <div class="form-group" style="margin-bottom:12px">
+                <label class="form-label" for="acct-at-threshold">Порог баланса, ₽</label>
+                <input type="number" id="acct-at-threshold" class="form-input" min="0" step="50" placeholder="100">
+              </div>
+            </div>
+            <button type="button" class="form-submit" style="padding:13px" onclick="Account.saveAutoTopup()">Сохранить</button>
+            <div class="acct-msg" id="acct-edit-msg"></div>
+            <p class="form-note" style="text-align:left">Когда баланс опустится ниже порога, карта пополнится на указанную сумму.
+              <span style="opacity:.7">Автосписание заработает после подключения рекуррентных платежей.</span></p>
+          </div>
+        </div>
+
+        <!-- Вкладка «История» -->
+        <div id="acct-pane-history" style="display:none">
+          <h4 style="margin:4px 0 6px; color:var(--white); font-size:1.02rem">История заказов</h4>
+          <div id="acct-history"></div>
+        </div>
 
         <button type="button" class="cart-checkout acct-logout" id="account-logout-btn" onclick="Account.logout()">Выйти</button>
+      </div>
+
+      <!-- Экран «Текущий заказ»: трекинг в реальном времени (для гостей и вошедших) -->
+      <div id="account-track" style="display:none">
+        <button type="button" class="acct-back" onclick="Account.backFromTrack()">← Назад</button>
+        <div id="atrack-lookup">
+          <p class="form-note" style="text-align:left; margin:0 0 12px">Введите номер заказа и телефон — покажем статус в реальном времени.</p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <input id="to-id" class="form-input" inputmode="numeric" placeholder="Номер заказа" style="flex:1; min-width:110px;">
+            <input id="to-phone" class="form-input" type="tel" inputmode="tel" placeholder="Телефон" style="flex:1.4; min-width:140px;">
+          </div>
+          <button type="button" class="form-submit" style="margin-top:12px" onclick="Account.lookup()">Отследить заказ</button>
+          <div id="to-error" class="form-error" style="text-align:center; margin-top:10px;"></div>
+        </div>
+        <button type="button" class="tk-other" id="atrack-other" style="display:none" onclick="Account.showLookup()">Отследить другой заказ</button>
+        <div id="atrack-view"></div>
       </div>
 
     </div>
@@ -1230,6 +1302,7 @@
 <!-- ============================================================
      JAVASCRIPT
 ============================================================ -->
+<script src="/qr.js"></script>
 <script>
 /* ─────────────────────────────────────────────────────────
    1. UTM-метки: читаем из URL → пишем в форму и sessionStorage
@@ -1285,6 +1358,7 @@ function applyPhoneMask(inp) {
   applyPhoneMask(document.getElementById('f-phone'));
   applyPhoneMask(document.getElementById('acct-login-phone'));
   applyPhoneMask(document.getElementById('acct-reg-phone'));
+  applyPhoneMask(document.getElementById('to-phone'));
 })();
 
 
@@ -1430,7 +1504,11 @@ function showSuccess(track, id, orderNo, pointsUsed, cardNo, pointsEarned) {
   if (track) {
     var a = document.getElementById('track-link');
     var w = document.getElementById('track-link-wrap');
-    if (a) a.href = '/track?t=' + encodeURIComponent(track);
+    if (a) {
+      /* Трекинг живёт в личном кабинете: открываем панель без перезагрузки страницы */
+      a.href = '/?track=' + encodeURIComponent(track);
+      a.onclick = function (ev) { ev.preventDefault(); Account.open('track'); Account.startTrack(track); };
+    }
     if (w) w.style.display = 'block';
   }
   document.getElementById('order-form').style.display = 'none';
@@ -1442,21 +1520,7 @@ function scrollToOrder() {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-/* Поиск заказа клиентом по номеру + телефону → переход на трекинг */
-function lookupOrder() {
-  var id = (document.getElementById('to-id').value || '').replace(/\D/g, '');
-  var phone = (document.getElementById('to-phone').value || '').replace(/\D/g, '');
-  var err = document.getElementById('to-error');
-  err.style.display = 'none';
-  if (!id || phone.length < 5) { err.textContent = 'Введите номер заказа и телефон'; err.style.display = 'block'; return; }
-  fetch('/api/track-lookup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id, phone: phone }) })
-    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
-    .then(function (res) {
-      if (!res.ok || !res.d.ok || !res.d.token) throw new Error((res.d && res.d.error) || 'Заказ не найден');
-      window.location.href = '/track?t=' + encodeURIComponent(res.d.token);
-    })
-    .catch(function (e) { err.textContent = (e && e.message) || 'Заказ не найден'; err.style.display = 'block'; });
-}
+/* Поиск заказа по номеру + телефону перенесён в личный кабинет — см. Account.lookup(). */
 
 /* Свернуть/развернуть поле промокода — по умолчанию скрыто, чтобы форма не выглядела длинной */
 function togglePromo() {
@@ -2115,10 +2179,29 @@ fetch('/api/menu')
 
 
 /* ─────────────────────────────────────────────────────────
-   8. Личный кабинет: карта + история заказов (вход/регистрация — телефон+пароль)
+   8. Личный кабинет: карта с QR + автопополнение + текущий заказ
+      (трекинг в реальном времени) + история заказов
    ───────────────────────────────────────────────────────── */
+
+/* П.5 — автозаполнение формы заказа из профиля клиента.
+   Заполняем только пустые поля; оплату и способ получения не трогаем. */
+function prefillOrderForm(p) {
+  if (!p) return;
+  var nameEl = document.getElementById('f-name');
+  if (nameEl && !nameEl.value.trim() && p.name) nameEl.value = p.name;
+  var phoneEl = document.getElementById('f-phone');
+  if (phoneEl && !phoneEl.value.replace(/\D/g, '') && p.phone) {
+    phoneEl.value = '+' + String(p.phone).replace(/\D/g, '');
+    /* событие input прогоняет маску телефона и проверку бонусов */
+    phoneEl.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+  var cmt = document.getElementById('f-comment');
+  if (cmt && !cmt.value.trim() && p.lastComment) cmt.value = p.lastComment;
+}
+
 var Account = (function () {
   var overlay = document.getElementById('account-overlay');
+  var ME = null; // данные /api/account/me; null — не вошёл
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -2126,8 +2209,130 @@ var Account = (function () {
     });
   }
 
-  function open() { if (overlay) overlay.classList.add('open'); refresh(); }
-  function close() { if (overlay) overlay.classList.remove('open'); }
+  /* ── Отслеживание заказа (перенесено со страницы /track): SSE + опрос-фолбэк ── */
+  var Track = (function () {
+    var token = '', timer = null, es = null, lastData = null;
+    var S_DELIVERY = [
+      { id: 'accepted',   t1: 'Заказ принят',   t2: 'Мы получили вашу заявку', icon: '✓' },
+      { id: 'cooking',    t1: 'Готовится',      t2: 'Повара взялись за дело',  icon: '🍳' },
+      { id: 'delivering', t1: 'Выдан курьеру',  t2: 'Заказ уже в пути',        icon: '🛵' },
+      { id: 'delivered',  t1: 'Доставлен',      t2: 'Приятного аппетита!',     icon: '🎉' }
+    ];
+    var S_PICKUP = [
+      { id: 'accepted',   t1: 'Заказ принят',   t2: 'Мы получили вашу заявку', icon: '✓' },
+      { id: 'cooking',    t1: 'Готовится',      t2: 'Повара взялись за дело',  icon: '🍳' },
+      { id: 'delivering', t1: 'Готов к выдаче', t2: 'Можно забирать заказ',    icon: '🏃' },
+      { id: 'delivered',  t1: 'Получен',        t2: 'Приятного аппетита!',     icon: '🎉' }
+    ];
+    function view() { return document.getElementById('atrack-view'); }
+    function fmt(n) { return (Number(n) || 0).toLocaleString('ru-RU') + ' ₽'; }
+
+    function render(data) {
+      lastData = data;
+      var el = view(); if (!el) return;
+      var html = '<div class="tk-head" style="margin-top:14px">Заказ ' + esc(data.orderNo || ('#' + data.id)) + '</div>';
+      if (data.track === 'canceled') {
+        html += '<div class="tk-canceled">Заказ отменён. Если это ошибка — позвоните нам.</div>';
+      } else {
+        var STAGES = data.fulfillment === 'pickup' ? S_PICKUP : S_DELIVERY;
+        var idx = Math.max(0, STAGES.map(function (s) { return s.id; }).indexOf(data.track));
+        html += '<div class="tk-steps">' + STAGES.map(function (s, i) {
+          var cls = i < idx ? 'done' : (i === idx ? 'current' : 'pending');
+          return '<div class="tk-step ' + cls + '"><div class="dot">' + (i < idx ? '✓' : s.icon) + '</div>' +
+            '<div><div class="t1">' + s.t1 + '</div><div class="t2">' + s.t2 + '</div></div></div>';
+        }).join('') + '</div>';
+        if (data.yandexTrackUrl) {
+          html += '<div style="text-align:center; margin-top:14px"><a class="btn btn-gold" href="' + esc(data.yandexTrackUrl) + '" target="_blank" rel="noopener">📍 Курьер на карте</a></div>';
+        }
+      }
+      var dt = new Date();
+      var p = function (n) { return (n < 10 ? '0' : '') + n; };
+      html += '<div class="tk-meta"><span>Позиций: <b>' + (data.itemsCount || 0) + '</b></span><span>Сумма: <b>' + fmt(data.total) + '</b></span></div>' +
+        '<div class="tk-upd">Обновлено ' + p(dt.getHours()) + ':' + p(dt.getMinutes()) + ':' + p(dt.getSeconds()) + '</div>';
+      el.innerHTML = html;
+    }
+    function showError(text) {
+      var el = view();
+      if (el) el.innerHTML = '<p class="form-note" style="color:var(--red); text-align:left">' + esc(text) + '</p>';
+    }
+    function isActiveStage(t) { return t !== 'delivered' && t !== 'canceled'; }
+
+    function poll() {
+      clearTimeout(timer);
+      if (!token) return;
+      fetch('/api/track?t=' + encodeURIComponent(token))
+        .then(function (r) {
+          if (r.status === 404) throw new Error('Заказ не найден. Проверьте ссылку.');
+          if (!r.ok) throw new Error('Не удалось получить статус. Пробуем ещё раз…');
+          return r.json();
+        })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Не удалось получить статус. Пробуем ещё раз…');
+          render(res);
+          if (isActiveStage(res.track)) timer = setTimeout(poll, 15000); // SSE — основной канал, это фолбэк
+        })
+        .catch(function (e2) {
+          if (!lastData) showError((e2 && e2.message) || 'Ошибка загрузки');
+          timer = setTimeout(poll, 15000);
+        });
+    }
+    function start(t) {
+      stop();
+      token = t; lastData = null;
+      var el = view(); if (el) el.innerHTML = '<p class="form-note" style="text-align:left">Загружаем статус…</p>';
+      var lk = document.getElementById('atrack-lookup');
+      var other = document.getElementById('atrack-other');
+      if (lk) lk.style.display = 'none';
+      if (other) other.style.display = 'block';
+      poll();
+      if (window.EventSource) {
+        try {
+          es = new EventSource('/api/track/stream?t=' + encodeURIComponent(token));
+          es.addEventListener('update', function (e) { try { render(JSON.parse(e.data)); } catch (err) {} });
+        } catch (e3) {}
+      }
+    }
+    function stop() {
+      clearTimeout(timer); timer = null;
+      if (es) { try { es.close(); } catch (e4) {} es = null; }
+    }
+    function showLookup() {
+      stop(); token = '';
+      var lk = document.getElementById('atrack-lookup');
+      var other = document.getElementById('atrack-other');
+      var el = view();
+      if (lk) lk.style.display = 'block';
+      if (other) other.style.display = 'none';
+      if (el) el.innerHTML = '';
+    }
+    /* при открытии экрана: активный заказ вошедшего клиента включаем автоматически */
+    function onShow() {
+      if (token) { poll(); return; }
+      if (ME && ME.currentOrder && ME.currentOrder.token) start(ME.currentOrder.token);
+      else showLookup();
+    }
+    return { start: start, stop: stop, onShow: onShow, showLookup: showLookup };
+  })();
+
+  /* ── Экраны панели: guest (вход) | inner (кабинет) | track (текущий заказ) ── */
+  function showScreen(name) {
+    var map = { guest: 'account-guest', inner: 'account-inner', track: 'account-track' };
+    Object.keys(map).forEach(function (k) {
+      var el = document.getElementById(map[k]);
+      if (el) el.style.display = (k === name) ? 'block' : 'none';
+    });
+    if (name === 'track') Track.onShow();
+    else Track.stop();
+  }
+  function homeScreen() { return ME ? 'inner' : 'guest'; }
+
+  function open(mode) {
+    if (overlay) overlay.classList.add('open');
+    if (mode === 'track') { showScreen('track'); refresh(true); }
+    else refresh();
+  }
+  function close() { if (overlay) overlay.classList.remove('open'); Track.stop(); }
+  function backFromTrack() { showScreen(homeScreen()); }
 
   function showTab(name) {
     var loginTab = document.getElementById('acct-tab-login');
@@ -2141,18 +2346,50 @@ var Account = (function () {
     if (regForm) regForm.style.display = isLogin ? 'none' : 'block';
   }
 
+  /* Вкладки кабинета: «Карта» / «История» (вкладка «Заказ» — отдельный экран track) */
+  function showInnerTab(name) {
+    var isCard = name === 'card';
+    var cardTab = document.getElementById('acct-itab-card');
+    var histTab = document.getElementById('acct-itab-history');
+    if (cardTab) cardTab.classList.toggle('active', isCard);
+    if (histTab) histTab.classList.toggle('active', !isCard);
+    var paneC = document.getElementById('acct-pane-card');
+    var paneH = document.getElementById('acct-pane-history');
+    if (paneC) paneC.style.display = isCard ? 'block' : 'none';
+    if (paneH) paneH.style.display = isCard ? 'none' : 'block';
+  }
+
   function setLoggedInUI(is) {
     var btn = document.getElementById('account-btn');
     if (btn) btn.classList.toggle('is-logged-in', is);
-    var guest = document.getElementById('account-guest');
-    var inner = document.getElementById('account-inner');
-    if (guest) guest.style.display = is ? 'none' : 'block';
-    if (inner) inner.style.display = is ? 'block' : 'none';
+  }
+
+  /* П.6 — QR-код вместо номера карты (генерируется из ID карты, см. /qr.js). */
+  function renderQr(cardNo) {
+    var qrEl = document.getElementById('acct-qr');
+    if (!qrEl) return;
+    if (cardNo && typeof QRMini !== 'undefined') {
+      try { qrEl.innerHTML = QRMini.svg(String(cardNo), { size: 116, dark: '#131011' }); return; }
+      catch (e) { /* фолбэк ниже */ }
+    }
+    qrEl.innerHTML = '<div class="acct-qr-none">' + (cardNo ? ('💳 ' + esc(cardNo)) : 'Карта появится после первого заказа') + '</div>';
+  }
+
+  var TRACK_LABEL = { accepted: 'Принят', cooking: 'Готовится', delivering: 'Выдан курьеру', delivered: 'Доставлен', canceled: 'Отменён' };
+  var TRACK_LABEL_PICKUP = { delivering: 'Готов к выдаче', delivered: 'Получен' };
+  function histStatus(o) {
+    var t = o.track || 'accepted';
+    var label = (o.fulfillment === 'pickup' && TRACK_LABEL_PICKUP[t]) || TRACK_LABEL[t] || t;
+    return '<span class="acct-hist-status hs-' + esc(t) + '">' + esc(label) + '</span>';
+  }
+
+  function setHistoryState(html) {
+    var h = document.getElementById('acct-history');
+    if (h) h.innerHTML = html;
   }
 
   function renderInner(d) {
-    var cardEl = document.getElementById('acct-card-no');
-    if (cardEl) cardEl.textContent = d.cardNo ? ('💳 ' + d.cardNo) : 'Карта появится после первого заказа';
+    renderQr(d.cardNo);
     var tierEl = document.getElementById('acct-tier-name');
     if (tierEl) tierEl.textContent = d.tierName || 'Новичок';
     var ptsEl = document.getElementById('acct-points');
@@ -2163,38 +2400,139 @@ var Account = (function () {
         ? ('До уровня «' + d.nextTierName + '» осталось заказать на ' + (Number(d.nextTierRemaining) || 0).toLocaleString('ru-RU') + ' ₽')
         : '';
     }
+
+    /* настройки автопополнения (не перезаписываем поле, пока клиент его редактирует) */
+    var at = d.autoTopup || {};
+    var en = document.getElementById('acct-at-enabled');
+    var am = document.getElementById('acct-at-amount');
+    var th = document.getElementById('acct-at-threshold');
+    if (en && document.activeElement !== en) en.checked = !!at.enabled;
+    if (am && document.activeElement !== am) am.value = at.amount != null ? at.amount : '';
+    if (th && document.activeElement !== th) th.value = at.threshold != null ? at.threshold : '';
+
+    /* П.1 — история заказов: дата/время, состав, сумма, статус */
     var histEl = document.getElementById('acct-history');
     if (histEl) {
       var items = d.history || [];
       histEl.innerHTML = items.length
         ? items.map(function (o) {
-            var meta = new Date(o.createdAt).toLocaleDateString('ru-RU') + ' · ' + (o.payment === 'online' ? 'оплачено онлайн' : 'при получении') +
-              (o.pointsEarned > 0 ? ' · +' + o.pointsEarned + ' баллов' : '') +
-              (o.pointsUsed > 0 ? ' · списано ' + o.pointsUsed : '');
-            return '<div class="acct-hist-item"><div><div class="acct-hist-no">' + esc(o.orderNo) + '</div>' +
-              '<div class="acct-hist-meta">' + esc(meta) + '</div></div>' +
-              '<div style="font-weight:800; color:var(--white)">' + (Number(o.total) || 0).toLocaleString('ru-RU') + ' ₽</div></div>';
+            var dt = new Date(o.createdAt);
+            var p = function (n) { return (n < 10 ? '0' : '') + n; };
+            var when = isNaN(dt) ? '' : (p(dt.getDate()) + '.' + p(dt.getMonth() + 1) + '.' + dt.getFullYear() + ' ' + p(dt.getHours()) + ':' + p(dt.getMinutes()));
+            var composition = (o.items || []).map(function (i) { return esc(i.name) + ' ×' + i.qty; }).join(', ');
+            var bonus = (o.pointsEarned > 0 ? ' · +' + o.pointsEarned + ' 🎁' : '') + (o.pointsUsed > 0 ? ' · списано ' + o.pointsUsed : '');
+            return '<div class="acct-hist-item"><div>' +
+              '<div class="acct-hist-no">' + esc(o.orderNo) + ' <span class="acct-hist-meta">' + when + '</span></div>' +
+              (composition ? '<div class="acct-hist-items">' + composition + '</div>' : '') +
+              '<div class="acct-hist-meta">' + (o.payment === 'online' ? 'оплачено онлайн' : 'оплата при получении') + bonus + '</div>' +
+              histStatus(o) + '</div>' +
+              '<div style="font-weight:800; color:var(--white); white-space:nowrap">' + (Number(o.total) || 0).toLocaleString('ru-RU') + ' ₽</div></div>';
           }).join('')
-        : '<p class="form-note" style="text-align:left">Пока нет заказов с картой или онлайн-оплатой.</p>';
+        : '<p class="form-note" style="text-align:left">Заказов пока нет — самое время попробовать нашу шаурму 🌯</p>';
     }
   }
 
-  function refresh() {
+  /* keepScreen=true — не переключать экран (например, открыт трекинг) */
+  function refresh(keepScreen) {
+    if (!keepScreen) setHistoryState('<p class="form-note" style="text-align:left">Загружаем…</p>');
     fetch('/api/account/me', { headers: { 'Accept': 'application/json' } })
-      .then(function (r) { if (!r.ok) throw new Error('auth'); return r.json(); })
+      .then(function (r) {
+        if (r.status === 401) throw new Error('auth');
+        if (!r.ok) throw new Error('http');
+        return r.json();
+      })
       .then(function (d) {
         if (!d || !d.ok) throw new Error('auth');
+        ME = d;
         setLoggedInUI(true);
         renderInner(d);
+        prefillOrderForm(d.profile);       // П.5 — автозаполнение формы заказа
+        if (!keepScreen) showScreen('inner');
+        else Track.onShow();
       })
-      .catch(function () { setLoggedInUI(false); });
+      .catch(function (e2) {
+        if (e2 && e2.message === 'http') {
+          /* сервер недоступен — состояние ошибки с повтором, из кабинета не выкидываем */
+          setHistoryState('<p class="form-note" style="text-align:left; color:var(--red)">Не удалось загрузить данные. ' +
+            '<button type="button" class="tk-other" onclick="Account.reload()">Повторить</button></p>');
+          return;
+        }
+        ME = null;
+        setLoggedInUI(false);
+        if (!keepScreen) showScreen('guest');
+      });
   }
+  function reload() { refresh(); }
 
   function checkSession() {
     fetch('/api/account/me', { headers: { 'Accept': 'application/json' } })
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
-      .then(function (d) { if (d && d.ok) setLoggedInUI(true); })
+      .then(function (d) {
+        if (d && d.ok) {
+          ME = d;
+          setLoggedInUI(true);
+          renderInner(d);
+          prefillOrderForm(d.profile);
+          showScreen('inner'); // панель закрыта — просто готовим нужный экран
+        }
+      })
       .catch(function () {});
+  }
+
+  /* ── Автопополнение (п.2): сохраняем настройки; QR перерисовывается после сохранения ── */
+  function toggleEdit() {
+    var ed = document.getElementById('acct-edit');
+    var btn = document.getElementById('acct-edit-btn');
+    if (!ed) return;
+    var show = ed.style.display === 'none';
+    ed.style.display = show ? 'block' : 'none';
+    if (btn) btn.textContent = show ? '✕ Скрыть редактирование' : '✏️ Редактировать карту';
+  }
+  function saveAutoTopup() {
+    var msg = document.getElementById('acct-edit-msg');
+    var body = {
+      enabled: !!((document.getElementById('acct-at-enabled') || {}).checked),
+      amount: Number((document.getElementById('acct-at-amount') || {}).value) || 500,
+      threshold: Number((document.getElementById('acct-at-threshold') || {}).value) || 0
+    };
+    fetch('/api/account/autotopup', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (!res.ok || !res.d.ok) throw new Error((res.d && res.d.error) || 'Не удалось сохранить настройки');
+        if (ME) ME.autoTopup = res.d.autoTopup;
+        renderQr(ME && ME.cardNo);
+        if (msg) {
+          msg.style.display = 'block'; msg.style.color = '#16a34a'; msg.textContent = '✓ Настройки сохранены';
+          setTimeout(function () { msg.style.display = 'none'; }, 2500);
+        }
+      })
+      .catch(function (e2) {
+        if (msg) { msg.style.display = 'block'; msg.style.color = 'var(--red)'; msg.textContent = (e2 && e2.message) || 'Ошибка'; }
+      });
+  }
+
+  /* Поиск заказа гостем: № заказа + телефон → трекинг прямо в панели */
+  function lookup() {
+    var id = ((document.getElementById('to-id') || {}).value || '').replace(/\D/g, '');
+    var phone = ((document.getElementById('to-phone') || {}).value || '').replace(/\D/g, '');
+    var err = document.getElementById('to-error');
+    if (err) err.style.display = 'none';
+    if (!id || phone.length < 5) {
+      if (err) { err.textContent = 'Введите номер заказа и телефон'; err.style.display = 'block'; }
+      return;
+    }
+    fetch('/api/track-lookup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id, phone: phone }) })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (!res.ok || !res.d.ok || !res.d.token) throw new Error((res.d && res.d.error) || 'Заказ не найден');
+        Track.start(res.d.token);
+      })
+      .catch(function (e2) {
+        if (err) { err.textContent = (e2 && e2.message) || 'Заказ не найден'; err.style.display = 'block'; }
+      });
   }
 
   function login(e) {
@@ -2236,7 +2574,11 @@ var Account = (function () {
   }
 
   function logout() {
-    fetch('/api/account/logout', { method: 'POST' }).then(function () { setLoggedInUI(false); });
+    fetch('/api/account/logout', { method: 'POST' }).then(function () {
+      ME = null;
+      setLoggedInUI(false);
+      showScreen('guest');
+    });
   }
 
   function openRegisterWithPhone(phone) {
@@ -2256,7 +2598,18 @@ var Account = (function () {
 
   checkSession();
 
-  return { open: open, close: close, showTab: showTab, logout: logout, openRegisterWithPhone: openRegisterWithPhone };
+  /* Старые ссылки /track?t=… редиректятся сервером на /?track=… — открываем панель трекинга */
+  (function () {
+    var t = new URLSearchParams(window.location.search).get('track');
+    if (t) { open('track'); Track.start(t); }
+  })();
+
+  return {
+    open: open, close: close, showTab: showTab, showInnerTab: showInnerTab, showScreen: showScreen,
+    logout: logout, openRegisterWithPhone: openRegisterWithPhone,
+    toggleEdit: toggleEdit, saveAutoTopup: saveAutoTopup, reload: reload,
+    lookup: lookup, showLookup: Track.showLookup, startTrack: Track.start, backFromTrack: backFromTrack
+  };
 })();
 </script>
 

@@ -423,32 +423,55 @@ app.post('/api/account/logout', function (req, res) {
   res.json({ ok: true });
 });
 
-/* Данные кабинета: карта, баллы, уровень + история заказов.
-   В историю попадают только заказы, где клиент реально пользовался картой
-   (баллы начислены или списаны) или заказ был оплачен онлайн — обычные заказы
-   «наличными без баллов» в истории не показываем, как и просили. */
+/* Данные кабинета: карта, баллы, уровень + история заказов + текущий заказ + профиль.
+   История — все заказы клиента (по телефону), последние 30: дата, состав, сумма.
+   currentOrder — активный заказ (принят/готовится/в пути) с токеном трекинга,
+   чтобы вкладка «Текущий заказ» в кабинете показывала статус в реальном времени.
+   profile — имя/адрес/комментарий из последнего заказа для автозаполнения формы. */
 app.get('/api/account/me', requireCustomer, function (req, res) {
   const digits = req.session.customerPhone;
   const s = settings.get();
   const rec = loyalty.getRecord(digits);
   const tier = loyalty.tierFor(rec.lifetimeSpend, s.loyaltyTiers) || { name: '', percent: Number(s.loyaltyPercent) || 0 };
   const next = loyalty.nextTierInfo(rec.lifetimeSpend, s.loyaltyTiers);
-  const history = store.list().filter(function (o) {
-    return String(o.phone || '').replace(/\D/g, '') === digits &&
-      (o.payment === 'online' || (o.pointsUsed || 0) > 0 || (o.pointsEarned || 0) > 0);
-  }).map(function (o) {
+
+  const my = store.list().filter(function (o) {
+    return String(o.phone || '').replace(/\D/g, '') === digits;
+  }); // store.list() уже отсортирован: новые сверху
+
+  const history = my.slice(0, 30).map(function (o) {
     return {
       id: o.id,
       orderNo: fmtOrderNo(o),
       createdAt: o.createdAt,
       total: o.total,
       itemsCount: (o.items || []).reduce(function (s2, i) { return s2 + (i.qty || 0); }, 0),
+      items: (o.items || []).map(function (i) { return { name: i.name, qty: i.qty }; }),
       payment: o.payment,
       status: o.status,
+      track: o.track || 'accepted',
+      fulfillment: o.fulfillment || 'delivery',
       pointsUsed: o.pointsUsed || 0,
       pointsEarned: o.pointsEarned || 0
     };
   });
+
+  /* Активный заказ для вкладки «Текущий заказ» (свой токен клиенту отдавать безопасно). */
+  const activeStages = ['accepted', 'cooking', 'delivering'];
+  const cur = my.find(function (o) {
+    return activeStages.indexOf(o.track || 'accepted') !== -1 && o.status !== 'canceled';
+  });
+
+  /* Профиль для автозаполнения формы заказа — из последних заказов клиента.
+     Служебную приписку «[Зона доставки: …]» из комментария убираем. */
+  const lastNamed = my.find(function (o) { return o.name; });
+  const lastCommented = my.find(function (o) { return o.comment; });
+  const cleanComment = lastCommented
+    ? String(lastCommented.comment).replace(/\n?\[Зона доставки:[^\]]*\]/g, '').trim()
+    : '';
+
+  const prefs = customers.getPrefs(digits);
+
   res.json({
     ok: true,
     phone: digits,
@@ -458,8 +481,33 @@ app.get('/api/account/me', requireCustomer, function (req, res) {
     percent: Number(tier.percent) || 0,
     nextTierName: next ? next.name : '',
     nextTierRemaining: next ? next.remaining : 0,
-    history: history
+    history: history,
+    currentOrder: cur ? Object.assign({ token: cur.trackToken || '' }, trackPayload(cur)) : null,
+    profile: {
+      name: lastNamed ? lastNamed.name : '',
+      phone: digits,
+      lastComment: cleanComment
+    },
+    autoTopup: Object.assign({ enabled: false, amount: 500, threshold: 100 }, prefs.autoTopup || {})
   });
+});
+
+/* Настройки автопополнения бонусной карты.
+   ⚠ Сохраняется только настройка клиента. Реального списания денег нет:
+   для автопополнения нужен бэкенд-биллинг (сохранённый способ оплаты в ЮKassa
+   с рекуррентными платежами) — при подключении используйте эти сохранённые поля. */
+const autoTopupSchema = z.object({
+  enabled: z.boolean().optional().default(false),
+  amount: z.coerce.number().min(50).max(100000).optional().default(500),
+  threshold: z.coerce.number().min(0).max(100000).optional().default(100)
+}).strip();
+
+app.post('/api/account/autotopup', requireCustomer, function (req, res) {
+  const parsed = autoTopupSchema.safeParse(req.body || {});
+  if (!parsed.success) return res.status(400).json({ ok: false, error: 'Некорректные настройки автопополнения' });
+  const saved = customers.setPrefs(req.session.customerPhone, { autoTopup: parsed.data });
+  if (!saved) return res.status(400).json({ ok: false, error: 'Кабинет не найден' });
+  res.json({ ok: true, autoTopup: parsed.data });
 });
 
 /* robots.txt — что можно индексировать поисковикам (П.7). */
@@ -691,9 +739,12 @@ app.get('/privacy', function (req, res) {
   res.sendFile(path.join(__dirname, 'privacy.html'));
 });
 
-/* Публичный трекинг заказа по токену (без персональных данных). */
+/* Публичный трекинг заказа по токену. Отдельная страница track.html упразднена:
+   отслеживание живёт в личном кабинете на главной — старые ссылки (SMS, закладки)
+   редиректим на главную с параметром, который открывает панель «Текущий заказ». */
 app.get('/track', function (req, res) {
-  res.sendFile(path.join(__dirname, 'track.html'));
+  const t = String(req.query.t || '');
+  res.redirect('/?track=' + encodeURIComponent(t));
 });
 app.get('/api/track', function (req, res) {
   const t = String(req.query.t || '');
