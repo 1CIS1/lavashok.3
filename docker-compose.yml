@@ -1,0 +1,23 @@
+# Базовый запуск: приложение на порту 3000.
+# Значения берутся из файла .env (если есть) либо из значений по умолчанию.
+#   docker compose up -d --build
+services:
+  app:
+    build: .
+    image: lavashok
+    container_name: lavashok
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      ADMIN_USER: ${ADMIN_USER:-admin}
+      ADMIN_PASS: ${ADMIN_PASS:-lavashok}
+      ADMIN_PASS_HASH: ${ADMIN_PASS_HASH:-}
+      SESSION_SECRET: ${SESSION_SECRET:-}
+      PUBLIC_URL: ${PUBLIC_URL:-}
+      STORE_DRIVER: ${STORE_DRIVER:-}
+      YOOKASSA_SHOP_ID: ${YOOKASSA_SHOP_ID:-}
+      YOOKASSA_SECRET_KEY: ${YOOKASSA_SECRET_KEY:-}
+    volumes:
+      - ./data:/app/data        # заказы (SQLite/JSON) сохраняются на хосте
+    ports:
+      - "3000:3000"

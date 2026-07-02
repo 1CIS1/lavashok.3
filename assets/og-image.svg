@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="ЛавашОК — шаурма и лаваши с доставкой">
+  <rect width="1200" height="630" fill="#C0251C"/>
+  <circle cx="1060" cy="120" r="260" fill="#A81F17"/>
+  <circle cx="150" cy="560" r="200" fill="#A81F17"/>
+
+  <!-- Логотип-бейдж -->
+  <g transform="translate(90,90)">
+    <rect width="96" height="96" rx="22" fill="#FFB800"/>
+    <text x="48" y="68" font-family="Arial, 'Segoe UI', sans-serif" font-size="56" font-weight="900" fill="#C0251C" text-anchor="middle">Л</text>
+  </g>
+  <text x="210" y="158" font-family="Arial, 'Segoe UI', sans-serif" font-size="46" font-weight="900" fill="#FFFFFF">ЛавашОК</text>
+
+  <!-- Заголовок -->
+  <text x="90" y="330" font-family="Arial, 'Segoe UI', sans-serif" font-size="86" font-weight="900" fill="#FFFFFF">Шаурма и лаваши</text>
+  <text x="90" y="430" font-family="Arial, 'Segoe UI', sans-serif" font-size="86" font-weight="900" fill="#FFB800">с доставкой за 40 минут</text>
+
+  <!-- Подпись -->
+  <text x="90" y="510" font-family="Arial, 'Segoe UI', sans-serif" font-size="38" font-weight="400" fill="#FFE6B0">Свежие ингредиенты · горячо · вкусно</text>
+
+  <!-- Плашка с телефоном -->
+  <g transform="translate(90,545)">
+    <rect width="430" height="62" rx="31" fill="#FFB800"/>
+    <text x="215" y="42" font-family="Arial, 'Segoe UI', sans-serif" font-size="32" font-weight="700" fill="#C0251C" text-anchor="middle">+7 (495) 120-45-67</text>
+  </g>
+</svg>

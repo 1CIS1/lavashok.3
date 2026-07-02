@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 270" role="img" aria-label="Шаурма Классическая">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#2a1512"/>
+      <stop offset="55%" stop-color="#171011"/>
+      <stop offset="100%" stop-color="#100c0d"/>
+    </radialGradient>
+    <linearGradient id="bread" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F2C879"/>
+      <stop offset="70%" stop-color="#E0A954"/>
+      <stop offset="100%" stop-color="#C98A3E"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F45151" stop-opacity=".28"/>
+      <stop offset="100%" stop-color="#F45151" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="360" height="270" fill="url(#bg)"/>
+  <circle cx="180" cy="130" r="130" fill="url(#glow)"/>
+  <circle cx="70" cy="60" r="2.2" fill="#FFB37A" opacity=".7"/>
+  <circle cx="300" cy="52" r="1.8" fill="#FFD9A0" opacity=".6"/>
+  <circle cx="318" cy="176" r="2" fill="#FF9A6A" opacity=".5"/>
+  <circle cx="44" cy="180" r="1.6" fill="#FFC98F" opacity=".5"/>
+  <ellipse cx="180" cy="222" rx="118" ry="15" fill="#000" opacity=".4"/>
+  <g transform="translate(180 138) rotate(-18)">
+    <rect x="-118" y="-42" width="216" height="84" rx="42" fill="url(#bread)"/>
+    <path d="M-118 6 a42 42 0 0 0 42 36 h134 a42 42 0 0 0 40 -30 l-216 -12z" fill="#B87B34" opacity=".45"/>
+    <path d="M-60 -40 q10 40 -4 78" stroke="#C98A3E" stroke-width="7" fill="none" stroke-linecap="round" opacity=".55"/>
+    <path d="M-14 -42 q12 42 -2 84" stroke="#C98A3E" stroke-width="7" fill="none" stroke-linecap="round" opacity=".55"/>
+    <path d="M32 -40 q10 40 -4 80" stroke="#C98A3E" stroke-width="7" fill="none" stroke-linecap="round" opacity=".45"/>
+    <circle cx="98" cy="0" r="42" fill="#E9B564"/>
+    <circle cx="98" cy="0" r="34" fill="#F7E3B8"/>
+    <circle cx="86" cy="-10" r="9" fill="#A85B33"/>
+    <circle cx="104" cy="8" r="10" fill="#9C5230"/>
+    <circle cx="112" cy="-12" r="7" fill="#E8503C"/>
+    <circle cx="88" cy="12" r="7" fill="#7CC454"/>
+    <circle cx="100" cy="-4" r="6" fill="#FFCE54"/>
+    <path d="M76 6 q10 10 24 8" stroke="#FFF3D6" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M-118 -20 h64 a14 14 0 0 1 14 14 v14 a34 34 0 0 1 -34 34 h-2 a42 42 0 0 1 -42 -40z" fill="#F5F0E6" opacity=".96"/>
+    <path d="M-70 -20 q-4 32 -16 40" stroke="#DBD3C2" stroke-width="3" fill="none" opacity=".8"/>
+  </g>
+</svg>

@@ -1,0 +1,25 @@
+# Надстройка для HTTPS через nginx + Let's Encrypt.
+# Запуск вместе с базовым файлом:
+#   docker compose -f docker-compose.yml -f docker-compose.https.yml up -d --build
+# Перед этим: укажите домен в nginx/lavashok.conf и получите сертификат (см. DEPLOY.md).
+services:
+  app:
+    ports: []                   # приложение не публикуется напрямую — только через nginx
+    expose:
+      - "3000"
+    environment:
+      PUBLIC_URL: ${PUBLIC_URL}  # https://ваш-домен — включает secure-cookie
+
+  nginx:
+    image: nginx:alpine
+    container_name: lavashok-nginx
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/lavashok.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot

@@ -1,0 +1,2264 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ========== SEO (П.7) — базовые значения; меняются в админке «Настройки → SEO» ========== -->
+  <title>ЛавашОК — шаурма и лаваши с доставкой | Вкусно, быстро, горячо</title>
+  <meta name="description" content="Заказывайте шаурму и лаваши в ЛавашОК! Свежие ингредиенты, горячая выпечка, доставка за 40 минут. Звоните: +7 (495) 120-45-67" />
+  <meta name="keywords" content="шаурма, шаурма доставка, заказать шаурму, лаваш, шаурма онлайн, доставка шаурмы, шаурма рядом, шаурма на дом, донер, горячая шаурма, ЛавашОК" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="/" />
+  <!-- ========================================================= -->
+
+  <!-- ========== Favicon ========== -->
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/favicon.svg" />
+  <meta name="theme-color" content="#0a0807" />
+
+  <!-- ===== Open Graph — превью ссылки в мессенджерах =====
+       ↓ Замените https://ВАШ-ДОМЕН на реальный домен после публикации сайта -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ЛавашОК" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta property="og:title" content="ЛавашОК — шаурма и лаваши с доставкой за 40 минут" />
+  <meta property="og:description" content="Сочное мясо, свежие овощи, фирменный соус. Готовим при вас и доставляем горячим. Заказ онлайн с оплатой картой или при получении." />
+  <meta property="og:url" content="https://ВАШ-ДОМЕН/" />
+  <meta property="og:image" content="https://ВАШ-ДОМЕН/og-image.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ЛавашОК — шаурма и лаваши с доставкой" />
+  <meta name="twitter:description" content="Горячо, сочно, вкусно. Заказ онлайн за пару минут." />
+  <meta name="twitter:image" content="https://ВАШ-ДОМЕН/og-image.svg" />
+  <!-- ==================================================== -->
+
+  <!-- ===== Микроразметка для поисковиков (П.7, schema.org) =====
+       Помогает Google/Яндексу понять, что это кафе с доставкой, и показывать
+       красивую карточку (адрес, телефон, часы). Часть полей обновляется из настроек. -->
+  <script type="application/ld+json" id="ld-restaurant">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "ЛавашОК",
+    "servesCuisine": ["Шаурма", "Лаваш", "Фастфуд"],
+    "description": "Шаурма и лаваши с доставкой. Свежие ингредиенты, горячая выпечка, доставка курьером.",
+    "telephone": "+7 (495) 120-45-67",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "г. Москва, ул. Арбат, д. 24",
+      "addressLocality": "Москва",
+      "addressCountry": "RU"
+    },
+    "openingHours": "Mo-Su 10:00-23:00",
+    "priceRange": "₽",
+    "acceptsReservations": false,
+    "hasMenu": "/#menu",
+    "potentialAction": {
+      "@type": "OrderAction",
+      "target": "/#order",
+      "deliveryMethod": "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"
+    }
+  }
+  </script>
+  <!-- ==================================================== -->
+
+  <!-- ========== Яндекс.Метрика — вставьте свой счётчик ========
+  <script type="text/javascript">
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();
+    for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}
+    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");
+    ym(XXXXXXXX,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/XXXXXXXX" style="position:absolute;left:-9999px;" alt=""/></div></noscript>
+  ========================================================= -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+  /* ============================================================
+     ЛавашОК — тёмная «огненная» тема (по референсу)
+     Меняете переменные ниже — меняется весь сайт
+  ============================================================ */
+  :root {
+    --red:    #F45151;   /* основной красный (кнопки, акценты) */
+    --red2:   #d83b3b;   /* красный hover */
+    --green:  #5EF845;   /* зелёный — «в корзину» */
+    --green2: #46e02f;
+    --bg:     #0a0807;   /* основной тёмный фон */
+    --bg2:    #131011;   /* фон секций / карточек */
+    --bg3:    #1c1718;   /* фон карточек (светлее) */
+    --line:   #2a2324;   /* границы */
+    --white:  #ffffff;
+    --text:   #f3eeee;   /* основной текст */
+    --muted:  #9a9091;   /* приглушённый текст */
+    --gold:   #F45151;   /* совместимость со старыми классами */
+    --gold2:  #d83b3b;
+    --dark:   #0a0807;
+    --gray:   #9a9091;
+    --light:  #131011;
+    --radius: 16px;
+    --radius-lg: 22px;
+    --shadow: 0 8px 30px rgba(0,0,0,.5);
+    --shadow-lg: 0 20px 60px rgba(0,0,0,.6);
+    --glow-red: 0 0 60px rgba(244,81,81,.45);
+    --maxw: 1180px;
+  }
+
+  /* ===== Сброс ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: 84px; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: 'Roboto', -apple-system, 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 16px;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; display: block; }
+  a { text-decoration: none; color: inherit; }
+  ul { list-style: none; }
+  ::selection { background: var(--red); color: #fff; }
+
+  h1, h2, h3, .logo, .section-title, .hero-title, .card-price { font-weight: 900; letter-spacing: -.01em; }
+
+  /* ===== Хелперы ===== */
+  .container { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+  .section { padding: 80px 0; }
+  .section-title {
+    font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+    font-weight: 900; text-transform: uppercase;
+    line-height: 1.05; letter-spacing: .01em;
+  }
+  .section-sub { color: var(--muted); font-size: 1.05rem; margin: 12px 0 42px; max-width: 640px; }
+  .accent { color: var(--red); }
+  .hidden, .is-hidden { display: none !important; }
+
+  /* ===== Кнопки ===== */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    font-weight: 700; font-size: 1rem;
+    padding: 15px 32px; border-radius: 10px; border: none; cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s, border-color .18s;
+    white-space: nowrap;
+  }
+  .btn-red { background: var(--red); color: #fff; box-shadow: 0 10px 30px rgba(244,81,81,.35); }
+  .btn-red:hover { background: var(--red2); transform: translateY(-2px); }
+  .btn-gold {
+    background: transparent; color: var(--white);
+    border: 1.5px solid rgba(255,255,255,.35);
+  }
+  .btn-gold:hover { border-color: var(--white); background: rgba(255,255,255,.06); transform: translateY(-2px); }
+
+  /* ============================================================
+     ШАПКА
+  ============================================================ */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,8,7,.82);
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .header-inner { display: flex; align-items: center; gap: 26px; height: 74px; }
+  .logo { display: flex; align-items: center; gap: 8px; font-size: 1.4rem; font-weight: 900; color: var(--white); text-transform: uppercase; margin-right: auto; }
+  .logo-icon { font-size: 1.5rem; }
+  .logo-o { color: var(--red); }
+
+  nav#site-nav { display: flex; align-items: center; gap: 28px; }
+  nav#site-nav > a { font-weight: 500; font-size: .96rem; color: var(--text); transition: color .15s; }
+  nav#site-nav > a:not(.nav-phone):hover { color: var(--red); }
+  .nav-phone { display: none !important; }
+
+  .header-phone {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--red); color: #fff;
+    padding: 10px 18px; border-radius: 10px; font-size: .92rem; font-weight: 700;
+    box-shadow: 0 8px 22px rgba(244,81,81,.32); transition: transform .18s, background .18s;
+  }
+  .header-phone:hover { background: var(--red2); transform: translateY(-1px); }
+
+  .burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px; }
+  .burger span { width: 26px; height: 3px; background: var(--white); border-radius: 3px; transition: .25s; }
+  .burger.nav-open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  .burger.nav-open span:nth-child(2) { opacity: 0; }
+  .burger.nav-open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+  /* Кнопка «Личный кабинет» — карта + история заказов */
+  .account-btn {
+    position: relative; display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px; border-radius: 10px; background: var(--bg3); border: 1px solid var(--line);
+    color: var(--white); cursor: pointer; transition: border-color .15s, transform .15s; flex: none;
+  }
+  .account-btn:hover { border-color: var(--red); transform: translateY(-1px); }
+  .account-btn-dot {
+    position: absolute; top: -3px; right: -3px; width: 10px; height: 10px; border-radius: 50%;
+    background: var(--green); border: 2px solid var(--bg2); display: none;
+  }
+  .account-btn.is-logged-in .account-btn-dot { display: block; }
+
+  /* ===== Панель личного кабинета (переиспользует стили панели корзины) ===== */
+  .acct-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+  .acct-tab {
+    flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg3);
+    color: var(--muted); font-weight: 700; font-size: .92rem; cursor: pointer; text-align: center;
+  }
+  .acct-tab.active { background: var(--red); color: #fff; border-color: var(--red); }
+  .acct-card {
+    background: linear-gradient(135deg, var(--red), #ff7a3c); color: #fff; border-radius: 14px;
+    padding: 18px 20px; margin-bottom: 18px; box-shadow: 0 10px 26px rgba(244,81,81,.3);
+  }
+  .acct-card-no { font-size: 1.35rem; font-weight: 900; letter-spacing: 1px; margin: 4px 0 10px; }
+  .acct-card-row { display: flex; justify-content: space-between; font-size: .88rem; opacity: .95; }
+  .acct-hist-item {
+    display: flex; justify-content: space-between; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line);
+    font-size: .9rem;
+  }
+  .acct-hist-item:last-child { border-bottom: none; }
+  .acct-hist-no { font-weight: 800; color: var(--white); }
+  .acct-hist-meta { color: var(--muted); font-size: .82rem; }
+  .acct-error { color: var(--red); font-size: .85rem; margin-top: 8px; display: none; }
+  .acct-msg { font-size: .85rem; margin-top: 8px; display: none; }
+  .acct-logout { width: 100%; margin-top: 6px; }
+
+  .promo-strip { background: linear-gradient(90deg, var(--red), #ff7a3c); color: #fff; text-align: center; padding: 11px 16px; font-weight: 700; font-size: .95rem; }
+
+  /* ============================================================
+     HERO — огненная сцена
+  ============================================================ */
+  #hero {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(720px 520px at 72% 50%, rgba(244,81,81,.38), transparent 62%),
+      radial-gradient(900px 700px at 90% 30%, rgba(180,30,20,.30), transparent 60%),
+      var(--bg);
+    padding: 78px 0 64px;
+  }
+  /* искры */
+  #hero::before, #hero::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(2px 2px at 20% 30%, rgba(255,160,80,.9), transparent),
+      radial-gradient(2px 2px at 60% 20%, rgba(255,120,60,.8), transparent),
+      radial-gradient(1.5px 1.5px at 80% 60%, rgba(255,200,120,.9), transparent),
+      radial-gradient(1.5px 1.5px at 35% 70%, rgba(255,140,70,.7), transparent),
+      radial-gradient(2px 2px at 50% 85%, rgba(255,170,90,.8), transparent),
+      radial-gradient(1px 1px at 75% 40%, rgba(255,210,140,.9), transparent);
+    background-repeat: no-repeat;
+    animation: sparks 6s linear infinite;
+    opacity: .7;
+  }
+  #hero::after { animation-duration: 9s; animation-direction: reverse; opacity: .45; }
+  @keyframes sparks { 0%{transform:translateY(10px)} 50%{transform:translateY(-12px)} 100%{transform:translateY(10px)} }
+
+  .hero-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--muted); font-size: .92rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .08em; margin-bottom: 16px;
+  }
+  .hero-title { font-size: clamp(2.6rem, 6.5vw, 5rem); font-weight: 900; line-height: 1; text-transform: uppercase; margin-bottom: 20px; }
+  .hero-desc { font-size: 1.1rem; color: var(--muted); max-width: 480px; margin-bottom: 32px; }
+  .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+
+  .hero-image-wrap { display: flex; justify-content: center; position: relative; }
+  .hero-image-wrap::before {
+    content: ''; position: absolute; width: 70%; aspect-ratio: 1; border-radius: 50%;
+    background: radial-gradient(circle, rgba(244,81,81,.55), transparent 65%);
+    filter: blur(20px); z-index: 0;
+  }
+  .hero-img-placeholder {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 440px; aspect-ratio: 1;
+    display: grid; place-items: center; font-size: 12rem;
+    filter: drop-shadow(0 24px 40px rgba(0,0,0,.6));
+    animation: floaty 5s ease-in-out infinite;
+  }
+  @keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+
+  .hero-stats { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-top: 56px; }
+  .hero-stat { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 16px; text-align: center; }
+  .hero-stat:hover { border-color: var(--red); }
+  .hero-stat-num { font-size: 1.9rem; font-weight: 900; color: var(--red); line-height: 1; }
+  .hero-stat-label { font-size: .86rem; color: var(--muted); margin-top: 8px; }
+
+  /* ============================================================
+     МЕНЮ
+  ============================================================ */
+  #menu { background: var(--bg); }
+  .menu-tabs {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 40px;
+    position: sticky; top: 74px; z-index: 40; background: var(--bg); padding: 14px 0;
+  }
+  .tab-btn {
+    background: var(--bg2); border: 1.5px solid var(--line); color: var(--text);
+    font-weight: 600; font-size: .94rem; padding: 10px 22px; border-radius: 999px; cursor: pointer; transition: all .18s;
+  }
+  .tab-btn:hover { border-color: var(--red); color: var(--red); }
+  .tab-btn.active { background: var(--red); color: #fff; border-color: var(--red); }
+
+  /* ===== Хиты — горизонтальная подборка над меню, чтобы не листать всё ===== */
+  .menu-hits { margin-bottom: 8px; }
+  .menu-hits-title { font-weight: 800; font-size: 1rem; color: var(--white); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .menu-hits-row {
+    display: flex; gap: 14px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; padding-bottom: 6px; scroll-snap-type: x proximity;
+  }
+  .menu-hits-row::-webkit-scrollbar { display: none; }
+  .menu-card.hit-mini { flex: 0 0 176px; scroll-snap-align: start; }
+  .menu-card.hit-mini .card-img, .menu-card.hit-mini .card-img-placeholder { aspect-ratio: 1/1; font-size: 3rem; }
+  .menu-card.hit-mini .card-body { padding: 12px 12px 14px; }
+  .menu-card.hit-mini .card-name {
+    font-size: .92rem; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .menu-card.hit-mini .card-price { font-size: 1.02rem; }
+  .menu-card.hit-mini .card-order-btn { width: 34px; height: 34px; padding: 0; border-radius: 10px; font-size: 1.05rem; }
+
+  .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 22px; }
+  .menu-card {
+    background: var(--bg3); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    overflow: hidden; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s, border-color .2s;
+  }
+  .menu-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--red); }
+  .card-img, .card-img-placeholder {
+    aspect-ratio: 4/3; width: 100%; display: grid; place-items: center; font-size: 4.5rem;
+    background: radial-gradient(circle at 50% 45%, rgba(244,81,81,.18), #100c0d); position: relative;
+  }
+  .card-img img { width: 100%; height: 100%; object-fit: cover; }
+  .card-meta { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge { font-size: .72rem; font-weight: 800; padding: 5px 10px; border-radius: 999px; background: rgba(0,0,0,.6); color: #fff; backdrop-filter: blur(4px); }
+  .badge-hit { background: var(--red); }
+  .badge-spicy { background: #c0392b; }
+  .badge-weight { position: absolute; top: 12px; right: 12px; left: auto; background: rgba(0,0,0,.6); color: #fff; }
+
+  .card-body { padding: 18px 18px 20px; display: flex; flex-direction: column; flex: 1; }
+  .card-name { font-size: 1.12rem; font-weight: 800; margin-bottom: 7px; color: var(--white); }
+  .card-desc { font-size: .88rem; color: var(--muted); flex: 1; margin-bottom: 16px; line-height: 1.5; }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; }
+  .card-price { font-size: 1.4rem; font-weight: 900; color: var(--white); }
+  .card-order-btn, .card-add, .add {
+    background: var(--green); color: #06270a; border: none; font-weight: 800; font-size: .92rem;
+    padding: 12px 18px; border-radius: 11px; cursor: pointer; display: inline-flex; align-items: center;
+    justify-content: center; white-space: nowrap; flex-shrink: 0; transition: transform .15s, background .15s;
+  }
+  .card-order-btn:hover, .card-add:hover, .add:hover { background: var(--green2); transform: translateY(-2px); }
+  .card-order-btn.added, .add.added { background: #2ecc71; }
+
+  .addons { margin-top: 14px; border-top: 1px dashed var(--line); padding-top: 12px; }
+  .addons-title { font-size: .78rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; }
+  .addon-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; font-size: .9rem; }
+  .addon-name { color: var(--text); }
+  .addon-price { color: var(--muted); }
+  .addon-add { background: var(--green); border: none; color: #06270a; font-weight: 800; border-radius: 8px; padding: 4px 12px; cursor: pointer; }
+
+  /* ============================================================
+     ПРЕИМУЩЕСТВА
+  ============================================================ */
+  #advantages { background: var(--bg2); }
+  .adv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 26px; }
+  .adv-card { text-align: left; }
+  .adv-icon {
+    width: 56px; height: 56px; margin-bottom: 16px; display: grid; place-items: center; font-size: 1.8rem;
+    color: var(--red); background: rgba(244,81,81,.12); border-radius: 14px;
+  }
+  .adv-title { font-size: 1.15rem; font-weight: 800; margin-bottom: 8px; color: var(--white); }
+  .adv-text { color: var(--muted); font-size: .92rem; }
+
+  /* ============================================================
+     ДОСТАВКА
+  ============================================================ */
+  #delivery { background: var(--bg); }
+  .delivery-inner { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 22px; }
+  .delivery-block-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 18px; color: var(--white); }
+  .delivery-block { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px; }
+  .delivery-rows { display: flex; flex-direction: column; gap: 16px; }
+  .delivery-row { display: flex; gap: 14px; align-items: flex-start; }
+  .delivery-row-icon { flex: none; width: 42px; height: 42px; border-radius: 11px; background: rgba(244,81,81,.12); display: grid; place-items: center; font-size: 1.2rem; }
+  .delivery-row-text strong { display: block; font-weight: 800; margin-bottom: 2px; color: var(--white); }
+  .delivery-row-text { color: var(--muted); font-size: .94rem; }
+  .freedel-bar { margin-top: 10px; height: 9px; border-radius: 999px; background: var(--line); overflow: hidden; }
+  .freedel-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--red), #ff8a4c); }
+
+  /* ============================================================
+     ОТСЛЕДИТЬ
+  ============================================================ */
+  #trackorder { background: var(--bg2) !important; }
+  #trackorder .order-form-wrap { max-width: 540px; }
+
+  /* ============================================================
+     ОТЗЫВЫ
+  ============================================================ */
+  #reviews { background: var(--bg); }
+  .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 22px; }
+  .review-card { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 26px; }
+  .review-stars { color: var(--red); font-size: 1.05rem; margin-bottom: 12px; }
+  .review-card .body, .review-text { color: var(--text); font-size: .98rem; margin-bottom: 18px; }
+  .review-author { display: flex; align-items: center; gap: 12px; }
+  .review-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--red), #ff8a4c); display: grid; place-items: center; color: #fff; font-weight: 800; }
+  .review-name { font-weight: 800; color: var(--white); }
+  .review-date { color: var(--muted); font-size: .84rem; }
+
+  /* ============================================================
+     ФОРМА ЗАКАЗА
+  ============================================================ */
+  #order { background: var(--bg); }
+  .order-form-wrap { max-width: 600px; margin: 0 auto; background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow); }
+  .order-summary { margin-bottom: 22px; }
+  .order-summary-empty { color: var(--muted); text-align: center; padding: 14px; }
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-weight: 700; font-size: .94rem; margin-bottom: 8px; color: var(--white); }
+  .form-input {
+    width: 100%; font-family: inherit; font-size: 1rem; padding: 14px 16px;
+    border: 1.5px solid var(--line); border-radius: 12px; background: var(--bg3); color: var(--text);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .form-input::placeholder { color: #6f6566; }
+  .form-input:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 4px rgba(244,81,81,.15); }
+  textarea.form-input { min-height: 92px; resize: vertical; }
+  .form-error { color: var(--red); font-size: .85rem; margin-top: 6px; display: none; }
+  .form-error.show { display: block; }
+
+  .promo-toggle { background: none; border: none; color: var(--red); font-weight: 700; font-size: .92rem; cursor: pointer; padding: 4px 0; }
+  .promo-toggle:hover { text-decoration: underline; }
+  .promo-fields { margin-top: 12px; }
+
+  .pay-methods { display: flex; flex-direction: column; gap: 10px; }
+  .pay-method { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; transition: border-color .15s, background .15s; background: var(--bg3); }
+  .pay-method:has(input:checked) { border-color: var(--red); background: rgba(244,81,81,.1); }
+  .pay-method input { accent-color: var(--red); width: 18px; height: 18px; }
+
+  .hp-field { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
+
+  .form-submit, .cart-checkout {
+    width: 100%; background: var(--red); color: #fff; border: none; font-size: 1.08rem; font-weight: 800;
+    padding: 17px; border-radius: 12px; cursor: pointer; box-shadow: 0 10px 30px rgba(244,81,81,.35); transition: transform .18s, background .18s;
+  }
+  .form-submit:hover, .cart-checkout:hover { background: var(--red2); transform: translateY(-2px); }
+  .form-note { text-align: center; color: var(--muted); font-size: .82rem; margin-top: 14px; }
+
+  #form-success { display: none; text-align: center; padding: 30px 10px; }
+  #form-success .success-icon { font-size: 4rem; margin-bottom: 14px; }
+  #form-success h3 { font-size: 1.55rem; font-weight: 800; margin-bottom: 10px; color: var(--white); }
+  #form-success p { color: var(--muted); }
+
+  /* ============================================================
+     КОНТАКТЫ
+  ============================================================ */
+  #contacts { background: var(--bg2); }
+  .contacts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+  .contact-item { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 22px; }
+  .contact-icon { flex: none; width: 48px; height: 48px; border-radius: 13px; background: rgba(244,81,81,.12); display: grid; place-items: center; font-size: 1.35rem; }
+  .contact-text strong { display: block; font-weight: 800; margin-bottom: 3px; color: var(--white); }
+  .contact-text span, .contact-text a { color: var(--muted); }
+  .contact-text a:hover { color: var(--red); }
+  .map-embed-placeholder, .map-placeholder { border-radius: var(--radius-lg); background: var(--bg3); border: 1px solid var(--line); display: grid; place-items: center; text-align: center; min-height: 320px; color: var(--muted); }
+  .map-embed-placeholder iframe, .map-placeholder iframe { width: 100%; height: 100%; border: 0; border-radius: var(--radius-lg); }
+
+  /* ============================================================
+     ФУТЕР
+  ============================================================ */
+  footer { background: #060404; color: #fff; padding: 44px 0; border-top: 1px solid var(--line); }
+  .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .footer-logo { font-size: 1.3rem; font-weight: 900; text-transform: uppercase; }
+  .footer-links { display: flex; gap: 22px; flex-wrap: wrap; }
+  .footer-links a { color: rgba(255,255,255,.6); font-size: .9rem; transition: color .15s; }
+  .footer-links a:hover { color: var(--red); }
+  .footer-copy { color: rgba(255,255,255,.4); font-size: .84rem; width: 100%; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.08); }
+
+  /* ============================================================
+     ПЛАВАЮЩИЕ КНОПКИ
+  ============================================================ */
+  .fab-call { display: none; position: fixed; left: 18px; bottom: 18px; z-index: 90; background: var(--bg3); color: #fff; padding: 14px 22px; border-radius: 999px; font-weight: 800; box-shadow: var(--shadow-lg); border: 1px solid var(--line); }
+  .cart-fab {
+    position: fixed; right: 18px; bottom: 18px; z-index: 90; display: inline-flex; align-items: center; gap: 10px;
+    background: var(--red); color: #fff; border: none; cursor: pointer; padding: 16px 26px; border-radius: 999px;
+    font-weight: 800; font-size: 1.05rem; box-shadow: 0 14px 36px rgba(244,81,81,.45); transition: transform .18s;
+  }
+  .cart-fab:hover { transform: translateY(-3px); }
+  .cart-fab.is-empty { animation: fabPulse 2.4s ease-in-out infinite; }
+  @keyframes fabPulse {
+    0%, 100% { box-shadow: 0 14px 36px rgba(244,81,81,.45); }
+    50% { box-shadow: 0 14px 46px rgba(244,81,81,.8), 0 0 0 9px rgba(244,81,81,.14); }
+  }
+  .cart-fab-count { background: var(--green); color: #06270a; min-width: 24px; height: 24px; border-radius: 999px; display: grid; place-items: center; font-size: .82rem; padding: 0 6px; }
+
+  /* ===== Корзина ===== */
+  .cart-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.6); backdrop-filter: blur(3px); display: none; justify-content: flex-end; }
+  .cart-overlay.open { display: flex; }
+  .cart-panel { width: min(420px, 100%); height: 100%; background: var(--bg2); display: flex; flex-direction: column; box-shadow: -10px 0 50px rgba(0,0,0,.5); border-left: 1px solid var(--line); animation: slideIn .28s ease; }
+  @keyframes slideIn { from { transform: translateX(40px); opacity: .6; } to { transform: none; opacity: 1; } }
+  .cart-head { display: flex; align-items: center; justify-content: space-between; padding: 22px 24px; border-bottom: 1px solid var(--line); }
+  .cart-head h3 { font-size: 1.25rem; font-weight: 800; color: var(--white); }
+  .cart-close { background: var(--bg3); border: 1px solid var(--line); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 1rem; color: var(--text); }
+  .cart-body { flex: 1; overflow-y: auto; padding: 18px 24px; }
+  .cart-empty { text-align: center; color: var(--muted); padding: 60px 0; }
+  .cart-empty-emoji { font-size: 3.4rem; margin-bottom: 12px; }
+  .cart-row { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); align-items: center; }
+  .cart-row-info { flex: 1; }
+  .cart-row-name { font-weight: 800; font-size: 1rem; color: var(--white); }
+  .cart-row-price { color: var(--muted); font-size: .86rem; }
+  .qty { display: inline-flex; align-items: center; gap: 10px; margin-top: 6px; }
+  .qty button { width: 28px; height: 28px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--bg3); cursor: pointer; font-weight: 800; font-size: 1rem; color: var(--text); }
+  .qty button:hover { border-color: var(--red); color: var(--red); }
+  .cart-row-sum { font-weight: 800; color: var(--white); }
+  .cart-row-del { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1.1rem; padding: 4px; }
+  .cart-row-del:hover { color: var(--red); }
+  .cart-foot { padding: 22px 24px; border-top: 1px solid var(--line); }
+  .cart-total-row { display: flex; justify-content: space-between; margin-bottom: 16px; }
+  .cart-total-row .label { font-size: 1.05rem; color: var(--muted); }
+  .cart-total-row .value { font-size: 1.45rem; font-weight: 900; color: var(--white); }
+
+  /* ===== Появление ===== */
+  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .fade-in.visible { opacity: 1; transform: none; }
+
+  /* ============================================================
+     АДАПТИВ
+  ============================================================ */
+  @media (max-width: 980px) {
+    .hero-inner { grid-template-columns: 1fr; text-align: center; }
+    .hero-desc { margin-left: auto; margin-right: auto; }
+    .hero-cta { justify-content: center; }
+    .hero-image-wrap { order: -1; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .contacts-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 760px) {
+    .section { padding: 56px 0; }
+    .header-phone { display: none; }
+    .burger { display: flex; }
+    nav#site-nav {
+      position: fixed; top: 74px; right: 0; width: min(280px, 86%); height: calc(100vh - 74px);
+      background: var(--bg2); border-left: 1px solid var(--line); flex-direction: column; align-items: flex-start;
+      gap: 4px; padding: 24px; transform: translateX(110%); transition: transform .28s ease; box-shadow: var(--shadow-lg);
+    }
+    nav#site-nav.open { transform: none; }
+    nav#site-nav > a { width: 100%; padding: 12px 4px; font-size: 1.05rem; border-bottom: 1px solid var(--line); }
+    .nav-phone { display: flex !important; background: var(--red); color: #fff !important; justify-content: center; border-radius: 10px; margin-top: 12px; }
+    .fab-call { display: inline-flex; }
+    .order-form-wrap { padding: 26px 20px; }
+    .footer-inner { flex-direction: column; text-align: center; }
+    .menu-tabs {
+      flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; margin: 0 -22px 32px; padding: 14px 22px;
+    }
+    .menu-tabs::-webkit-scrollbar { display: none; }
+    .tab-btn { flex: 0 0 auto; white-space: nowrap; }
+  }
+  @media (max-width: 420px) {
+    .hero-img-placeholder { font-size: 8rem; }
+    .hero-stat-num { font-size: 1.5rem; }
+    .card-price { font-size: 1.25rem; }
+  }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     ШАПКА
+============================================================ -->
+<header>
+  <div class="container header-inner">
+    <a href="#hero" class="logo" aria-label="ЛавашОК — на главную">
+      <svg class="logo-icon" width="30" height="30" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="30" r="24" fill="#F45151" opacity=".18"/>
+        <g transform="translate(32 34) rotate(-22)">
+          <rect x="-23" y="-9.5" width="42" height="19" rx="9.5" fill="#E8B25E"/>
+          <circle cx="19" cy="0" r="9.5" fill="#E9B564"/>
+          <circle cx="19" cy="0" r="7" fill="#F7E3B8"/>
+          <circle cx="17" cy="-2" r="2.4" fill="#A85B33"/>
+          <circle cx="21" cy="2.2" r="2.4" fill="#E8503C"/>
+          <circle cx="17.5" cy="2.6" r="2" fill="#7CC454"/>
+          <path d="M-23 -4 h9.5 a4 4 0 0 1 4 4 v2 a7.5 7.5 0 0 1 -7.5 7.5 a9.5 9.5 0 0 1 -6 -9.5z" fill="#F5F0E6"/>
+        </g>
+      </svg>
+      Лаваш<span class="logo-o">О</span>К
+    </a>
+
+    <nav id="site-nav" aria-label="Навигация по странице">
+      <a href="#menu">Меню</a>
+      <a href="#delivery">Доставка</a>
+      <a href="#trackorder">Отследить</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="#contacts">Контакты</a>
+      <a href="tel:+74951204567" class="nav-phone js-tel" onclick="trackPhone('nav')">📞 <span class="js-phone">+7 (495) 120-45-67</span></a>
+    </nav>
+
+    <!-- ↓ ЗАМЕНИТЕ номер телефона на свой (в двух местах: href и текст) -->
+    <a href="tel:+74951204567"
+       class="header-phone js-tel"
+       id="phone-header"
+       onclick="trackPhone('header')"
+       aria-label="Позвонить в ЛавашОК">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07
+                 10.81 19.79 19.79 0 01.01 2.23 2 2 0 012 .05h3a2 2 0 012 1.72c.127.96.361
+                 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0
+                 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/>
+      </svg>
+      <strong class="js-phone">+7 (495) 120-45-67</strong>
+    </a>
+
+    <!-- Личный кабинет: карта + история заказов -->
+    <button class="account-btn" id="account-btn" type="button" aria-label="Личный кабинет" aria-haspopup="dialog" onclick="Account.open()">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="4" y1="7" x2="20" y2="7"></line>
+        <line x1="4" y1="12" x2="20" y2="12"></line>
+        <line x1="4" y1="17" x2="20" y2="17"></line>
+      </svg>
+      <span class="account-btn-dot" id="account-btn-dot"></span>
+    </button>
+
+    <!-- Бургер для мобильной навигации -->
+    <button class="burger" id="burger" type="button"
+            aria-label="Открыть меню" aria-expanded="false" aria-controls="site-nav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Баннер акции (заполняется из настроек) -->
+<div id="promo-banner" class="promo-strip" style="display:none"></div>
+
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section id="hero" aria-label="Главный экран">
+  <div class="container">
+    <div class="hero-inner">
+
+      <div>
+        <span class="hero-badge">🔥 Горячо · Сочно · Вкусно</span>
+        <h1 class="hero-title">
+          Шаурма и лаваши,<br>
+          от которых <span class="accent">сносит крышу 😍</span>
+        </h1>
+        <p class="hero-desc">
+          Сочное мясо, свежие овощи, фирменный соус — всё завёрнуто с душой.
+          Готовим при вас и доставляем горячим прямо до двери.
+        </p>
+        <div class="hero-cta">
+          <a href="#menu" class="btn btn-red" onclick="trackOrder('hero-cta')">
+            🛒 Заказать сейчас
+          </a>
+          <a href="#menu" class="btn btn-gold">
+            📋 Смотреть меню
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-image-wrap">
+        <!-- Фирменная иллюстрация. Когда появится реальное фото — замените на:
+          <img src="img/hero.webp" alt="Аппетитная шаурма ЛавашОК" width="440" height="440"
+               style="border-radius:28px;width:100%;max-width:440px;object-fit:cover;">
+        -->
+        <img src="/img/hero.svg" alt="Аппетитная шаурма ЛавашОК" width="440" height="440"
+             fetchpriority="high" class="hero-img-placeholder">
+      </div>
+    </div>
+
+    <!-- Статы -->
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <!-- ↓ Замените на реальное время -->
+        <div class="hero-stat-num">40<small style="font-size:.9rem"> мин</small></div>
+        <div class="hero-stat-label">Среднее время доставки</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">4.9 ⭐</div>
+        <div class="hero-stat-label">Рейтинг на Яндекс.Картах</div>
+      </div>
+      <div class="hero-stat">
+        <!-- ↓ Замените на реальное число -->
+        <div class="hero-stat-num">3 000+</div>
+        <div class="hero-stat-label">Довольных клиентов</div>
+      </div>
+      <div class="hero-stat">
+        <!-- ↓ Замените на реальную сумму -->
+        <div class="hero-stat-num">от 500₽</div>
+        <div class="hero-stat-label">Бесплатная доставка</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     МЕНЮ
+============================================================ -->
+<section id="menu" class="section" aria-label="Меню">
+  <div class="container">
+    <h2 class="section-title">Наше меню 🌯</h2>
+    <p class="section-sub">Всё готовится свежо — никаких «под лампой»</p>
+
+    <!-- Хиты — подборка бестселлеров сверху, чтобы не листать всё меню (заполняется JS из /api/menu) -->
+    <div class="menu-hits" id="menu-hits"></div>
+
+    <!-- Табы фильтрации -->
+    <div class="menu-tabs" role="tablist" aria-label="Категории меню">
+      <button class="tab-btn active" data-cat="all"      role="tab" aria-selected="true">Всё меню</button>
+      <button class="tab-btn"        data-cat="shawarma" role="tab">Шаурма</button>
+      <button class="tab-btn"        data-cat="lavash"   role="tab">Лаваши</button>
+      <button class="tab-btn"        data-cat="combo"    role="tab">Комбо</button>
+      <button class="tab-btn"        data-cat="drinks"   role="tab">Напитки</button>
+      <button class="tab-btn"        data-cat="addon"    role="tab">Добавки</button>
+    </div>
+
+    <div class="menu-grid" id="menu-grid">
+
+      <!-- ────────────────────────────────────────────────────────
+           ШАБЛОН КАРТОЧКИ:
+           data-cat = shawarma | lavash | combo | drinks
+           Замените emoji в .card-img-placeholder на:
+           <img src="img/dish.webp" alt="Название" width="360" height="270">
+      ──────────────────────────────────────────────────────── -->
+
+      <!-- Карточки меню рендерятся из /api/menu (см. JS, раздел «Меню сайта»).
+           Редактируется в админке → /admin, вкладка «Меню». -->
+      <p id="menu-loading" style="grid-column:1 / -1; text-align:center; color:var(--gray); padding:30px 0;">Загружаем меню…</p>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ПРЕИМУЩЕСТВА
+============================================================ -->
+<section id="advantages" class="section" aria-label="Наши преимущества">
+  <div class="container">
+    <h2 class="section-title">Почему ЛавашОК? 😉</h2>
+    <p class="section-sub">Ну а вдруг вы ещё сомневаетесь — вот аргументы</p>
+    <div class="adv-grid">
+      <div class="adv-card fade-in">
+        <div class="adv-icon">🥩</div>
+        <h3 class="adv-title">Только свежее</h3>
+        <p class="adv-text">Мясо маринуем каждое утро, овощи — с рынка. Никакой «вчерашки».</p>
+      </div>
+      <div class="adv-card fade-in">
+        <div class="adv-icon">⚡</div>
+        <h3 class="adv-title">Готово за 5 минут</h3>
+        <p class="adv-text">Завёртываем прямо при вас. Ждать долго не придётся — мы уважаем ваш голод.</p>
+      </div>
+      <div class="adv-card fade-in">
+        <div class="adv-icon">🛵</div>
+        <h3 class="adv-title">Доставка до двери</h3>
+        <p class="adv-text">Привезём горячим. Курьеры знают: лаваш должен добраться тёплым.</p>
+      </div>
+      <div class="adv-card fade-in">
+        <div class="adv-icon">💯</div>
+        <h3 class="adv-title">Честные ингредиенты</h3>
+        <p class="adv-text">Без усилителей вкуса и хитростей. Мясо — это мясо, а не «мясной продукт».</p>
+      </div>
+      <div class="adv-card fade-in">
+        <div class="adv-icon">💸</div>
+        <h3 class="adv-title">Честная цена</h3>
+        <p class="adv-text">Вкусная шаурма не должна стоить как бизнес-ланч в ресторане.</p>
+      </div>
+      <div class="adv-card fade-in">
+        <div class="adv-icon">📦</div>
+        <h3 class="adv-title">Удобный заказ</h3>
+        <p class="adv-text">Позвоните или оставьте заявку — перезвоним за 2 минуты.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ДОСТАВКА
+============================================================ -->
+<section id="delivery" class="section" aria-label="Условия доставки">
+  <div class="container">
+    <h2 class="section-title">Условия доставки 🛵</h2>
+    <p class="section-sub">Привезём туда, куда нужно — и вовремя</p>
+
+    <div class="delivery-inner">
+      <div>
+        <h3 class="delivery-block-title">Как это работает</h3>
+        <div class="delivery-rows">
+          <div class="delivery-row fade-in">
+            <div class="delivery-row-icon">🕐</div>
+            <div class="delivery-row-text">
+              <strong>Время доставки</strong>
+              <span>Курьером Яндекс — обычно 30–60 минут (точное время при оформлении)</span>
+            </div>
+          </div>
+          <div class="delivery-row fade-in">
+            <div class="delivery-row-icon">💳</div>
+            <div class="delivery-row-text">
+              <strong>Минимальный заказ</strong>
+              <span>от 300 ₽</span><!-- ↑ Замените -->
+            </div>
+          </div>
+          <div class="delivery-row fade-in">
+            <div class="delivery-row-icon">📞</div>
+            <div class="delivery-row-text">
+              <strong>Оформление заказа</strong>
+              <span>По телефону или через форму — перезвоним в течение 2 минут</span>
+            </div>
+          </div>
+          <div class="delivery-row fade-in">
+            <div class="delivery-row-icon">🕗</div>
+            <div class="delivery-row-text">
+              <strong>Режим работы</strong>
+              <span class="js-hours">Ежедневно с 10:00 до 23:00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ↓ Замените на iframe Яндекс.Карт -->
+        <div class="map-placeholder">
+          <div class="map-icon">🗺️</div>
+          <p>Мы на карте · точка самовывоза<br><small>← Вставьте iframe Яндекс.Карт</small></p>
+        </div>
+      </div>
+
+      <div class="zones-card fade-in" style="padding:0; overflow:hidden;">
+        <div style="background:var(--red); color:#fff; padding:16px 18px; font-weight:800; font-size:1.05rem;">🛵 Зоны доставки и стоимость</div>
+        <div style="padding:18px;">
+          <!-- Таблица зон (П.5) — заполняется из настроек админки -->
+          <div style="overflow-x:auto;">
+            <table class="zones-table" id="delivery-zones">
+              <thead>
+                <tr><th>Район</th><th>Доставка</th><th>Мин. заказ</th><th>Время</th></tr>
+              </thead>
+              <tbody id="delivery-zones-body">
+                <tr><td colspan="4" style="text-align:center; color:var(--gray); padding:16px;">Загружаем зоны…</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="delivery-row" style="box-shadow:none; border:1px solid #f0e0de; margin-top:14px;">
+            <div class="delivery-row-icon">🏃</div>
+            <div class="delivery-row-text"><strong>Самовывоз — бесплатно</strong><span>Готовность ~15 минут</span></div>
+          </div>
+          <div style="margin-top:14px; font-size:.85rem; color:var(--gray);">🛵 Доставляем курьерами <b style="color:var(--dark)">Яндекс.Доставки</b>. 📦 После оформления пришлём ссылку для отслеживания курьера.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ОТСЛЕДИТЬ ЗАКАЗ
+============================================================ -->
+<section id="trackorder" class="section" aria-label="Отследить заказ" style="background:var(--light)">
+  <div class="container" style="max-width:560px;">
+    <h2 class="section-title">Отследить заказ 📦</h2>
+    <p class="section-sub">Введите номер заказа и телефон — покажем статус доставки</p>
+    <div style="background:var(--bg2); border:1px solid var(--line); border-radius:var(--radius-lg); box-shadow:var(--shadow); overflow:hidden;">
+      <div style="background:var(--red); color:#fff; padding:16px 22px; font-weight:800; font-size:1.05rem; display:flex; align-items:center; gap:10px;">
+        <span style="width:34px; height:34px; border-radius:10px; background:rgba(255,255,255,.18); display:grid; place-items:center; font-size:1.1rem; flex:none;">📦</span>
+        Где мой заказ?
+      </div>
+      <div style="padding:26px;">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <input id="to-id" class="form-input" inputmode="numeric" placeholder="Номер заказа" style="flex:1; min-width:120px;">
+          <input id="to-phone" class="form-input" type="tel" inputmode="tel" placeholder="Телефон" style="flex:1.4; min-width:150px;">
+        </div>
+        <button class="btn btn-red" style="width:100%; margin-top:14px;" onclick="lookupOrder()">Отследить заказ</button>
+        <div id="to-error" class="form-error" style="text-align:center; margin-top:12px;"></div>
+        <p style="text-align:center; color:var(--muted); font-size:.82rem; margin-top:12px;">Номер заказа есть на экране после оформления.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ОТЗЫВЫ
+============================================================ -->
+<section id="reviews" class="section" aria-label="Отзывы клиентов">
+  <div class="container">
+    <h2 class="section-title">Что говорят люди 💬</h2>
+    <p class="section-sub">Нам не стыдно — вот реальные отзывы</p>
+    <div class="reviews-grid">
+      <!-- ↓ Замените на реальные отзывы с Яндекс.Карт или 2ГИС -->
+      <div class="review-card fade-in">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">«Заказываю уже третий раз. Шаурма приехала горячей, завёрнута плотно — ничего не вытекло. Это искусство!»</p>
+        <div class="review-author">
+          <div class="review-avatar">А</div>
+          <div>
+            <div class="review-name">Алексей К.</div>
+            <div class="review-date">Яндекс.Карты · 3 дня назад</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card fade-in">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">«Брала комбо на двоих — объелись! Мясо реально вкусное, не пережаренное. Соус фирменный — огонь!»</p>
+        <div class="review-author">
+          <div class="review-avatar">М</div>
+          <div>
+            <div class="review-name">Мария Л.</div>
+            <div class="review-date">2ГИС · неделю назад</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card fade-in">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">«Привезли за 35 минут, хотя живу не близко. Курьер вежливый, еда горячая. Вот это сервис!»</p>
+        <div class="review-author">
+          <div class="review-avatar">Д</div>
+          <div>
+            <div class="review-name">Дмитрий В.</div>
+            <div class="review-date">Яндекс.Карты · 2 недели назад</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ФОРМА ЗАЯВКИ
+============================================================ -->
+<section id="order" class="section" aria-label="Оформление заказа">
+  <div class="container">
+    <h2 class="section-title">Оформить заказ 🛒</h2>
+    <p class="section-sub">Оставьте заявку — перезвоним в течение 2 минут и всё оформим</p>
+
+    <div class="order-form-wrap">
+
+      <!-- Форма -->
+      <form id="order-form" novalidate>
+        <!-- Скрытые UTM-поля — заполняются автоматически из URL -->
+        <input type="hidden" id="utm_source"   name="utm_source">
+        <input type="hidden" id="utm_medium"   name="utm_medium">
+        <input type="hidden" id="utm_campaign" name="utm_campaign">
+        <input type="hidden" id="utm_content"  name="utm_content">
+        <input type="hidden" id="utm_term"     name="utm_term">
+        <input type="hidden" id="page_url"     name="page_url">
+
+        <!-- Сводка корзины — заполняется автоматически (см. JS) -->
+        <div class="order-summary" id="order-summary"></div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-name">Ваше имя</label>
+          <input type="text" id="f-name" name="name" class="form-input"
+                 placeholder="Иван" autocomplete="given-name">
+          <div class="form-error" id="err-name">Пожалуйста, введите имя</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-phone">Телефон *</label>
+          <input type="tel" id="f-phone" name="phone" class="form-input"
+                 placeholder="+7 (___) ___-__-__" autocomplete="tel" required
+                 oninput="checkLoyalty()">
+          <div class="form-error" id="err-phone">Введите корректный номер телефона</div>
+          <div id="loyalty-info" style="margin-top:8px; font-size:.9rem; display:none; color:#16a34a; font-weight:700;"></div>
+          <label class="pay-method" id="loyalty-redeem-wrap" style="display:none; margin-top:10px;">
+            <input type="checkbox" id="loyalty-redeem" onchange="Cart.render()">
+            <span id="loyalty-redeem-label">🎁 Списать бонусы</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Способ получения</label>
+          <div class="pay-methods">
+            <label class="pay-method">
+              <input type="radio" name="fulfillment" value="delivery" checked onchange="onFulfillmentChange()">
+              <span>🚚 Доставка курьером</span>
+            </label>
+            <label class="pay-method">
+              <input type="radio" name="fulfillment" value="pickup" onchange="onFulfillmentChange()">
+              <span>🏃 Самовывоз — заберу сам(а)</span>
+            </label>
+          </div>
+          <div id="pickup-info" style="margin-top:8px; font-size:.9rem; display:none; color:#16a34a; font-weight:700;"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="f-comment" id="f-comment-label">Адрес и комментарий</label>
+          <textarea id="f-comment" name="comment" class="form-input"
+                    placeholder="Ул. Пушкина, д.10, кв.5. Домофон 25, позвонить за 10 минут..."></textarea>
+        </div>
+
+        <div class="form-group" id="zone-group" style="display:none">
+          <label class="form-label" for="f-zone">Зона доставки</label>
+          <select id="f-zone" class="form-input" onchange="showZoneInfo()">
+            <option value="">— выберите район —</option>
+          </select>
+          <div id="zone-info" style="margin-top:8px; font-size:.9rem; display:none;"></div>
+        </div>
+
+        <div class="form-group promo-group">
+          <button type="button" class="promo-toggle" id="promo-toggle" onclick="togglePromo()">🎟️ Есть промокод?</button>
+          <div id="promo-fields" class="promo-fields hidden">
+            <label class="form-label" for="f-promo">Промокод</label>
+            <div style="display:flex; gap:10px;">
+              <input type="text" id="f-promo" class="form-input" placeholder="Например, ПРИВЕТ" style="text-transform:uppercase">
+              <button type="button" class="btn btn-gold" onclick="applyPromo()" style="white-space:nowrap; padding:14px 20px;">Применить</button>
+            </div>
+            <div id="promo-msg" style="margin-top:8px; font-size:.88rem; display:none;"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Способ оплаты</label>
+          <div class="pay-methods">
+            <label class="pay-method">
+              <input type="radio" name="payment" value="cash" checked>
+              <span>💵 При получении — наличными или картой курьеру</span>
+            </label>
+            <label class="pay-method hidden" id="pay-online-wrap">
+              <input type="radio" name="payment" value="online">
+              <span>💳 Онлайн-картой (ЮKassa)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Honeypot: ловушка для ботов. Люди это поле не видят и не заполняют. -->
+        <div class="hp-field" aria-hidden="true">
+          <label>Если вы человек — не заполняйте
+            <input type="text" id="hp-website" name="website" tabindex="-1" autocomplete="off">
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="pay-method" id="consent-wrap" style="align-items:flex-start; gap:10px;">
+            <input type="checkbox" id="f-consent" name="consent">
+            <span>Согласен(на) с <a href="/privacy" target="_blank" rel="noopener">политикой конфиденциальности</a> и даю согласие на обработку персональных данных *</span>
+          </label>
+          <div class="form-error" id="err-consent">Нужно подтвердить согласие на обработку данных</div>
+        </div>
+
+        <button type="submit" class="form-submit" id="btn-form-submit">
+          🎉 Оформить заказ
+        </button>
+      </form>
+
+      <!-- Экран успеха -->
+      <div id="form-success">
+        <div class="success-icon">🎊</div>
+        <h3>Заявка принята!</h3>
+        <p>Перезвоним в течение 2 минут и оформим заказ. Скоро будет вкусно!</p>
+        <p id="order-num" style="display:none; margin-top:10px; font-weight:800;"></p>
+        <p id="order-card" style="display:none; margin-top:8px; color:var(--muted); font-size:.92rem;"></p>
+        <p id="track-link-wrap" style="display:none; margin-top:16px;">
+          <a id="track-link" class="btn btn-gold" href="#">📦 Отследить заказ</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     КОНТАКТЫ
+============================================================ -->
+<section id="contacts" class="section" aria-label="Контакты">
+  <div class="container">
+    <h2 class="section-title">Где нас найти 📍</h2>
+    <p class="section-sub">Приходите сами или звоните — рады всегда</p>
+    <div class="contacts-grid">
+      <div>
+        <div class="contact-item fade-in">
+          <div class="contact-icon">📍</div>
+          <div class="contact-text">
+            <strong>Адрес</strong>
+            <!-- ↓ Замените на реальный адрес -->
+            <span class="js-address">г. Москва, ул. Арбат, д. 24</span>
+          </div>
+        </div>
+        <div class="contact-item fade-in">
+          <div class="contact-icon">📞</div>
+          <div class="contact-text">
+            <strong>Телефон</strong>
+            <!-- ↓ Замените телефон -->
+            <a href="tel:+74951204567" class="js-tel" onclick="trackPhone('contacts')"><span class="js-phone">+7 (495) 120-45-67</span></a>
+          </div>
+        </div>
+        <div class="contact-item fade-in">
+          <div class="contact-icon">🕐</div>
+          <div class="contact-text">
+            <strong>Режим работы</strong>
+            <!-- ↓ Замените на реальные часы -->
+            <span class="js-hours">Ежедневно: 10:00 – 23:00, без выходных</span>
+          </div>
+        </div>
+        <div class="contact-item fade-in">
+          <div class="contact-icon">💬</div>
+          <div class="contact-text">
+            <strong>Мессенджеры</strong>
+            <!-- ↓ Замените ссылки -->
+            <span>
+              <a href="https://wa.me/74951204567" class="js-wa" style="color:var(--red);font-weight:700;">WhatsApp</a>
+              &nbsp;·&nbsp;
+              <a href="https://t.me/lavashok" class="js-tg" style="color:var(--red);font-weight:700;">Telegram</a>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ↓ Замените на iframe Яндекс.Карт с вашим адресом -->
+      <div class="map-embed-placeholder fade-in">
+        <span style="font-size:3rem">🗺️</span>
+        <p>Здесь будет карта<br><small>← Вставьте iframe Яндекс.Карт</small></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ФУТЕР
+============================================================ -->
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-logo">😉 ЛавашОК</div>
+    <div class="footer-links">
+      <!-- ↓ Вставьте реальные ссылки -->
+      <a href="/privacy">Политика конфиденциальности</a>
+      <a href="/oferta">Публичная оферта</a>
+    </div>
+    <!-- ↓ Замените год при необходимости -->
+    <div class="footer-copy">© 2024–2026 ЛавашОК. Все права защищены.</div>
+  </div>
+</footer>
+
+
+<!-- Плавающая кнопка звонка (только мобильная) -->
+<!-- ↓ Замените номер -->
+<a href="tel:+74951204567" class="fab-call js-tel" onclick="trackPhone('fab')" aria-label="Позвонить">
+  📞 Позвонить
+</a>
+
+
+<!-- Плавающая кнопка корзины -->
+<button class="cart-fab" id="cart-fab" type="button" aria-label="Открыть корзину">
+  🛒 <span class="cart-fab-count" id="cart-fab-count">0</span>
+  <span id="cart-fab-total">0 ₽</span>
+</button>
+
+<!-- Панель корзины -->
+<div class="cart-overlay" id="cart-overlay" role="dialog" aria-modal="true" aria-label="Корзина">
+  <aside class="cart-panel">
+    <div class="cart-head">
+      <h3>Ваша корзина 🛒</h3>
+      <button class="cart-close" id="cart-close" type="button" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="cart-body" id="cart-body"></div>
+    <div class="cart-foot">
+      <div class="cart-total-row">
+        <span class="label">Итого:</span>
+        <span class="value" id="cart-total">0 ₽</span>
+      </div>
+      <button class="cart-checkout" id="cart-checkout" type="button">Оформить заказ</button>
+    </div>
+  </aside>
+</div>
+
+<!-- Панель личного кабинета -->
+<div class="cart-overlay" id="account-overlay" role="dialog" aria-modal="true" aria-label="Личный кабинет">
+  <aside class="cart-panel">
+    <div class="cart-head">
+      <h3>Личный кабинет 🔑</h3>
+      <button class="cart-close" id="account-close" type="button" aria-label="Закрыть">✕</button>
+    </div>
+    <div class="cart-body" id="account-body">
+
+      <!-- Гость: вход / регистрация -->
+      <div id="account-guest">
+        <div class="acct-tabs">
+          <button type="button" class="acct-tab active" id="acct-tab-login" onclick="Account.showTab('login')">Вход</button>
+          <button type="button" class="acct-tab" id="acct-tab-register" onclick="Account.showTab('register')">Регистрация</button>
+        </div>
+
+        <form id="account-login-form">
+          <div class="form-group">
+            <label class="form-label" for="acct-login-phone">Телефон</label>
+            <input type="tel" id="acct-login-phone" class="form-input" placeholder="+7 (___) ___-__-__" autocomplete="tel" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="acct-login-pass">Пароль</label>
+            <input type="password" id="acct-login-pass" class="form-input" placeholder="Пароль" autocomplete="current-password" required>
+          </div>
+          <button type="submit" class="form-submit">Войти</button>
+          <div class="acct-error" id="acct-login-error"></div>
+        </form>
+
+        <form id="account-register-form" style="display:none">
+          <div class="form-group">
+            <label class="form-label" for="acct-reg-phone">Телефон</label>
+            <input type="tel" id="acct-reg-phone" class="form-input" placeholder="+7 (___) ___-__-__" autocomplete="tel" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="acct-reg-pass">Пароль</label>
+            <input type="password" id="acct-reg-pass" class="form-input" placeholder="Минимум 4 символа" autocomplete="new-password" required>
+          </div>
+          <button type="submit" class="form-submit">Создать кабинет</button>
+          <div class="acct-error" id="acct-register-error"></div>
+        </form>
+
+        <p class="form-note">Кабинет — это ваша бонусная карта и история заказов. Логин — номер телефона.</p>
+      </div>
+
+      <!-- Вошёл: карта + история -->
+      <div id="account-inner" style="display:none">
+        <div class="acct-card">
+          <div style="font-size:.85rem; opacity:.9">Бонусная карта</div>
+          <div class="acct-card-no" id="acct-card-no">—</div>
+          <div class="acct-card-row"><span id="acct-tier-name">—</span><span id="acct-points">0 баллов</span></div>
+        </div>
+        <div id="acct-next-tier" class="form-note" style="text-align:left; margin-top:0"></div>
+
+        <h4 style="margin:18px 0 6px; color:var(--white); font-size:1.02rem">История заказов</h4>
+        <div id="acct-history"></div>
+
+        <button type="button" class="cart-checkout acct-logout" id="account-logout-btn" onclick="Account.logout()">Выйти</button>
+      </div>
+
+    </div>
+  </aside>
+</div>
+
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ─────────────────────────────────────────────────────────
+   1. UTM-метки: читаем из URL → пишем в форму и sessionStorage
+   ───────────────────────────────────────────────────────── */
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function (key) {
+    var val = params.get(key) || sessionStorage.getItem(key) || '';
+    if (val) sessionStorage.setItem(key, val);
+    var el = document.getElementById(key);
+    if (el) el.value = val;
+  });
+  var pu = document.getElementById('page_url');
+  if (pu) pu.value = window.location.href;
+})();
+
+
+/* ─────────────────────────────────────────────────────────
+   2. Яндекс.Метрика: цели конверсий
+   Замените XXXXXXXX на ID вашего счётчика
+   ───────────────────────────────────────────────────────── */
+var YM_ID = 'XXXXXXXX'; // ← сюда вставьте реальный ID
+
+function ymGoal(goal) {
+  if (typeof ym === 'function') ym(YM_ID, 'reachGoal', goal);
+  if (window.dataLayer) window.dataLayer.push({ event: goal });
+}
+function trackOrder(src)  { ymGoal('order_click');  }
+function trackPhone(src)  { ymGoal('phone_click');  }
+function trackFormSent()  { ymGoal('form_submit');  }
+
+
+/* ─────────────────────────────────────────────────────────
+   3. Маска телефона
+   ───────────────────────────────────────────────────────── */
+function applyPhoneMask(inp) {
+  if (!inp) return;
+  inp.addEventListener('input', function () {
+    var digits = inp.value.replace(/\D/g, '');
+    if (digits[0] === '8') digits = '7' + digits.slice(1);
+    if (digits[0] !== '7' && digits.length) digits = '7' + digits;
+    digits = digits.slice(0, 11);
+    var m = '';
+    if (digits.length >= 1) m = '+7';
+    if (digits.length >= 2) m += ' (' + digits.slice(1, 4);
+    if (digits.length >= 5) m += ') ' + digits.slice(4, 7);
+    if (digits.length >= 8) m += '-' + digits.slice(7, 9);
+    if (digits.length >= 10) m += '-' + digits.slice(9, 11);
+    inp.value = m;
+  });
+}
+(function () {
+  applyPhoneMask(document.getElementById('f-phone'));
+  applyPhoneMask(document.getElementById('acct-login-phone'));
+  applyPhoneMask(document.getElementById('acct-reg-phone'));
+})();
+
+
+/* ─────────────────────────────────────────────────────────
+   4. Валидация и отправка формы
+   ───────────────────────────────────────────────────────── */
+document.getElementById('order-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  if (!ORDERS_OPEN) { alert(ORDERS_CLOSED_MSG || 'Приём заказов сейчас приостановлен'); return; }
+
+  var name    = document.getElementById('f-name');
+  var phone   = document.getElementById('f-phone');
+  var consent = document.getElementById('f-consent');
+  var errName = document.getElementById('err-name');
+  var errPhone= document.getElementById('err-phone');
+  var errConsent = document.getElementById('err-consent');
+  var ok = true;
+
+  /* сброс */
+  [name, phone].forEach(function (el) { el.classList.remove('error'); });
+  [errName, errPhone, errConsent].forEach(function (el) { el.classList.remove('show'); });
+
+  if (name.value.trim().length > 0 && name.value.trim().length < 2) {
+    name.classList.add('error'); errName.classList.add('show'); ok = false;
+  }
+  var digits = phone.value.replace(/\D/g, '');
+  if (digits.length < 11) {
+    phone.classList.add('error'); errPhone.classList.add('show'); ok = false;
+  }
+  if (consent && !consent.checked) {
+    errConsent.classList.add('show'); ok = false;
+  }
+  if (!ok) return;
+
+  /* ───────────────────────────────────────────────────────
+     ОТПРАВКА НА БЭКЕНД — форма уже отправляет заявку на /api/order (Express).
+     Ниже оставлены альтернативные варианты интеграции на будущее.
+
+     Вариант A — FormSubmit (без бэкенда, письмо на email):
+       Добавьте в тег <form>:
+         action="https://formsubmit.co/ВАШ@EMAIL.ru" method="POST"
+       И уберите e.preventDefault() выше.
+
+     Вариант B — собственный API:
+  ─────────────────────────────────────────────────────────
+  var data = new FormData(document.getElementById('order-form'));
+  fetch('/send-order', { method: 'POST', body: data })
+    .then(function (r) { return r.json(); })
+    .then(function ()  { showSuccess(); })
+    .catch(function () { alert('Ошибка. Позвоните нам напрямую!'); });
+  ───────────────────────────────────────────────────────── */
+
+  /* ── Отправка заказа на бэкенд (Express, /api/order) ──── */
+  var submitBtn = document.getElementById('btn-form-submit');
+  var originalBtnText = submitBtn.innerHTML;
+  var paymentEl = document.querySelector('input[name="payment"]:checked');
+  var payMethod = paymentEl ? paymentEl.value : 'cash';
+
+  if (payMethod === 'online' && Cart.total() <= 0) {
+    alert('Для онлайн-оплаты добавьте блюда в корзину.');
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = 'Отправляем…';
+
+  var val = function (id) {
+    var el = document.getElementById(id);
+    return el ? el.value : '';
+  };
+
+  var zoneSel = document.getElementById('f-zone');
+  var zIdx = zoneSel ? parseInt(zoneSel.value, 10) : NaN;
+  var zoneName = (!isNaN(zIdx) && DELIV_ZONES[zIdx]) ? DELIV_ZONES[zIdx].name : '';
+  var fulfillEl = document.querySelector('input[name="fulfillment"]:checked');
+  var fulfillment = fulfillEl ? fulfillEl.value : 'delivery';
+
+  var payload = {
+    name:         name.value.trim(),
+    phone:        phone.value.trim(),
+    comment:      val('f-comment').trim(),
+    payment:      payMethod,
+    items:        Cart.items(),
+    promoCode:    appliedPromo ? appliedPromo.code : '',
+    fulfillment:  fulfillment,
+    zone:         fulfillment === 'pickup' ? '' : zoneName,
+    pointsToUse:  (typeof getPointsToUse === 'function') ? getPointsToUse() : 0,
+    website:      val('hp-website'),   // honeypot
+    utm_source:   val('utm_source'),
+    utm_medium:   val('utm_medium'),
+    utm_campaign: val('utm_campaign'),
+    utm_content:  val('utm_content'),
+    utm_term:     val('utm_term'),
+    page_url:     val('page_url')
+  };
+
+  fetch('/api/order', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+    .then(function (r) {
+      return r.json().then(function (data) { return { okHttp: r.ok, data: data }; });
+    })
+    .then(function (resp) {
+      var res = resp.data || {};
+      if (!resp.okHttp || !res.ok) throw new Error(res.error || 'server error');
+      if (res.paymentUrl) { window.location.href = res.paymentUrl; return; } // → ЮKassa
+      showSuccess(res.track, res.id, res.orderNo, res.pointsUsed, res.cardNo, res.pointsEarned);
+    })
+    .catch(function (err) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnText;
+      alert((err && err.message && err.message !== 'server error')
+        ? err.message
+        : 'Не удалось отправить заявку. Позвоните нам напрямую: +7 (495) 120-45-67');
+    });
+});
+
+function showSuccess(track, id, orderNo, pointsUsed, cardNo, pointsEarned) {
+  trackFormSent();
+  Cart.clear();
+  var redeemCb = document.getElementById('loyalty-redeem');
+  if (redeemCb) redeemCb.checked = false;
+  if (id) {
+    var n = document.getElementById('order-num');
+    if (n) {
+      var txt = 'Ваш номер заказа: ' + (orderNo || ('#' + id));
+      if (Number(pointsUsed) > 0) txt += ' · списано бонусами: ' + Number(pointsUsed).toLocaleString('ru-RU') + ' ₽';
+      if (Number(pointsEarned) > 0) txt += ' · начислено бонусами: +' + Number(pointsEarned).toLocaleString('ru-RU') + ' ₽';
+      n.textContent = txt; n.style.display = 'block';
+    }
+  }
+  if (cardNo) {
+    var c = document.getElementById('order-card');
+    if (c) {
+      c.innerHTML = '💳 Номер вашей карты: <b>' + cardNo + '</b> — сохраните, чтобы диктовать при заказе по телефону' +
+        '<br><a href="#" onclick="Account.openRegisterWithPhone(document.getElementById(\'f-phone\').value); return false;" style="color:var(--red); font-weight:700">🔑 Завести личный кабинет, чтобы не потерять карту</a>';
+      c.style.display = 'block';
+    }
+  }
+  if (track) {
+    var a = document.getElementById('track-link');
+    var w = document.getElementById('track-link-wrap');
+    if (a) a.href = '/track?t=' + encodeURIComponent(track);
+    if (w) w.style.display = 'block';
+  }
+  document.getElementById('order-form').style.display = 'none';
+  document.getElementById('form-success').classList.add('show');
+}
+
+function scrollToOrder() {
+  var el = document.getElementById('order');
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* Поиск заказа клиентом по номеру + телефону → переход на трекинг */
+function lookupOrder() {
+  var id = (document.getElementById('to-id').value || '').replace(/\D/g, '');
+  var phone = (document.getElementById('to-phone').value || '').replace(/\D/g, '');
+  var err = document.getElementById('to-error');
+  err.style.display = 'none';
+  if (!id || phone.length < 5) { err.textContent = 'Введите номер заказа и телефон'; err.style.display = 'block'; return; }
+  fetch('/api/track-lookup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: id, phone: phone }) })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (res) {
+      if (!res.ok || !res.d.ok || !res.d.token) throw new Error((res.d && res.d.error) || 'Заказ не найден');
+      window.location.href = '/track?t=' + encodeURIComponent(res.d.token);
+    })
+    .catch(function (e) { err.textContent = (e && e.message) || 'Заказ не найден'; err.style.display = 'block'; });
+}
+
+/* Свернуть/развернуть поле промокода — по умолчанию скрыто, чтобы форма не выглядела длинной */
+function togglePromo() {
+  var fields = document.getElementById('promo-fields');
+  var btn = document.getElementById('promo-toggle');
+  if (!fields || !btn) return;
+  var willShow = fields.classList.contains('hidden');
+  fields.classList.toggle('hidden', !willShow);
+  btn.textContent = willShow ? '🎟️ Скрыть промокод' : '🎟️ Есть промокод?';
+  if (willShow) {
+    var inp = document.getElementById('f-promo');
+    if (inp) inp.focus();
+  }
+}
+
+/* Применить промокод (сервер проверяет и считает скидку) */
+function applyPromo() {
+  var code = (document.getElementById('f-promo').value || '').trim();
+  var msg = document.getElementById('promo-msg');
+  if (!code) { resetPromo(); Cart.render(); return; }
+  var items = Cart.items();
+  if (!items.length) { msg.style.display = 'block'; msg.style.color = 'var(--red)'; msg.textContent = 'Сначала добавьте блюда в корзину'; return; }
+  fetch('/api/promo/check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: code, items: items }) })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+    .then(function (res) {
+      if (!res.ok || !res.d.ok) throw new Error((res.d && res.d.error) || 'Промокод не применён');
+      appliedPromo = { code: res.d.code, discount: res.d.discount };
+      msg.style.display = 'block'; msg.style.color = '#16a34a';
+      msg.textContent = '✓ Промокод применён: −' + (res.d.discount).toLocaleString('ru-RU') + ' ₽';
+      Cart.render();
+    })
+    .catch(function (e) { appliedPromo = null; msg.style.display = 'block'; msg.style.color = 'var(--red)'; msg.textContent = (e && e.message) || 'Промокод не применён'; Cart.render(); });
+}
+
+/* Подгружаем настройки заведения (телефон, адрес, часы, мессенджеры) */
+(function () {
+  fetch('/api/settings')
+    .then(function (r) { return r.json(); })
+    .then(function (res) {
+      var s = res && res.settings; if (!s) return;
+      var digits = String(s.phone || '').replace(/\D/g, '');
+      var tel = digits ? '+' + digits : '';
+      document.querySelectorAll('.js-tel').forEach(function (a) { if (tel) a.setAttribute('href', 'tel:' + tel); });
+      document.querySelectorAll('.js-phone').forEach(function (el) { if (s.phone) el.textContent = s.phone; });
+      document.querySelectorAll('.js-address').forEach(function (el) { if (s.address) el.textContent = s.address; });
+      document.querySelectorAll('.js-hours').forEach(function (el) { if (s.hours) el.textContent = s.hours; });
+      SHOP_ADDRESS = s.address || ''; SHOP_HOURS = s.hours || '';
+      document.querySelectorAll('.js-wa').forEach(function (a) { var w = String(s.whatsapp || '').replace(/\D/g, ''); if (w) a.setAttribute('href', 'https://wa.me/' + w); });
+      document.querySelectorAll('.js-tg').forEach(function (a) { var t = String(s.telegram || '').replace(/[@\s]/g, ''); if (t) a.setAttribute('href', 'https://t.me/' + t); });
+      var pb = document.getElementById('promo-banner');
+      if (pb && s.promoBanner) { pb.textContent = s.promoBanner; pb.style.display = 'block'; }
+
+      renderDeliveryZones(s.deliveryZones);   // П.5 — зоны доставки
+      applySeo(s);                            // П.7 — SEO из настроек
+    })
+    .catch(function () { renderDeliveryZones(null); });
+})();
+
+/* П.5 / №3 — зоны доставки: таблица + выбор в форме */
+var DELIV_ZONES = [];
+var SHOP_ADDRESS = '';
+var SHOP_HOURS = '';
+
+/* Переключатель «Доставка / Самовывоз» — прячет зону доставки и показывает адрес самовывоза. */
+function onFulfillmentChange() {
+  var checked = document.querySelector('input[name="fulfillment"]:checked');
+  var pickup = checked && checked.value === 'pickup';
+  var zoneGrp = document.getElementById('zone-group');
+  var pickupInfo = document.getElementById('pickup-info');
+  var commentLabel = document.getElementById('f-comment-label');
+  if (pickup) {
+    if (zoneGrp) zoneGrp.style.display = 'none';
+    if (commentLabel) commentLabel.textContent = 'Комментарий к заказу';
+    if (pickupInfo) {
+      pickupInfo.style.display = 'block';
+      pickupInfo.innerHTML = '📍 Заберите заказ по адресу: <b>' + escHtml(SHOP_ADDRESS || 'уточните по телефону') + '</b>' +
+        (SHOP_HOURS ? '<br>Часы работы: ' + escHtml(SHOP_HOURS) : '');
+    }
+  } else {
+    if (pickupInfo) pickupInfo.style.display = 'none';
+    if (commentLabel) commentLabel.textContent = 'Адрес и комментарий';
+    populateZoneSelect(DELIV_ZONES); // вернуть показ зоны, если они настроены
+  }
+}
+function renderDeliveryZones(zones) {
+  DELIV_ZONES = Array.isArray(zones) ? zones : [];
+  populateZoneSelect(DELIV_ZONES);
+  var body = document.getElementById('delivery-zones-body');
+  if (!body) return;
+  if (!DELIV_ZONES.length) {
+    body.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--gray); padding:16px;">' +
+      'Доставляем по всему городу. Стоимость уточняйте при заказе.</td></tr>';
+    return;
+  }
+  body.innerHTML = DELIV_ZONES.map(function (z) {
+    var price = Math.round(Number(z.price) || 0);
+    var priceTxt = price <= 0 ? '<b style="color:#16a34a">бесплатно</b>' : price.toLocaleString('ru-RU') + ' ₽';
+    var minTxt = (Number(z.minOrder) || 0) > 0 ? 'от ' + Math.round(z.minOrder).toLocaleString('ru-RU') + ' ₽' : '—';
+    return '<tr>' +
+      '<td>' + escHtml(z.name || '') + '</td>' +
+      '<td>' + priceTxt + '</td>' +
+      '<td>' + minTxt + '</td>' +
+      '<td>' + escHtml(z.time || '—') + '</td>' +
+    '</tr>';
+  }).join('');
+}
+
+/* №3 — выпадающий список зон в форме заказа */
+function populateZoneSelect(zones) {
+  var sel = document.getElementById('f-zone');
+  var grp = document.getElementById('zone-group');
+  if (!sel || !grp) return;
+  if (!zones || !zones.length) { grp.style.display = 'none'; return; }
+  grp.style.display = 'block';
+  sel.innerHTML = '<option value="">— выберите район —</option>' +
+    zones.map(function (z, i) { return '<option value="' + i + '">' + escHtml(z.name || '') + '</option>'; }).join('');
+}
+function showZoneInfo() {
+  var sel = document.getElementById('f-zone');
+  var info = document.getElementById('zone-info');
+  if (!sel || !info) return;
+  var z = DELIV_ZONES[parseInt(sel.value, 10)];
+  if (!z) { info.style.display = 'none'; return; }
+  var price = Math.round(Number(z.price) || 0);
+  var priceTxt = price <= 0 ? 'бесплатно' : price.toLocaleString('ru-RU') + ' ₽';
+  var min = Number(z.minOrder) || 0;
+  var sub = (typeof Cart !== 'undefined') ? Cart.total() : 0;
+  var html = '🛵 Доставка: <b>' + priceTxt + '</b>' + (z.time ? ' · ' + escHtml(z.time) : '') +
+    (min > 0 ? ' · мин. заказ ' + min.toLocaleString('ru-RU') + ' ₽' : '');
+  if (min > 0 && sub > 0 && sub < min) {
+    html += '<br><span style="color:var(--red)">Добавьте ещё на ' + (min - sub).toLocaleString('ru-RU') + ' ₽ до минимума по зоне</span>';
+  }
+  info.style.display = 'block';
+  info.style.color = 'var(--dark)';
+  info.innerHTML = html;
+}
+
+/* №1 — показать бонусный баланс, уровень и прогресс до следующего уровня по телефону */
+var LOYALTY_ENABLED = false, LOYALTY_PERCENT = 0, LOYALTY_BALANCE = 0, LOYALTY_REDEEM_MAX_PERCENT = 0, loyaltyTimer = null;
+function checkLoyalty() {
+  if (!LOYALTY_ENABLED) return;
+  var phoneEl = document.getElementById('f-phone');
+  var info = document.getElementById('loyalty-info');
+  if (!phoneEl || !info) return;
+  var digits = (phoneEl.value || '').replace(/\D/g, '');
+  if (digits.length < 11) { info.style.display = 'none'; LOYALTY_BALANCE = 0; updateLoyaltyRedeemLabel(); return; }
+  clearTimeout(loyaltyTimer);
+  loyaltyTimer = setTimeout(function () {
+    fetch('/api/loyalty?phone=' + encodeURIComponent(digits))
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d || !d.enabled) { info.style.display = 'none'; LOYALTY_BALANCE = 0; updateLoyaltyRedeemLabel(); return; }
+        var pts = Number(d.points) || 0;
+        var percent = Number(d.percent) || 0;
+        LOYALTY_PERCENT = percent;
+        LOYALTY_BALANCE = pts;
+        LOYALTY_REDEEM_MAX_PERCENT = Number(d.redeemMaxPercent) || 0;
+        var tierTxt = d.tierName ? (' · уровень «' + d.tierName + '»') : '';
+        var nextTxt = d.nextTierName ? ('. До уровня «' + d.nextTierName + '» — ещё заказов на ' + Number(d.nextTierRemaining).toLocaleString('ru-RU') + ' ₽') : '';
+        var earn = percent > 0 ? (' · за этот заказ начислим ~' + Math.round(Cart.total() * percent / 100) + ' 🎁') : '';
+        var cardTxt = d.cardNo ? ('<br>💳 Номер карты: <b>' + d.cardNo + '</b> — продиктуйте его, если будете заказывать по телефону') : '';
+        info.style.display = 'block';
+        info.innerHTML = (pts > 0 ? '🎁 Ваши бонусы: ' + pts.toLocaleString('ru-RU') + ' ₽' : '🎁 Копите бонусы с каждого заказа') + tierTxt + earn + nextTxt + cardTxt;
+        updateLoyaltyRedeemLabel();
+      })
+      .catch(function () { info.style.display = 'none'; LOYALTY_BALANCE = 0; updateLoyaltyRedeemLabel(); });
+  }, 500);
+}
+
+/* Сколько баллов реально можно списать сейчас: не больше баланса и не больше % от суммы корзины. */
+function maxRedeemablePoints() {
+  if (typeof Cart === 'undefined') return 0;
+  var byPercent = Math.floor(Cart.total() * LOYALTY_REDEEM_MAX_PERCENT / 100);
+  return Math.max(0, Math.min(LOYALTY_BALANCE, byPercent));
+}
+/* Сколько баллов реально списываем в этот заказ — по галочке «Списать бонусы». */
+function getPointsToUse() {
+  var cb = document.getElementById('loyalty-redeem');
+  if (!cb || !cb.checked) return 0;
+  return maxRedeemablePoints();
+}
+/* Показать/скрыть галочку списания и обновить сумму в её подписи. */
+function updateLoyaltyRedeemLabel() {
+  var wrap = document.getElementById('loyalty-redeem-wrap');
+  var label = document.getElementById('loyalty-redeem-label');
+  if (!wrap || !label) return;
+  var max = maxRedeemablePoints();
+  if (max <= 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'flex';
+  label.textContent = '🎁 Списать бонусы (−' + max.toLocaleString('ru-RU') + ' ₽)';
+}
+
+/* П.7 — подставить SEO-значения из настроек (title/description/keywords + микроразметка) */
+function applySeo(s) {
+  if (!s) return;
+  if (s.seoTitle) { document.title = s.seoTitle; }
+  function setMeta(sel, val) {
+    if (!val) return;
+    var el = document.querySelector(sel);
+    if (el) el.setAttribute('content', val);
+  }
+  setMeta('meta[name="description"]', s.seoDescription);
+  setMeta('meta[name="keywords"]', s.seoKeywords);
+  setMeta('meta[property="og:title"]', s.seoTitle);
+  setMeta('meta[property="og:description"]', s.seoDescription);
+  try {
+    var ld = document.getElementById('ld-restaurant');
+    if (ld) {
+      var data = JSON.parse(ld.textContent);
+      if (s.brand) data.name = s.brand;
+      if (s.phone) data.telephone = s.phone;
+      if (s.seoDescription) data.description = s.seoDescription;
+      if (s.address) { data.address.streetAddress = s.address; }
+      if (s.city) { data.address.addressLocality = s.city; }
+      ld.textContent = JSON.stringify(data);
+    }
+  } catch (e) {}
+}
+
+
+/* ─────────────────────────────────────────────────────────
+   4b. Корзина: состояние, отрисовка, степперы
+   ───────────────────────────────────────────────────────── */
+var Cart = (function () {
+  var items = {};   // id -> { id, name, price, qty }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function fmt(n) { return (Number(n) || 0).toLocaleString('ru-RU') + ' ₽'; }
+
+  function count() {
+    return Object.keys(items).reduce(function (n, k) { return n + items[k].qty; }, 0);
+  }
+  function total() {
+    return Object.keys(items).reduce(function (s, k) { return s + items[k].qty * items[k].price; }, 0);
+  }
+  function asArray() {
+    return Object.keys(items).map(function (k) { return items[k]; });
+  }
+
+  function add(id, name, price) {
+    if (!items[id]) items[id] = { id: id, name: name, price: price, qty: 0 };
+    items[id].qty += 1;
+    resetPromo();
+    renderAll();
+  }
+  function setQty(id, qty) {
+    if (!items[id]) return;
+    items[id].qty = qty;
+    if (items[id].qty <= 0) delete items[id];
+    resetPromo();
+    renderAll();
+  }
+  function remove(id) { delete items[id]; resetPromo(); renderAll(); }
+  function clear() { items = {}; renderAll(); }
+
+  function renderFab() {
+    var fab = document.getElementById('cart-fab');
+    if (!fab) return;
+    var c = count();
+    fab.classList.add('show');                 // П.2 — корзина всегда на экране
+    var countEl = document.getElementById('cart-fab-count');
+    var totalEl = document.getElementById('cart-fab-total');
+    if (countEl) { countEl.textContent = c; countEl.style.display = c > 0 ? '' : 'none'; }
+    if (totalEl) totalEl.textContent = c > 0 ? fmt(total()) : 'Корзина';
+    fab.classList.toggle('is-empty', c === 0);
+  }
+  function renderDrawer() {
+    var body = document.getElementById('cart-body');
+    var totalEl = document.getElementById('cart-total');
+    var checkout = document.getElementById('cart-checkout');
+    if (!body) return;
+    var arr = asArray();
+    if (!arr.length) {
+      body.innerHTML = '<div class="cart-empty"><span class="cart-empty-emoji">🛒</span>' +
+                       'Корзина пуста.<br>Добавьте блюда из меню.</div>';
+    } else {
+      var rows = arr.map(function (it) {
+        return '<div class="cart-row">' +
+          '<div class="cart-row-info">' +
+            '<div class="cart-row-name">' + esc(it.name) + '</div>' +
+            '<div class="cart-row-price">' + fmt(it.price) + ' / шт.</div>' +
+          '</div>' +
+          '<div class="qty">' +
+            '<button type="button" data-act="dec" data-id="' + esc(it.id) + '" aria-label="Меньше">−</button>' +
+            '<span>' + it.qty + '</span>' +
+            '<button type="button" data-act="inc" data-id="' + esc(it.id) + '" aria-label="Больше">+</button>' +
+          '</div>' +
+          '<div class="cart-row-sum">' + fmt(it.price * it.qty) + '</div>' +
+          '<button type="button" class="cart-row-del" data-act="del" data-id="' + esc(it.id) + '" aria-label="Удалить">🗑</button>' +
+        '</div>';
+      }).join('');
+      body.innerHTML = rows + freeDelivBar() + addonsHtml();
+    }
+    if (totalEl) totalEl.textContent = fmt(total());
+    if (checkout) checkout.disabled = arr.length === 0 || (typeof ORDERS_OPEN !== 'undefined' && !ORDERS_OPEN);
+  }
+
+  function freeDelivBar() {
+    if (!FREE_DELIVERY_FROM || FREE_DELIVERY_FROM <= 0) return '';
+    var t = total();
+    if (t >= FREE_DELIVERY_FROM) return '<div class="freedel done">🎉 Доставка бесплатно!</div>';
+    var pct = Math.min(100, Math.round(t / FREE_DELIVERY_FROM * 100));
+    return '<div class="freedel">До бесплатной доставки осталось <b>' + fmt(FREE_DELIVERY_FROM - t) + '</b>' +
+      '<div class="freedel-bar"><span style="width:' + pct + '%"></span></div></div>';
+  }
+  function addonsHtml() {
+    if (!MENU_ITEMS || !MENU_ITEMS.length) return '';
+    var avail = MENU_ITEMS.filter(function (m) { return !items[m.id]; });
+    var rank = function (c) { return c === 'addon' ? 0 : (c === 'drinks' ? 1 : (c === 'combo' ? 2 : 3)); };
+    avail.sort(function (a, b) {
+      var ra = rank(a.category), rb = rank(b.category);
+      if (ra !== rb) return ra - rb;
+      return (a.price || 0) - (b.price || 0);
+    });
+    var sugg = avail.slice(0, 4);
+    if (!sugg.length) return '';
+    return '<div class="addons"><div class="addons-title">Добавить к заказу</div>' +
+      sugg.map(function (m) {
+        return '<div class="addon-row">' +
+          '<span class="addon-name">' + esc(m.name) + '</span>' +
+          '<span class="addon-price">' + fmt(Math.round(Number(m.price) || 0)) + '</span>' +
+          '<button type="button" class="addon-add" data-act="addon" data-id="' + esc(m.id) + '">+ добавить</button>' +
+        '</div>';
+      }).join('') + '</div>';
+  }
+  function renderSummary() {
+    var box = document.getElementById('order-summary');
+    if (box) {
+      var arr = asArray();
+      if (!arr.length) {
+        box.innerHTML = '<div class="order-summary-empty">Корзина пуста — можно просто оставить заявку, ' +
+                        'и мы перезвоним, либо выберите блюда в меню выше.</div>';
+      } else {
+        var sub = total();
+        var disc = appliedPromo ? Math.min(appliedPromo.discount, sub) : 0;
+        var pts = (typeof getPointsToUse === 'function') ? Math.min(getPointsToUse(), Math.max(0, sub - disc)) : 0;
+        var rows = arr.map(function (it) {
+          return '<div class="summary-row"><span>' + esc(it.name) + ' × ' + it.qty + '</span>' +
+                 '<span>' + fmt(it.price * it.qty) + '</span></div>';
+        }).join('');
+        if (disc > 0) {
+          rows += '<div class="summary-row"><span>Сумма</span><span>' + fmt(sub) + '</span></div>';
+          rows += '<div class="summary-row" style="color:var(--gold)"><span>Скидка' + (appliedPromo.code ? ' (' + appliedPromo.code + ')' : '') + '</span><span>−' + fmt(disc) + '</span></div>';
+        }
+        if (pts > 0) {
+          rows += '<div class="summary-row" style="color:var(--gold)"><span>Бонусами</span><span>−' + fmt(pts) + '</span></div>';
+        }
+        rows += '<div class="summary-total"><span>Итого</span><span class="gold">' + fmt(sub - disc - pts) + '</span></div>';
+        box.innerHTML = rows;
+      }
+    }
+    updateSubmitLabel();
+  }
+  function updateSubmitLabel() {
+    var btn = document.getElementById('btn-form-submit');
+    if (!btn || btn.disabled) return;
+    var paymentEl = document.querySelector('input[name="payment"]:checked');
+    var online = paymentEl && paymentEl.value === 'online';
+    var sub = total();
+    var disc = appliedPromo ? Math.min(appliedPromo.discount, sub) : 0;
+    var pts = (typeof getPointsToUse === 'function') ? Math.min(getPointsToUse(), Math.max(0, sub - disc)) : 0;
+    var t = sub - disc - pts;
+    if (online && t > 0) btn.innerHTML = '💳 Оплатить онлайн — ' + fmt(t);
+    else if (t > 0)      btn.innerHTML = '🎉 Оформить заказ — ' + fmt(t);
+    else                 btn.innerHTML = '🎉 Оформить заказ';
+  }
+  function renderAll() {
+    renderFab(); renderDrawer(); renderSummary();
+    if (typeof updateLoyaltyRedeemLabel === 'function') updateLoyaltyRedeemLabel();
+  }
+
+  return {
+    add: add, setQty: setQty, remove: remove, clear: clear,
+    count: count, total: total,
+    items: function () { return asArray().map(function (it) { return { id: it.id, qty: it.qty }; }); },
+    render: renderAll, updateSubmitLabel: updateSubmitLabel
+  };
+})();
+
+/* Кнопка «В корзину» в карточках меню */
+function addToCart(btn) {
+  var card = btn.closest('.menu-card');
+  if (!card) return;
+  var id = card.dataset.id;
+  var price = parseInt(card.dataset.price, 10) || 0;
+  var nameEl = card.querySelector('.card-name');
+  var name = nameEl ? nameEl.textContent.trim() : id;
+  Cart.add(id, name, price);
+  var orig = btn.textContent;
+  btn.classList.add('added');
+  btn.textContent = 'Добавлено ✓';
+  setTimeout(function () { btn.classList.remove('added'); btn.textContent = orig; }, 900);
+}
+
+/* Панель корзины + степперы (делегирование) + конфиг онлайн-оплаты */
+(function () {
+  var fab = document.getElementById('cart-fab');
+  var overlay = document.getElementById('cart-overlay');
+  var closeBtn = document.getElementById('cart-close');
+  var checkout = document.getElementById('cart-checkout');
+  var body = document.getElementById('cart-body');
+
+  function open()  { if (overlay) overlay.classList.add('open'); }
+  function close() { if (overlay) overlay.classList.remove('open'); }
+
+  /* Корзина пуста → ведём в меню; есть товары → открываем корзину (П.2). */
+  if (fab) fab.addEventListener('click', function () {
+    if (Cart.count() === 0) {
+      var m = document.getElementById('menu');
+      if (m) m.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      open();
+    }
+  });
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  if (overlay) overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) close();
+  });
+  if (checkout) checkout.addEventListener('click', function () { close(); scrollToOrder(); });
+
+  function qtyOf(id) {
+    var found = Cart.items().filter(function (x) { return x.id === id; })[0];
+    return found ? found.qty : 0;
+  }
+  if (body) body.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-act]');
+    if (!b) return;
+    var id = b.getAttribute('data-id');
+    var act = b.getAttribute('data-act');
+    if (act === 'inc') Cart.setQty(id, qtyOf(id) + 1);
+    else if (act === 'dec') Cart.setQty(id, qtyOf(id) - 1);
+    else if (act === 'del') Cart.remove(id);
+    else if (act === 'addon') {
+      var m = (MENU_ITEMS || []).filter(function (x) { return x.id === id; })[0];
+      if (m) Cart.add(m.id, m.name, Math.round(Number(m.price) || 0));
+    }
+  });
+
+  document.querySelectorAll('input[name="payment"]').forEach(function (r) {
+    r.addEventListener('change', Cart.updateSubmitLabel);
+  });
+
+  Cart.render();
+
+  /* конфиг: онлайн-оплата + порог бесплатной доставки */
+  fetch('/api/config')
+    .then(function (r) { return r.json(); })
+    .then(function (cfg) {
+      if (cfg && cfg.onlinePayment) {
+        var wrap = document.getElementById('pay-online-wrap');
+        if (wrap) wrap.classList.remove('hidden');
+      }
+      if (cfg && cfg.freeDeliveryFrom) {
+        FREE_DELIVERY_FROM = cfg.freeDeliveryFrom;
+        Cart.render();
+      }
+      if (cfg && cfg.ordersOpen === false) {       // П.9 — приём заказов выключен
+        applyOrdersClosed(cfg.ordersClosedMsg);
+      }
+      if (cfg && cfg.loyaltyEnabled) {             // №1 — лояльность включена
+        LOYALTY_ENABLED = true;
+        LOYALTY_PERCENT = Number(cfg.loyaltyPercent) || 0;
+        checkLoyalty();
+      }
+    })
+    .catch(function () {});
+})();
+
+/* П.9 — режим «приём заказов приостановлен» */
+var ORDERS_OPEN = true;
+var ORDERS_CLOSED_MSG = '';
+function applyOrdersClosed(msg) {
+  ORDERS_OPEN = false;
+  ORDERS_CLOSED_MSG = msg || 'Приём заказов временно приостановлен';
+  /* верхний баннер */
+  if (!document.getElementById('orders-closed-bar')) {
+    var bar = document.createElement('div');
+    bar.id = 'orders-closed-bar';
+    bar.textContent = '⏸ ' + ORDERS_CLOSED_MSG;
+    document.body.appendChild(bar);
+    document.body.classList.add('has-closed-bar');
+  }
+  /* блокируем кнопку оформления */
+  var btn = document.getElementById('btn-form-submit');
+  if (btn) { btn.disabled = true; btn.innerHTML = '⏸ Приём заказов приостановлен'; }
+  var co = document.getElementById('cart-checkout');
+  if (co) { co.disabled = true; co.textContent = 'Приём заказов приостановлен'; }
+}
+
+
+/* ─────────────────────────────────────────────────────────
+   5. Меню сайта: рендер из /api/menu + фильтр по табам
+   ───────────────────────────────────────────────────────── */
+function escHtml(s) {
+  return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+var currentCat = 'all';
+var MENU_ITEMS = [];
+var FREE_DELIVERY_FROM = 0;
+var appliedPromo = null;
+function resetPromo(){ appliedPromo = null; var pm = document.getElementById('promo-msg'); if (pm) { pm.style.display = 'none'; pm.textContent = ''; } }
+
+function applyMenuFilter(cat) {
+  document.querySelectorAll('.menu-card').forEach(function (card) {
+    var show = cat === 'all' || card.dataset.cat === cat;
+    card.classList.toggle('is-hidden', !show);
+  });
+}
+
+/* Хиты — подборка бестселлеров над меню (по полю it.hit), чтобы не сравнивать всё подряд */
+function renderMenuHits(items) {
+  var wrap = document.getElementById('menu-hits');
+  if (!wrap) return;
+  var hits = (items || []).filter(function (it) { return !!it.hit; }).slice(0, 6);
+  if (!hits.length) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = '<div class="menu-hits-title">🔥 Хиты продаж</div><div class="menu-hits-row">' +
+    hits.map(function (it) {
+      var price = Math.round(Number(it.price) || 0);
+      var media = it.image
+        ? '<img class="card-img" src="' + escHtml(it.image) + '" alt="' + escHtml(it.name) + '" loading="lazy">'
+        : '<div class="card-img-placeholder" role="img" aria-label="' + escHtml(it.name) + '">' + escHtml(it.emoji || '🌯') + '</div>';
+      return '<article class="menu-card hit-mini" data-cat="' + escHtml(it.category) + '" data-id="' + escHtml(it.id) + '" data-price="' + price + '">' +
+        media +
+        '<div class="card-body">' +
+          '<h3 class="card-name">' + escHtml(it.name) + '</h3>' +
+          '<div class="card-footer">' +
+            '<span class="card-price">' + price + ' ₽</span>' +
+            '<button class="card-order-btn" onclick="addToCart(this); trackOrder(\'hit-mini\')">+</button>' +
+          '</div>' +
+        '</div>' +
+      '</article>';
+    }).join('') +
+  '</div>';
+}
+
+function renderMenu(items) {
+  var grid = document.getElementById('menu-grid');
+  if (!grid) return;
+  renderMenuHits(items);
+  if (!items || !items.length) {
+    grid.innerHTML = '<p style="grid-column:1 / -1; text-align:center; color:var(--gray); padding:30px 0;">' +
+      'Меню временно недоступно. Позвоните нам: +7 (495) 120-45-67</p>';
+    return;
+  }
+  MENU_ITEMS = items;
+  grid.innerHTML = items.map(function (it) {
+    var price = Math.round(Number(it.price) || 0);
+    var badges = '';
+    if (it.weight) badges += '<span class="badge badge-weight">⚖️ ' + escHtml(it.weight) + '</span>';
+    if (it.spicy)  badges += '<span class="badge badge-spicy">' + escHtml(it.spicy) + '</span>';
+    if (it.hit)    badges += '<span class="badge badge-hit">' + escHtml(it.hit) + '</span>';
+    var media = it.image
+      ? '<img class="card-img" src="' + escHtml(it.image) + '" alt="' + escHtml(it.name) + '" loading="lazy">'
+      : '<div class="card-img-placeholder" role="img" aria-label="' + escHtml(it.name) + '">' + escHtml(it.emoji || '🌯') + '</div>';
+    return '<article class="menu-card" data-cat="' + escHtml(it.category) + '" data-id="' + escHtml(it.id) + '" data-price="' + price + '">' +
+      media +
+      '<div class="card-body">' +
+        '<h3 class="card-name">' + escHtml(it.name) + '</h3>' +
+        '<div class="card-meta">' + badges + '</div>' +
+        '<p class="card-desc">' + escHtml(it.desc || '') + '</p>' +
+        '<div class="card-footer">' +
+          '<span class="card-price">от ' + price + ' ₽</span>' +
+          '<button class="card-order-btn" onclick="addToCart(this); trackOrder(\'menu-card\')">В корзину</button>' +
+        '</div>' +
+      '</div>' +
+    '</article>';
+  }).join('');
+  applyMenuFilter(currentCat);
+}
+
+document.querySelectorAll('.tab-btn').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    document.querySelectorAll('.tab-btn').forEach(function (b) {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    currentCat = btn.dataset.cat;
+    applyMenuFilter(currentCat);
+  });
+});
+
+/* подгружаем меню с сервера */
+fetch('/api/menu')
+  .then(function (r) { return r.json(); })
+  .then(function (res) { renderMenu(res && res.items ? res.items : []); })
+  .catch(function () { renderMenu([]); });
+
+
+/* ─────────────────────────────────────────────────────────
+   6. Появление элементов при скролле (IntersectionObserver)
+   ───────────────────────────────────────────────────────── */
+(function () {
+  if (!('IntersectionObserver' in window)) {
+    /* fallback: сразу показываем всё */
+    document.querySelectorAll('.fade-in').forEach(function (el) {
+      el.classList.add('visible');
+    });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.10 });
+
+  document.querySelectorAll('.fade-in').forEach(function (el) { io.observe(el); });
+})();
+
+
+/* ─────────────────────────────────────────────────────────
+   7. Мобильное бургер-меню
+   ───────────────────────────────────────────────────────── */
+(function () {
+  var burger = document.getElementById('burger');
+  var header = document.querySelector('header');
+  if (!burger || !header) return;
+
+  function closeMenu() {
+    header.classList.remove('nav-open');
+    burger.setAttribute('aria-expanded', 'false');
+  }
+
+  burger.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var open = header.classList.toggle('nav-open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  /* закрываем меню после клика по любой ссылке */
+  header.querySelectorAll('nav a').forEach(function (a) {
+    a.addEventListener('click', closeMenu);
+  });
+
+  /* закрываем при клике вне шапки */
+  document.addEventListener('click', function (e) {
+    if (header.classList.contains('nav-open') && !header.contains(e.target)) {
+      closeMenu();
+    }
+  });
+
+  /* закрываем при возврате к десктопной ширине */
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 760) closeMenu();
+  });
+})();
+
+
+/* ─────────────────────────────────────────────────────────
+   8. Личный кабинет: карта + история заказов (вход/регистрация — телефон+пароль)
+   ───────────────────────────────────────────────────────── */
+var Account = (function () {
+  var overlay = document.getElementById('account-overlay');
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function open() { if (overlay) overlay.classList.add('open'); refresh(); }
+  function close() { if (overlay) overlay.classList.remove('open'); }
+
+  function showTab(name) {
+    var loginTab = document.getElementById('acct-tab-login');
+    var regTab = document.getElementById('acct-tab-register');
+    var loginForm = document.getElementById('account-login-form');
+    var regForm = document.getElementById('account-register-form');
+    var isLogin = name === 'login';
+    if (loginTab) loginTab.classList.toggle('active', isLogin);
+    if (regTab) regTab.classList.toggle('active', !isLogin);
+    if (loginForm) loginForm.style.display = isLogin ? 'block' : 'none';
+    if (regForm) regForm.style.display = isLogin ? 'none' : 'block';
+  }
+
+  function setLoggedInUI(is) {
+    var btn = document.getElementById('account-btn');
+    if (btn) btn.classList.toggle('is-logged-in', is);
+    var guest = document.getElementById('account-guest');
+    var inner = document.getElementById('account-inner');
+    if (guest) guest.style.display = is ? 'none' : 'block';
+    if (inner) inner.style.display = is ? 'block' : 'none';
+  }
+
+  function renderInner(d) {
+    var cardEl = document.getElementById('acct-card-no');
+    if (cardEl) cardEl.textContent = d.cardNo ? ('💳 ' + d.cardNo) : 'Карта появится после первого заказа';
+    var tierEl = document.getElementById('acct-tier-name');
+    if (tierEl) tierEl.textContent = d.tierName || 'Новичок';
+    var ptsEl = document.getElementById('acct-points');
+    if (ptsEl) ptsEl.textContent = (Number(d.points) || 0).toLocaleString('ru-RU') + ' баллов';
+    var nextEl = document.getElementById('acct-next-tier');
+    if (nextEl) {
+      nextEl.textContent = d.nextTierName
+        ? ('До уровня «' + d.nextTierName + '» осталось заказать на ' + (Number(d.nextTierRemaining) || 0).toLocaleString('ru-RU') + ' ₽')
+        : '';
+    }
+    var histEl = document.getElementById('acct-history');
+    if (histEl) {
+      var items = d.history || [];
+      histEl.innerHTML = items.length
+        ? items.map(function (o) {
+            var meta = new Date(o.createdAt).toLocaleDateString('ru-RU') + ' · ' + (o.payment === 'online' ? 'оплачено онлайн' : 'при получении') +
+              (o.pointsEarned > 0 ? ' · +' + o.pointsEarned + ' баллов' : '') +
+              (o.pointsUsed > 0 ? ' · списано ' + o.pointsUsed : '');
+            return '<div class="acct-hist-item"><div><div class="acct-hist-no">' + esc(o.orderNo) + '</div>' +
+              '<div class="acct-hist-meta">' + esc(meta) + '</div></div>' +
+              '<div style="font-weight:800; color:var(--white)">' + (Number(o.total) || 0).toLocaleString('ru-RU') + ' ₽</div></div>';
+          }).join('')
+        : '<p class="form-note" style="text-align:left">Пока нет заказов с картой или онлайн-оплатой.</p>';
+    }
+  }
+
+  function refresh() {
+    fetch('/api/account/me', { headers: { 'Accept': 'application/json' } })
+      .then(function (r) { if (!r.ok) throw new Error('auth'); return r.json(); })
+      .then(function (d) {
+        if (!d || !d.ok) throw new Error('auth');
+        setLoggedInUI(true);
+        renderInner(d);
+      })
+      .catch(function () { setLoggedInUI(false); });
+  }
+
+  function checkSession() {
+    fetch('/api/account/me', { headers: { 'Accept': 'application/json' } })
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (d) { if (d && d.ok) setLoggedInUI(true); })
+      .catch(function () {});
+  }
+
+  function login(e) {
+    e.preventDefault();
+    var phone = (document.getElementById('acct-login-phone').value || '').trim();
+    var pass = (document.getElementById('acct-login-pass').value || '').trim();
+    var err = document.getElementById('acct-login-error');
+    err.style.display = 'none';
+    fetch('/api/account/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phone, password: pass })
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (!res.ok || !res.d.ok) throw new Error((res.d && res.d.error) || 'Не удалось войти');
+        document.getElementById('acct-login-pass').value = '';
+        refresh();
+      })
+      .catch(function (e2) { err.textContent = e2.message; err.style.display = 'block'; });
+  }
+
+  function register(e) {
+    e.preventDefault();
+    var phone = (document.getElementById('acct-reg-phone').value || '').trim();
+    var pass = (document.getElementById('acct-reg-pass').value || '').trim();
+    var err = document.getElementById('acct-register-error');
+    err.style.display = 'none';
+    fetch('/api/account/register', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phone, password: pass })
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (res) {
+        if (!res.ok || !res.d.ok) throw new Error((res.d && res.d.error) || 'Не удалось создать кабинет');
+        document.getElementById('acct-reg-pass').value = '';
+        refresh();
+      })
+      .catch(function (e2) { err.textContent = e2.message; err.style.display = 'block'; });
+  }
+
+  function logout() {
+    fetch('/api/account/logout', { method: 'POST' }).then(function () { setLoggedInUI(false); });
+  }
+
+  function openRegisterWithPhone(phone) {
+    open();
+    showTab('register');
+    var inp = document.getElementById('acct-reg-phone');
+    if (inp && phone) inp.value = phone;
+  }
+
+  var loginForm = document.getElementById('account-login-form');
+  if (loginForm) loginForm.addEventListener('submit', login);
+  var regForm = document.getElementById('account-register-form');
+  if (regForm) regForm.addEventListener('submit', register);
+  var closeBtn = document.getElementById('account-close');
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  if (overlay) overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+
+  checkSession();
+
+  return { open: open, close: close, showTab: showTab, logout: logout, openRegisterWithPhone: openRegisterWithPhone };
+})();
+</script>
+
+</body>
+</html>

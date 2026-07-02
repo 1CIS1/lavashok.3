@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 270" role="img" aria-label="Комбо ЛавашОК">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#2a1512"/>
+      <stop offset="55%" stop-color="#171011"/>
+      <stop offset="100%" stop-color="#100c0d"/>
+    </radialGradient>
+    <linearGradient id="bread" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F2C879"/>
+      <stop offset="100%" stop-color="#CE9443"/>
+    </linearGradient>
+    <linearGradient id="cup" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F45151"/>
+      <stop offset="100%" stop-color="#C93A34"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F45151" stop-opacity=".26"/>
+      <stop offset="100%" stop-color="#F45151" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="360" height="270" fill="url(#bg)"/>
+  <circle cx="180" cy="132" r="132" fill="url(#glow)"/>
+  <circle cx="64" cy="58" r="2.2" fill="#FFB37A" opacity=".7"/>
+  <circle cx="304" cy="52" r="1.8" fill="#FFD9A0" opacity=".6"/>
+  <ellipse cx="180" cy="226" rx="136" ry="15" fill="#000" opacity=".4"/>
+  <g transform="translate(236 106)">
+    <path d="M-34 46 l-8 -74 h84 l-8 74 q-2 14 -16 14 h-36 q-14 0 -16 -14z" transform="translate(0 60)" fill="url(#cup)"/>
+    <path d="M-46 24 h92 l-2 14 h-88z" transform="translate(0 60)" fill="#A82B26"/>
+    <rect x="-48" y="74" width="96" height="12" rx="6" fill="#F5F0E6"/>
+    <rect x="6" y="8" width="9" height="72" rx="4.5" transform="rotate(14 10 44)" fill="#5EC24A"/>
+    <circle cx="0" cy="128" r="17" fill="#F5F0E6"/>
+    <path d="M-7 128 a7 7 0 0 1 14 0 a7 7 0 0 1 -14 0z" fill="#F45151"/>
+  </g>
+  <g transform="translate(96 176) rotate(-46)">
+    <path d="M-72 26 a72 72 0 0 1 144 0z" fill="url(#bread)"/>
+    <path d="M-58 14 q6 -14 22 -12 l72 4 q16 2 18 20z" fill="#FFCE54"/>
+    <path d="M-70 20 a70 70 0 0 1 140 0 l-4 4 q-66 -20 -132 0z" fill="#EFC170"/>
+    <path d="M-44 -8 q6 6 14 5 M4 -20 q6 7 14 6 M46 -6 q5 6 12 5" stroke="#BE8339" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/>
+  </g>
+  <g transform="translate(158 158) rotate(-16)">
+    <rect x="-84" y="-30" width="152" height="60" rx="30" fill="url(#bread)"/>
+    <path d="M-84 4 a30 30 0 0 0 30 26 h92 a30 30 0 0 0 28 -22 l-150 -8z" fill="#B87B34" opacity=".45"/>
+    <path d="M-36 -28 q8 28 -2 56" stroke="#C98A3E" stroke-width="6" fill="none" stroke-linecap="round" opacity=".55"/>
+    <circle cx="68" cy="0" r="30" fill="#E9B564"/>
+    <circle cx="68" cy="0" r="23" fill="#F7E3B8"/>
+    <circle cx="60" cy="-6" r="7" fill="#A85B33"/>
+    <circle cx="74" cy="6" r="7" fill="#9C5230"/>
+    <circle cx="78" cy="-8" r="5" fill="#E8503C"/>
+    <circle cx="62" cy="8" r="5" fill="#7CC454"/>
+    <path d="M-84 -14 h42 a12 12 0 0 1 12 12 v8 a26 26 0 0 1 -26 26 a30 30 0 0 1 -28 -30z" fill="#F5F0E6" opacity=".96"/>
+  </g>
+</svg>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Оплата заказа · ЛавашОК</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <style>
+    :root { --red:#C0251C; --gold:#FFB800; --dark:#1A1A1A; --gray:#666; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      font-family:'Segoe UI',Arial,sans-serif; color:var(--dark);
+      background:linear-gradient(135deg,#fffbec,#fdf0ef);
+      min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
+    }
+    .card {
+      background:#fff; border-radius:24px; box-shadow:0 16px 50px rgba(192,37,28,.15);
+      max-width:460px; width:100%; padding:44px 36px; text-align:center;
+      border-top:5px solid var(--gold);
+    }
+    .icon { font-size:4.5rem; margin-bottom:14px; line-height:1; }
+    h1 { font-size:1.6rem; font-weight:900; margin-bottom:10px; }
+    p { color:var(--gray); font-size:1rem; margin-bottom:8px; }
+    .total { font-weight:800; color:var(--red); }
+    .spinner {
+      width:46px; height:46px; margin:0 auto 16px; border-radius:50%;
+      border:5px solid #f0e0de; border-top-color:var(--red); animation:spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .btn {
+      display:inline-block; margin-top:22px; padding:14px 30px; border-radius:50px;
+      background:var(--red); color:#fff; font-weight:700; text-decoration:none;
+      transition:background .15s;
+    }
+    .btn:hover { background:#A81F17; }
+    .muted { font-size:.82rem; color:#aaa; margin-top:16px; }
+  </style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="spinner" id="spinner"></div>
+    <h1 id="title">Проверяем оплату…</h1>
+    <p id="text">Это занимает несколько секунд.</p>
+    <div id="actions"></div>
+    <div class="muted" id="order-id"></div>
+  </div>
+
+  <script>
+    var params = new URLSearchParams(location.search);
+    var orderId = params.get('order') || '';
+    var card = document.getElementById('card');
+    var attempts = 0;
+
+    function fmt(n) { return (Number(n) || 0).toLocaleString('ru-RU') + ' ₽'; }
+
+    function render(state, total) {
+      var spinner = document.getElementById('spinner');
+      var title = document.getElementById('title');
+      var text = document.getElementById('text');
+      var actions = document.getElementById('actions');
+      if (orderId) document.getElementById('order-id').textContent = 'Заказ #' + orderId;
+
+      if (state === 'succeeded') {
+        if (spinner) spinner.outerHTML = '<div class="icon">🎉</div>';
+        title.textContent = 'Оплата прошла!';
+        text.innerHTML = 'Спасибо за заказ. Сумма ' + (total ? '<span class="total">' + fmt(total) + '</span> ' : '') +
+                         'оплачена. Мы уже готовим — перезвоним для подтверждения.';
+        actions.innerHTML = '<a class="btn" href="/">На главную</a>';
+      } else if (state === 'canceled' || state === 'error') {
+        if (spinner) spinner.outerHTML = '<div class="icon">⚠️</div>';
+        title.textContent = 'Оплата не завершена';
+        text.textContent = 'Платёж не прошёл или был отменён. Можно попробовать ещё раз или оформить с оплатой при получении.';
+        actions.innerHTML = '<a class="btn" href="/#order">Вернуться к заказу</a>';
+      } else {
+        title.textContent = 'Проверяем оплату…';
+        text.textContent = 'Это занимает несколько секунд.';
+      }
+    }
+
+    function poll() {
+      if (!orderId) { render('error'); return; }
+      fetch('/api/payment-status?order=' + encodeURIComponent(orderId))
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          var st = res && res.status;
+          if (st === 'succeeded') { render('succeeded', res.total); return; }
+          if (st === 'canceled') { render('canceled'); return; }
+          attempts++;
+          if (attempts < 12) { setTimeout(poll, 2500); }
+          else {
+            render('pending');
+            document.getElementById('text').textContent =
+              'Платёж ещё обрабатывается. Мы свяжемся с вами после подтверждения.';
+            document.getElementById('actions').innerHTML = '<a class="btn" href="/">На главную</a>';
+            var sp = document.getElementById('spinner'); if (sp) sp.style.display = 'none';
+          }
+        })
+        .catch(function () {
+          attempts++;
+          if (attempts < 12) setTimeout(poll, 2500);
+        });
+    }
+
+    poll();
+  </script>
+</body>
+</html>

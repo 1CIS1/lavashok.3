@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ЛавашОК — презентация для клиента</title>
+<style>
+  :root{
+    --red:#C0251C; --red2:#8B1A1A; --gold:#FFB800; --dark:#1A1A1A; --gray:#666;
+    --light:#FFF8F0; --line:#eee;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#0d0d10;color:var(--dark);overflow:hidden}
+
+  .deck{position:relative;width:100vw;height:100vh}
+  .slide{
+    position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
+    padding:6vh 8vw;background:#fff;
+  }
+  .slide.active{display:flex;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* тёмные слайды (титул/финал) */
+  .slide.dark{background:linear-gradient(135deg,var(--red) 0%,var(--red2) 100%);color:#fff}
+  .slide.dark .kicker{color:var(--gold)}
+
+  .kicker{font-size:1.05rem;font-weight:800;color:var(--red);letter-spacing:.04em;text-transform:uppercase;margin-bottom:14px}
+  h1{font-size:clamp(2.2rem,6vw,4rem);font-weight:900;line-height:1.08}
+  h2{font-size:clamp(1.8rem,4.5vw,3rem);font-weight:900;line-height:1.12;margin-bottom:28px}
+  .lead{font-size:clamp(1.05rem,2.2vw,1.5rem);color:var(--gray);max-width:60ch;line-height:1.5}
+  .slide.dark .lead{color:rgba(255,255,255,.9)}
+  .accent{color:var(--red)} .gold{color:var(--gold)}
+
+  .logo{display:flex;align-items:center;gap:10px;font-size:1.6rem;font-weight:900;margin-bottom:30px}
+  .logo .o{color:var(--gold)}
+  .slide.dark .logo{color:#fff}
+
+  /* сетки и карточки */
+  .grid{display:grid;gap:22px;margin-top:10px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:var(--light);border-radius:16px;padding:24px 22px}
+  .card .ic{width:54px;height:54px;border-radius:14px;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:14px}
+  .card h3{font-size:1.15rem;font-weight:800;margin-bottom:6px}
+  .card p{font-size:.98rem;color:var(--gray);line-height:1.45}
+
+  /* шаги */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:14px}
+  .step{position:relative;padding-top:8px}
+  .step .n{width:46px;height:46px;border-radius:50%;background:var(--gold);color:var(--dark);font-weight:900;font-size:1.3rem;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+  .step h3{font-size:1.1rem;font-weight:800;margin-bottom:4px}
+  .step p{font-size:.95rem;color:var(--gray);line-height:1.4}
+
+  /* строки иконка+текст */
+  .rows{display:flex;flex-direction:column;gap:18px;margin-top:10px}
+  .row{display:flex;gap:16px;align-items:flex-start}
+  .row .ic{width:50px;height:50px;flex-shrink:0;border-radius:14px;background:var(--gold);color:var(--dark);display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+  .row h3{font-size:1.2rem;font-weight:800;margin-bottom:3px}
+  .row p{font-size:1rem;color:var(--gray);line-height:1.45}
+
+  /* большие цифры */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:18px}
+  .stat .num{font-size:clamp(2.4rem,6vw,4rem);font-weight:900;color:var(--gold);line-height:1}
+  .slide:not(.dark) .stat .num{color:var(--red)}
+  .stat .lbl{font-size:1rem;color:var(--gray);margin-top:6px}
+  .slide.dark .stat .lbl{color:rgba(255,255,255,.85)}
+
+  .two{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+  .visual{background:linear-gradient(135deg,var(--gold) 0%,var(--red) 100%);border-radius:24px;min-height:46vh;display:flex;align-items:center;justify-content:center;font-size:11rem}
+
+  ul.bul{list-style:none;margin-top:10px}
+  ul.bul li{position:relative;padding-left:34px;margin-bottom:16px;font-size:1.15rem;line-height:1.45}
+  ul.bul li::before{content:'✓';position:absolute;left:0;top:0;width:24px;height:24px;background:var(--gold);color:var(--dark);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900}
+
+  /* нижняя панель */
+  .bar{position:fixed;bottom:18px;right:24px;display:flex;align-items:center;gap:14px;z-index:20}
+  .bar button{border:none;background:rgba(0,0,0,.08);color:#333;width:44px;height:44px;border-radius:50%;font-size:1.3rem;cursor:pointer;transition:background .15s}
+  .bar button:hover{background:var(--gold);color:#000}
+  .on-dark .bar button{background:rgba(255,255,255,.2);color:#fff}
+  .on-dark .bar button:hover{background:var(--gold);color:#000}
+  .on-dark .counter{color:rgba(255,255,255,.7)}
+  .on-dark .hint{color:rgba(255,255,255,.55)}
+  .counter{position:fixed;bottom:24px;left:24px;font-size:.95rem;font-weight:700;color:#999;z-index:20}
+  .hint{position:fixed;top:18px;right:24px;font-size:.8rem;color:#aaa;z-index:20}
+
+  @media (max-width:760px){
+    .g2,.g3,.g4{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr 1fr}
+    .stats{grid-template-columns:1fr}
+    .two{grid-template-columns:1fr}
+    .visual{min-height:26vh;font-size:6rem}
+    .slide{padding:7vh 7vw}
+  }
+
+  /* печать → PDF: каждый слайд отдельной страницей */
+  @media print{
+    @page{size:1280px 720px;margin:0}
+    body{overflow:visible}
+    .deck{height:auto}
+    .slide{position:relative;display:flex!important;height:720px;width:1280px;page-break-after:always;inset:auto}
+    .bar,.counter,.hint{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- 1. Титул -->
+  <section class="slide dark active">
+    <div class="logo">😉 Лаваш<span class="o">О</span>К</div>
+    <div class="kicker">Сайт доставки под ключ</div>
+    <h1>Свой сайт приёма<br>заказов для вашего<br>заведения</h1>
+    <p class="lead" style="margin-top:24px">Меню, корзина, оплата и доставка — в одном месте. Заказы приходят напрямую вам, <b class="gold">без комиссий агрегаторам</b>.</p>
+  </section>
+
+  <!-- 2. Зачем свой сайт -->
+  <section class="slide">
+    <div class="kicker">Проблема</div>
+    <h2>Агрегаторы забирают прибыль<br>и ваших клиентов</h2>
+    <div class="stats">
+      <div class="stat"><div class="num">25–35%</div><div class="lbl">комиссии агрегаторам с каждого заказа</div></div>
+      <div class="stat"><div class="num">0</div><div class="lbl">данных о клиентах — они «их», не ваши</div></div>
+      <div class="stat"><div class="num">∞</div><div class="lbl">потерянных заказов «по телефону»</div></div>
+    </div>
+    <p class="lead" style="margin-top:26px">Свой сайт — это <b class="accent">свои заказы, свои клиенты и ноль комиссий</b>.</p>
+  </section>
+
+  <!-- 3. Путь клиента -->
+  <section class="slide">
+    <div class="kicker">Как это работает для клиента</div>
+    <h2>Заказ за 4 простых шага</h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Выбирает в меню</h3><p>Фото блюд, категории, описания — всё аппетитно.</p></div>
+      <div class="step"><div class="n">2</div><h3>Собирает корзину</h3><p>Количество и сумма считаются сами.</p></div>
+      <div class="step"><div class="n">3</div><h3>Оформляет и платит</h3><p>Онлайн картой или при получении.</p></div>
+      <div class="step"><div class="n">4</div><h3>Отслеживает заказ</h3><p>Видит статус доставки в реальном времени.</p></div>
+    </div>
+  </section>
+
+  <!-- 4. Продающая витрина -->
+  <section class="slide">
+    <div class="two">
+      <div>
+        <div class="kicker">Витрина, которая продаёт</div>
+        <h2 style="margin-bottom:18px">Средний чек выше<br>без усилий</h2>
+        <ul class="bul">
+          <li>Фото блюд и удобная корзина</li>
+          <li>Допродажи: «добавьте напиток / соус»</li>
+          <li>Прогресс «до бесплатной доставки осталось…»</li>
+          <li>Промокоды и акции — скидка на первый заказ</li>
+        </ul>
+      </div>
+      <div class="visual">🌯</div>
+    </div>
+  </section>
+
+  <!-- 5. Оплата -->
+  <section class="slide">
+    <div class="kicker">Оплата — как удобно клиенту</div>
+    <h2>Деньги сразу вам, без посредников</h2>
+    <div class="grid g2">
+      <div class="card"><div class="ic">💳</div><h3>Онлайн картой</h3><p>Приём оплаты через ЮKassa — клиент платит на сайте, средства поступают вам.</p></div>
+      <div class="card"><div class="ic">💵</div><h3>При получении</h3><p>Наличными или картой курьеру. Подходит всем клиентам.</p></div>
+    </div>
+    <p class="lead" style="margin-top:26px">Никаких комиссий агрегаторам — только эквайринг банка.</p>
+  </section>
+
+  <!-- 6. Доставка Яндекс + трекинг -->
+  <section class="slide">
+    <div class="kicker">Доставка и отслеживание</div>
+    <h2>Курьер Яндекс + статус для клиента</h2>
+    <div class="rows">
+      <div class="row"><div class="ic">🛵</div><div><h3>Доставка курьером Яндекс</h3><p>Курьеры Яндекс.Доставки (не Яндекс Еда) — стоимость и время по адресу.</p></div></div>
+      <div class="row"><div class="ic">🗺️</div><div><h3>Зоны доставки и цены</h3><p>Настраиваете сами: районы, стоимость, минимальный заказ. Охват — хоть весь город.</p></div></div>
+      <div class="row"><div class="ic">📦</div><div><h3>Клиент сам видит статус</h3><p>Принят → Готовим → Курьер в пути → Доставлен. По ссылке, в реальном времени.</p></div></div>
+    </div>
+  </section>
+
+  <!-- 7. Админка -->
+  <section class="slide">
+    <div class="kicker">Панель управления</div>
+    <h2>Все заказы в одном месте,<br>в реальном времени</h2>
+    <div class="grid g4">
+      <div class="card"><div class="ic">⚡</div><h3>Сразу видно</h3><p>Новый заказ появляется мгновенно.</p></div>
+      <div class="card"><div class="ic">🔎</div><h3>Поиск и фильтры</h3><p>По телефону, статусу, дате.</p></div>
+      <div class="card"><div class="ic">✏️</div><h3>Редактирование</h3><p>Состав и данные заказа на лету.</p></div>
+      <div class="card"><div class="ic">🔁</div><h3>Понятные статусы</h3><p>Один статус на заказ — клиент видит его сразу.</p></div>
+    </div>
+  </section>
+
+  <!-- 8. Кухня и доска -->
+  <section class="slide">
+    <div class="kicker">Для кухни и оператора</div>
+    <h2>Ничего не теряется в часы пик</h2>
+    <div class="grid g3">
+      <div class="card"><div class="ic">🍳</div><h3>Кухонный экран</h3><p>Что готовить сейчас, таймер ожидания и чек-лист по позициям. Стоп-лист в один тап — блюдо скрывается на сайте.</p></div>
+      <div class="card"><div class="ic">🗂️</div><h3>Доска заказов</h3><p>Перетаскивайте заказы между статусами мышкой — наглядно и быстро.</p></div>
+      <div class="card"><div class="ic">⏸️</div><h3>Стоп приёма заказов</h3><p>Завал или закрытие — выключаете приём одной кнопкой. Сайт покажет «приём приостановлен».</p></div>
+    </div>
+  </section>
+
+  <!-- 9. Управление без программиста -->
+  <section class="slide">
+    <div class="kicker">Полный контроль</div>
+    <h2>Всё меняете сами, без программиста</h2>
+    <div class="grid g3">
+      <div class="card"><div class="ic">🍽️</div><h3>Меню и цены</h3><p>Добавляйте блюда, цены, фото за минуту.</p></div>
+      <div class="card"><div class="ic">🏷️</div><h3>Акции и промокоды</h3><p>Скидки и баннер — из админки.</p></div>
+      <div class="card"><div class="ic">⚙️</div><h3>Контакты и часы</h3><p>Телефон, адрес, режим работы.</p></div>
+      <div class="card"><div class="ic">📊</div><h3>Аналитика</h3><p>Выручка, средний чек, топ блюд.</p></div>
+      <div class="card"><div class="ic">📥</div><h3>Экспорт</h3><p>Выгрузка заказов в Excel.</p></div>
+      <div class="card"><div class="ic">📱</div><h3>Любое устройство</h3><p>Сайт и админка — на телефоне тоже.</p></div>
+    </div>
+  </section>
+
+  <!-- 10. SEO -->
+  <section class="slide">
+    <div class="two">
+      <div>
+        <div class="kicker">Бесплатные клиенты</div>
+        <h2 style="margin-bottom:18px">Вас находят<br>в поиске</h2>
+        <ul class="bul">
+          <li>Сайт оптимизирован под Google и Яндекс</li>
+          <li>Ключевые слова: «шаурма доставка» + ваш город</li>
+          <li>Микроразметка — красивая карточка в результатах поиска</li>
+          <li>Заголовок и ключевые слова меняете сами в админке</li>
+        </ul>
+      </div>
+      <div class="visual">🔎</div>
+    </div>
+  </section>
+
+  <!-- 11. Финал -->
+  <section class="slide dark">
+    <div class="kicker">Почему это выгодно</div>
+    <h2 style="font-size:clamp(1.8rem,4.5vw,3.2rem)">Ваш сайт — ваша прибыль<br>и ваши клиенты</h2>
+    <ul class="bul" style="max-width:62ch">
+      <li>Без комиссий агрегаторам — экономия 25–35% с заказа</li>
+      <li>База клиентов и данные остаются у вас</li>
+      <li>Допродажи и промокоды поднимают средний чек</li>
+      <li>Работает на любом устройстве, запуск — быстро</li>
+    </ul>
+    <p class="lead gold" style="margin-top:26px;font-weight:800">Готов показать вживую и запустить под ваше заведение.</p>
+  </section>
+
+</div>
+
+<div class="counter"><span id="cur">1</span> / <span id="total">10</span></div>
+<div class="hint">← → для перелистывания</div>
+<div class="bar">
+  <button onclick="prev()" aria-label="Назад">‹</button>
+  <button onclick="next()" aria-label="Вперёд">›</button>
+</div>
+
+<script>
+  var slides=document.querySelectorAll('.slide');
+  var i=0;
+  document.getElementById('total').textContent=slides.length;
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach(function(s,idx){s.classList.toggle('active',idx===i);});
+    document.getElementById('cur').textContent=i+1;
+    // тёмная панель на тёмных слайдах
+    var isDark = slides[i].classList.contains('dark');
+    document.body.style.background = isDark ? '#7a1611' : '#0d0d10';
+    document.body.classList.toggle('on-dark', isDark);
+  }
+  function next(){show(i+1);}
+  function prev(){show(i-1);}
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();next();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}
+    else if(e.key==='Home'){show(0);} else if(e.key==='End'){show(slides.length-1);}
+  });
+  // свайп на телефоне
+  var x0=null;
+  document.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;},{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(x0===null)return; var dx=e.changedTouches[0].clientX-x0;
+    if(Math.abs(dx)>50){ dx<0?next():prev(); } x0=null;
+  },{passive:true});
+  show(0);
+</script>
+</body>
+</html>

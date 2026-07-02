@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Вход в админку · ЛавашОК</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <style>
+    :root { --red:#C0251C; --red2:#A81F17; --gold:#FFB800; --dark:#1A1A1A; --gray:#666; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      font-family:'Segoe UI',Arial,sans-serif; color:var(--dark);
+      background:linear-gradient(135deg,#fffbec,#fdf0ef);
+      min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
+    }
+    .card {
+      background:#fff; border-radius:22px; box-shadow:0 16px 50px rgba(192,37,28,.15);
+      width:100%; max-width:380px; padding:36px 30px; border-top:5px solid var(--gold);
+    }
+    .brand { text-align:center; font-size:1.5rem; font-weight:900; color:var(--red); margin-bottom:6px; }
+    .brand span { color:var(--gold); }
+    .sub { text-align:center; color:var(--gray); font-size:.9rem; margin-bottom:24px; }
+    label { display:block; font-weight:600; font-size:.85rem; margin-bottom:6px; }
+    input {
+      width:100%; padding:13px 15px; border-radius:11px; border:2px solid #eee;
+      font-size:1rem; outline:none; transition:border-color .15s; margin-bottom:16px;
+    }
+    input:focus { border-color:var(--gold); }
+    button {
+      width:100%; padding:15px; border:none; border-radius:50px; background:var(--red);
+      color:#fff; font-weight:800; font-size:1.05rem; cursor:pointer; transition:background .15s;
+    }
+    button:hover { background:var(--red2); }
+    .error {
+      background:#fdecea; color:var(--red); font-size:.88rem; text-align:center;
+      padding:10px; border-radius:10px; margin-bottom:18px;
+    }
+  </style>
+</head>
+<body>
+  <form class="card" method="POST" action="/admin/login">
+    <div class="brand">😉 Лаваш<span>О</span>К</div>
+    <div class="sub">Вход в рабочую панель ЛавашОК</div>
+    <div class="error" id="error" style="display:none">Неверный логин или пароль</div>
+    <div class="error" id="locked" style="display:none"></div>
+
+    <label for="username">Логин</label>
+    <input type="text" id="username" name="username" autocomplete="username" autofocus required>
+
+    <label for="password">Пароль</label>
+    <input type="password" id="password" name="password" autocomplete="current-password" required>
+
+    <button type="submit">Войти</button>
+  </form>
+
+  <script>
+    var qp = new URLSearchParams(location.search);
+    var locked = qp.get('locked');
+    if (locked) {
+      var el = document.getElementById('locked');
+      el.textContent = 'Слишком много неудачных попыток. Подождите ' + locked + ' сек. и попробуйте снова.';
+      el.style.display = 'block';
+    } else if (qp.get('error')) {
+      document.getElementById('error').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

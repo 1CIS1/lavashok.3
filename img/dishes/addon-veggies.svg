@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 270" role="img" aria-label="Дополнительные овощи">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#15200f"/>
+      <stop offset="55%" stop-color="#151112"/>
+      <stop offset="100%" stop-color="#100c0d"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7CC454" stop-opacity=".2"/>
+      <stop offset="100%" stop-color="#7CC454" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="360" height="270" fill="url(#bg)"/>
+  <circle cx="180" cy="132" r="126" fill="url(#glow)"/>
+  <ellipse cx="180" cy="214" rx="118" ry="13" fill="#000" opacity=".4"/>
+  <g transform="translate(140 138)">
+    <circle cx="0" cy="0" r="58" fill="#E8503C"/>
+    <circle cx="0" cy="0" r="48" fill="#F06A50"/>
+    <g fill="#FFD9CF">
+      <path d="M0 -40 l10 26 -10 8 -10 -8z"/>
+      <path d="M38 -12 l-22 16 -10 -8 4 -12z" transform="rotate(0)"/>
+      <path d="M24 34 l-18 -18 8 -10 12 4z"/>
+      <path d="M-24 34 l6 -26 10 2 2 12z"/>
+      <path d="M-38 -12 l26 6 0 12 -12 4z"/>
+    </g>
+    <circle cx="0" cy="0" r="10" fill="#FFD9CF"/>
+  </g>
+  <g transform="translate(240 108) rotate(12)">
+    <ellipse cx="0" cy="0" rx="44" ry="40" fill="#8FD062"/>
+    <ellipse cx="0" cy="0" rx="34" ry="30" fill="#D9F0B4"/>
+    <g stroke="#8FD062" stroke-width="4" fill="none" opacity=".8">
+      <path d="M0 -24 v18 M17 -12 l-13 10 M17 14 l-13 -8 M0 26 v-18 M-17 14 l13 -8 M-17 -12 l13 10"/>
+    </g>
+    <circle cx="0" cy="0" r="5" fill="#8FD062"/>
+  </g>
+  <g transform="translate(248 176) rotate(-8)">
+    <ellipse cx="0" cy="0" rx="38" ry="34" fill="#8FD062" opacity=".95"/>
+    <ellipse cx="0" cy="0" rx="29" ry="25" fill="#D9F0B4"/>
+    <circle cx="0" cy="0" r="4" fill="#8FD062"/>
+  </g>
+  <g transform="translate(96 202) rotate(-24)" fill="#7CC454">
+    <path d="M0 0 q30 -26 64 -12 q-10 26 -44 24 q-14 0 -20 -12z"/>
+    <path d="M4 -2 q26 -14 52 -8" stroke="#5E9E3C" stroke-width="3" fill="none"/>
+  </g>
+  <g transform="translate(288 84)" fill="#7CC454">
+    <ellipse cx="0" cy="0" rx="12" ry="6" transform="rotate(-24)"/>
+  </g>
+</svg>

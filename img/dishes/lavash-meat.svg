@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 270" role="img" aria-label="Лаваш с мясом">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="75%">
+      <stop offset="0%" stop-color="#2b1410"/>
+      <stop offset="55%" stop-color="#171011"/>
+      <stop offset="100%" stop-color="#100c0d"/>
+    </radialGradient>
+    <linearGradient id="bread" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F2C879"/>
+      <stop offset="100%" stop-color="#D49B47"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F45151" stop-opacity=".24"/>
+      <stop offset="100%" stop-color="#F45151" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="360" height="270" fill="url(#bg)"/>
+  <circle cx="180" cy="130" r="128" fill="url(#glow)"/>
+  <circle cx="70" cy="64" r="2" fill="#FFB37A" opacity=".65"/>
+  <circle cx="298" cy="58" r="1.8" fill="#FFD9A0" opacity=".55"/>
+  <ellipse cx="180" cy="218" rx="126" ry="14" fill="#000" opacity=".4"/>
+  <g transform="translate(180 148)">
+    <path d="M-124 30 q-6 -50 44 -58 l160 10 q34 8 34 44 l-6 16 q-114 30 -226 0z" fill="url(#bread)"/>
+    <path d="M-124 30 q116 34 232 12 l6 -16 q-2 22 -22 28 l-192 4 q-20 -4 -24 -28z" fill="#B87B34" opacity=".5"/>
+    <path d="M-88 -20 q8 8 18 6 M-28 -30 q8 10 18 8 M36 -26 q6 8 16 7 M84 -8 q6 8 14 6" stroke="#BE8339" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/>
+    <g>
+      <circle cx="-56" cy="-34" r="15" fill="#9C5230"/>
+      <circle cx="-14" cy="-44" r="17" fill="#A85B33"/>
+      <circle cx="30" cy="-38" r="15" fill="#8A4526"/>
+      <circle cx="66" cy="-26" r="13" fill="#A85B33"/>
+      <path d="M-66 -40 q8 -6 16 -2 M-24 -52 q8 -6 16 -2 M20 -46 q8 -5 14 -1 M58 -33 q6 -5 12 -1" stroke="#6E3418" stroke-width="4" fill="none" stroke-linecap="round"/>
+    </g>
+    <ellipse cx="-78" cy="-16" rx="11" ry="6" fill="#7CC454" transform="rotate(-20 -78 -16)"/>
+    <ellipse cx="52" cy="-8" rx="10" ry="6" fill="#7CC454" transform="rotate(16 52 -8)"/>
+    <circle cx="-36" cy="-16" r="8" fill="#E8503C"/>
+    <circle cx="10" cy="-20" r="8" fill="#E8503C"/>
+    <path d="M-52 -8 q30 14 96 4" stroke="#FFF3D6" stroke-width="6" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

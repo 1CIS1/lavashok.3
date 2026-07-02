@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ЛавашОК">
+  <defs>
+    <linearGradient id="b" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F2C879"/>
+      <stop offset="100%" stop-color="#C98A3E"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#131011"/>
+  <circle cx="32" cy="30" r="22" fill="#F45151" opacity=".22"/>
+  <g transform="translate(32 34) rotate(-22)">
+    <rect x="-22" y="-9" width="40" height="18" rx="9" fill="url(#b)"/>
+    <circle cx="18" cy="0" r="9" fill="#E9B564"/>
+    <circle cx="18" cy="0" r="6.5" fill="#F7E3B8"/>
+    <circle cx="16" cy="-2" r="2.2" fill="#A85B33"/>
+    <circle cx="20" cy="2" r="2.2" fill="#E8503C"/>
+    <circle cx="16.5" cy="2.5" r="1.8" fill="#7CC454"/>
+    <path d="M-22 -4 h9 a4 4 0 0 1 4 4 v2 a7 7 0 0 1 -7 7 a9 9 0 0 1 -6 -9z" fill="#F5F0E6"/>
+  </g>
+</svg>
