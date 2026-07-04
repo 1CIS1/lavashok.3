@@ -64,21 +64,13 @@
   </script>
   <!-- ==================================================== -->
 
-  <!-- ========== Яндекс.Метрика — вставьте свой счётчик ========
-  <script type="text/javascript">
-    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-    m[i].l=1*new Date();
-    for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}
-    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-    (window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");
-    ym(XXXXXXXX,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});
-  </script>
-  <noscript><div><img src="https://mc.yandex.ru/watch/XXXXXXXX" style="position:absolute;left:-9999px;" alt=""/></div></noscript>
-  ========================================================= -->
+  <!-- Яндекс.Метрика подключается автоматически, если ID счётчика задан
+       в админке: Настройки → SEO → «ID счётчика Яндекс.Метрики» (см. initMetrika в JS). -->
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Roboto — текст, Unbounded (кириллица) — заголовки и логотип -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Unbounded:wght@700;900&display=swap" rel="stylesheet">
   <style>
   /* ============================================================
      ЛавашОК — тёмная «огненная» тема (по референсу)
@@ -127,12 +119,18 @@
   ::selection { background: var(--red); color: #fff; }
 
   h1, h2, h3, .logo, .section-title, .hero-title, .card-price { font-weight: 900; letter-spacing: -.01em; }
+  /* Фирменный дисплейный шрифт — только заголовки и логотип, текст остаётся на Roboto.
+     Unbounded заметно шире Roboto, поэтому размеры заголовков уменьшены в их правилах ниже. */
+  h1, h2, .logo, .section-title, .hero-title, .footer-logo {
+    font-family: 'Unbounded', 'Roboto', sans-serif;
+    letter-spacing: 0; font-weight: 900;
+  }
 
   /* ===== Хелперы ===== */
   .container { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
   .section { padding: 80px 0; }
   .section-title {
-    font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+    font-size: clamp(1.6rem, 3.8vw, 2.3rem);
     font-weight: 900; text-transform: uppercase;
     line-height: 1.05; letter-spacing: .01em;
   }
@@ -167,7 +165,7 @@
     border-bottom: 1px solid var(--line);
   }
   .header-inner { display: flex; align-items: center; gap: 26px; height: 74px; }
-  .logo { display: flex; align-items: center; gap: 8px; font-size: 1.4rem; font-weight: 900; color: var(--white); text-transform: uppercase; margin-right: auto; }
+  .logo { display: flex; align-items: center; gap: 8px; font-size: 1.15rem; font-weight: 900; color: var(--white); text-transform: uppercase; margin-right: auto; }
   .logo-icon { font-size: 1.5rem; }
   .logo-o { color: var(--red); }
 
@@ -261,6 +259,7 @@
   .tk-step.pending .t1 { color: #6f6566; }
   .tk-step .t2 { font-size: .8rem; color: var(--muted); }
   .tk-canceled { text-align: center; padding: 14px; background: rgba(244,81,81,.12); color: var(--red); border-radius: 12px; font-weight: 700; }
+  .tk-done-banner { text-align: center; padding: 14px; margin-top: 14px; background: rgba(94,248,69,.12); color: var(--green); border-radius: 12px; font-weight: 800; }
   .tk-meta { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 8px; font-size: .85rem; color: var(--muted); flex-wrap: wrap; }
   .tk-meta b { color: var(--white); }
   .tk-upd { font-size: .72rem; color: #6f6566; text-align: center; margin-top: 10px; }
@@ -310,7 +309,7 @@
     color: var(--muted); font-size: .92rem; font-weight: 600;
     text-transform: uppercase; letter-spacing: .08em; margin-bottom: 16px;
   }
-  .hero-title { font-size: clamp(2.6rem, 6.5vw, 5rem); font-weight: 900; line-height: 1; text-transform: uppercase; margin-bottom: 20px; }
+  .hero-title { font-size: clamp(2rem, 5vw, 3.6rem); font-weight: 900; line-height: 1.08; text-transform: uppercase; margin-bottom: 20px; }
   .hero-desc { font-size: 1.1rem; color: var(--muted); max-width: 480px; margin-bottom: 32px; }
   .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
 
@@ -556,9 +555,59 @@
   .cart-total-row .label { font-size: 1.05rem; color: var(--muted); }
   .cart-total-row .value { font-size: 1.45rem; font-weight: 900; color: var(--white); }
 
+  /* ===== Карточка блюда (bottom-sheet) ===== */
+  .menu-card { cursor: pointer; }
+  .dish-overlay { position: fixed; inset: 0; z-index: 220; background: rgba(0,0,0,.62); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; padding: 20px; }
+  .dish-overlay.open { display: flex; }
+  .dish-sheet {
+    position: relative; width: min(440px, 100%); max-height: 88vh; overflow-y: auto;
+    background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    animation: dishIn .25s ease;
+  }
+  @keyframes dishIn { from { transform: translateY(26px); opacity: .5; } to { transform: none; opacity: 1; } }
+  .dish-close {
+    position: absolute; top: 12px; right: 12px; z-index: 2; width: 38px; height: 38px;
+    border-radius: 50%; border: 1px solid var(--line); background: rgba(10,8,7,.7); color: #fff; cursor: pointer; font-size: 1rem;
+  }
+  .dish-media { aspect-ratio: 4/3; background: radial-gradient(circle at 50% 45%, rgba(244,81,81,.18), #100c0d); display: grid; place-items: center; overflow: hidden; }
+  .dish-media img { width: 100%; height: 100%; object-fit: cover; }
+  .dish-emoji { font-size: 6rem; }
+  .dish-body { padding: 20px 22px 22px; }
+  .dish-name { font-size: 1.3rem; font-weight: 900; color: var(--white); margin-bottom: 10px; }
+  .dish-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .dish-badges .badge { position: static; }
+  .dish-desc { color: var(--muted); font-size: .95rem; margin-bottom: 18px; }
+  .dish-foot { display: flex; gap: 14px; align-items: center; }
+  .dish-foot .qty { margin: 0; }
+  .dish-foot .qty button { width: 38px; height: 38px; font-size: 1.2rem; }
+  .dish-foot .qty span { min-width: 22px; text-align: center; font-weight: 800; }
+  .dish-add {
+    flex: 1; background: var(--green); color: #06270a; border: none; border-radius: 12px;
+    padding: 14px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: transform .15s, background .15s;
+  }
+  .dish-add:hover { background: var(--green2); transform: translateY(-1px); }
+
+  /* ===== Микроанимации: полёт товара в корзину + пульс счётчика ===== */
+  .fly-ball {
+    position: fixed; z-index: 300; width: 46px; height: 46px; border-radius: 50%;
+    background: var(--bg3) center/cover no-repeat; display: grid; place-items: center; font-size: 1.6rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,.45); pointer-events: none;
+    transition: transform .6s cubic-bezier(.25,.7,.4,1), opacity .6s;
+  }
+  .cart-fab-count.bump { animation: bump .4s ease; }
+  @keyframes bump { 0% { transform: scale(1); } 40% { transform: scale(1.45); } 100% { transform: scale(1); } }
+
   /* ===== Появление ===== */
   .fade-in { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
   .fade-in.visible { opacity: 1; transform: none; }
+
+  /* Уважение к reduced motion: без появлений, полётов и постоянных анимаций */
+  @media (prefers-reduced-motion: reduce) {
+    .fade-in { opacity: 1; transform: none; transition: none; }
+    #hero::before, #hero::after, .hero-img-placeholder, .cart-fab.is-empty, .cart-fab-count.bump { animation: none !important; }
+    .fly-ball { display: none; }
+    html { scroll-behavior: auto; }
+  }
 
   /* ============================================================
      АДАПТИВ
@@ -583,7 +632,9 @@
     nav#site-nav.open { transform: none; }
     nav#site-nav > a { width: 100%; padding: 12px 4px; font-size: 1.05rem; border-bottom: 1px solid var(--line); }
     .nav-phone { display: flex !important; background: var(--red); color: #fff !important; justify-content: center; border-radius: 10px; margin-top: 12px; }
-    .fab-call { display: inline-flex; }
+    /* Корзина на мобильных — липкая полоса во всю ширину внизу экрана */
+    .cart-fab { left: 12px; right: 12px; bottom: 12px; border-radius: 14px; padding: 15px 20px; justify-content: space-between; font-size: 1rem; }
+    .fab-call { display: inline-flex; bottom: 82px; }
     .order-form-wrap { padding: 26px 20px; }
     .footer-inner { flex-direction: column; text-align: center; }
     .menu-tabs {
@@ -608,16 +659,12 @@
 <header>
   <div class="container header-inner">
     <a href="#hero" class="logo" aria-label="ЛавашОК — на главную">
-      <svg class="logo-icon" width="30" height="30" viewBox="0 0 64 64" aria-hidden="true">
-        <circle cx="32" cy="30" r="24" fill="#F45151" opacity=".18"/>
-        <g transform="translate(32 34) rotate(-22)">
-          <rect x="-23" y="-9.5" width="42" height="19" rx="9.5" fill="#E8B25E"/>
-          <circle cx="19" cy="0" r="9.5" fill="#E9B564"/>
-          <circle cx="19" cy="0" r="7" fill="#F7E3B8"/>
-          <circle cx="17" cy="-2" r="2.4" fill="#A85B33"/>
-          <circle cx="21" cy="2.2" r="2.4" fill="#E8503C"/>
-          <circle cx="17.5" cy="2.6" r="2" fill="#7CC454"/>
-          <path d="M-23 -4 h9.5 a4 4 0 0 1 4 4 v2 a7.5 7.5 0 0 1 -7.5 7.5 a9.5 9.5 0 0 1 -6 -9.5z" fill="#F5F0E6"/>
+      <!-- Минималистичный линейный знак: свёрнутый лаваш одним штрихом -->
+      <svg class="logo-icon" width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <g transform="rotate(-24 16 16)" stroke="#F45151" stroke-width="2.4" stroke-linecap="round">
+          <rect x="4.2" y="9.8" width="23.6" height="12.4" rx="6.2"/>
+          <path d="M12.4 10.4 q1.6 5.6 0 11.2" opacity=".85"/>
+          <path d="M18.2 10.4 q1.6 5.6 0 11.2" opacity=".55"/>
         </g>
       </svg>
       Лаваш<span class="logo-o">О</span>К
@@ -1138,7 +1185,7 @@
 ============================================================ -->
 <footer>
   <div class="container footer-inner">
-    <div class="footer-logo">😉 ЛавашОК</div>
+    <div class="footer-logo">Лаваш<span style="color:var(--red)">О</span>К</div>
     <div class="footer-links">
       <!-- ↓ Вставьте реальные ссылки -->
       <a href="/privacy">Политика конфиденциальности</a>
@@ -1162,6 +1209,27 @@
   🛒 <span class="cart-fab-count" id="cart-fab-count">0</span>
   <span id="cart-fab-total">0 ₽</span>
 </button>
+
+<!-- Карточка блюда: шторка с фото, описанием и количеством -->
+<div class="dish-overlay" id="dish-overlay" role="dialog" aria-modal="true" aria-label="Карточка блюда">
+  <div class="dish-sheet">
+    <button class="dish-close" id="dish-close" type="button" aria-label="Закрыть">✕</button>
+    <div class="dish-media" id="dish-media"></div>
+    <div class="dish-body">
+      <h3 class="dish-name" id="dish-name"></h3>
+      <div class="dish-badges" id="dish-badges"></div>
+      <p class="dish-desc" id="dish-desc"></p>
+      <div class="dish-foot">
+        <div class="qty">
+          <button type="button" id="dish-dec" aria-label="Меньше">−</button>
+          <span id="dish-qty">1</span>
+          <button type="button" id="dish-inc" aria-label="Больше">+</button>
+        </div>
+        <button type="button" class="dish-add" id="dish-add">В корзину</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Панель корзины -->
 <div class="cart-overlay" id="cart-overlay" role="dialog" aria-modal="true" aria-label="Корзина">
@@ -1324,11 +1392,25 @@
    2. Яндекс.Метрика: цели конверсий
    Замените XXXXXXXX на ID вашего счётчика
    ───────────────────────────────────────────────────────── */
-var YM_ID = 'XXXXXXXX'; // ← сюда вставьте реальный ID
+var YM_ID = ''; // заполняется из настроек (админка → Настройки → SEO), см. initMetrika()
 
 function ymGoal(goal) {
-  if (typeof ym === 'function') ym(YM_ID, 'reachGoal', goal);
+  if (YM_ID && typeof ym === 'function') ym(YM_ID, 'reachGoal', goal);
   if (window.dataLayer) window.dataLayer.push({ event: goal });
+}
+
+/* Подключение счётчика Метрики, если ID задан в настройках заведения. */
+function initMetrika(id) {
+  id = String(id || '').replace(/\D/g, '');
+  if (!id || window.ym) { if (id) YM_ID = id; return; }
+  YM_ID = id;
+  (function (m, e, t, r, i, k, a) {
+    m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+    m[i].l = 1 * new Date();
+    k = e.createElement(t); a = e.getElementsByTagName(t)[0];
+    k.async = 1; k.src = r; a.parentNode.insertBefore(k, a);
+  })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+  ym(YM_ID, 'init', { clickmap: true, trackLinks: true, accurateTrackBounce: true });
 }
 function trackOrder(src)  { ymGoal('order_click');  }
 function trackPhone(src)  { ymGoal('phone_click');  }
@@ -1475,7 +1557,7 @@ document.getElementById('order-form').addEventListener('submit', function (e) {
       submitBtn.innerHTML = originalBtnText;
       alert((err && err.message && err.message !== 'server error')
         ? err.message
-        : 'Не удалось отправить заявку. Позвоните нам напрямую: +7 (495) 120-45-67');
+        : 'Не удалось отправить заявку. Позвоните нам напрямую: ' + SHOP_PHONE);
     });
 });
 
@@ -1568,6 +1650,9 @@ function applyPromo() {
       document.querySelectorAll('.js-address').forEach(function (el) { if (s.address) el.textContent = s.address; });
       document.querySelectorAll('.js-hours').forEach(function (el) { if (s.hours) el.textContent = s.hours; });
       SHOP_ADDRESS = s.address || ''; SHOP_HOURS = s.hours || '';
+      if (s.phone) SHOP_PHONE = s.phone;
+      initMetrika(s.yandexMetrikaId);   // счётчик Метрики из настроек
+      embedMap(s);                      // карта в контактах по адресу заведения
       document.querySelectorAll('.js-wa').forEach(function (a) { var w = String(s.whatsapp || '').replace(/\D/g, ''); if (w) a.setAttribute('href', 'https://wa.me/' + w); });
       document.querySelectorAll('.js-tg').forEach(function (a) { var t = String(s.telegram || '').replace(/[@\s]/g, ''); if (t) a.setAttribute('href', 'https://t.me/' + t); });
       var pb = document.getElementById('promo-banner');
@@ -1583,6 +1668,15 @@ function applyPromo() {
 var DELIV_ZONES = [];
 var SHOP_ADDRESS = '';
 var SHOP_HOURS = '';
+var SHOP_PHONE = '+7 (495) 120-45-67'; // заменяется телефоном из настроек при загрузке
+
+/* Карта в контактах: если задан адрес — встраиваем виджет Яндекс.Карт (поиск по адресу). */
+function embedMap(s) {
+  var host = document.querySelector('.map-embed-placeholder');
+  if (!host || !s || !s.address) return;
+  host.innerHTML = '<iframe src="https://yandex.ru/map-widget/v1/?mode=search&text=' +
+    encodeURIComponent(s.address) + '" loading="lazy" title="Карта: как нас найти"></iframe>';
+}
 
 /* Переключатель «Доставка / Самовывоз» — прячет зону доставки и показывает адрес самовывоза. */
 function onFulfillmentChange() {
@@ -1654,7 +1748,7 @@ function showZoneInfo() {
     html += '<br><span style="color:var(--red)">Добавьте ещё на ' + (min - sub).toLocaleString('ru-RU') + ' ₽ до минимума по зоне</span>';
   }
   info.style.display = 'block';
-  info.style.color = 'var(--dark)';
+  info.style.color = 'var(--text)'; // --dark на тёмной теме был невидим
   info.innerHTML = html;
 }
 
@@ -1763,12 +1857,14 @@ var Cart = (function () {
     return Object.keys(items).map(function (k) { return items[k]; });
   }
 
-  function add(id, name, price) {
+  function addQty(id, name, price, qty) {
+    qty = Math.max(1, parseInt(qty, 10) || 1);
     if (!items[id]) items[id] = { id: id, name: name, price: price, qty: 0 };
-    items[id].qty += 1;
+    items[id].qty = Math.min(99, items[id].qty + qty);
     resetPromo();
     renderAll();
   }
+  function add(id, name, price) { addQty(id, name, price, 1); }
   function setQty(id, qty) {
     if (!items[id]) return;
     items[id].qty = qty;
@@ -1896,7 +1992,7 @@ var Cart = (function () {
   }
 
   return {
-    add: add, setQty: setQty, remove: remove, clear: clear,
+    add: add, addQty: addQty, setQty: setQty, remove: remove, clear: clear,
     count: count, total: total,
     items: function () { return asArray().map(function (it) { return { id: it.id, qty: it.qty }; }); },
     render: renderAll, updateSubmitLabel: updateSubmitLabel
@@ -1912,10 +2008,45 @@ function addToCart(btn) {
   var nameEl = card.querySelector('.card-name');
   var name = nameEl ? nameEl.textContent.trim() : id;
   Cart.add(id, name, price);
+  flyToCart(btn);
   var orig = btn.textContent;
   btn.classList.add('added');
   btn.textContent = 'Добавлено ✓';
   setTimeout(function () { btn.classList.remove('added'); btn.textContent = orig; }, 900);
+}
+
+/* Микроанимация: миниатюра блюда «летит» в корзину */
+function flyToCart(sourceEl) {
+  try {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var fab = document.getElementById('cart-fab');
+    if (!fab || !sourceEl) return;
+    var card = sourceEl.closest('.menu-card');
+    var media = card ? card.querySelector('.card-img, .card-img-placeholder') : sourceEl;
+    var from = (media || sourceEl).getBoundingClientRect();
+    var to = fab.getBoundingClientRect();
+    var ball = document.createElement('div');
+    ball.className = 'fly-ball';
+    var img = (media && media.tagName === 'IMG') ? media : (media ? media.querySelector('img') : null);
+    if (img && img.src) ball.style.backgroundImage = 'url("' + img.src + '")';
+    else ball.textContent = '🌯';
+    ball.style.left = (from.left + from.width / 2 - 23) + 'px';
+    ball.style.top = (from.top + from.height / 2 - 23) + 'px';
+    document.body.appendChild(ball);
+    requestAnimationFrame(function () {
+      ball.style.transform = 'translate(' + (to.left + to.width / 2 - (from.left + from.width / 2)) + 'px, ' +
+        (to.top + to.height / 2 - (from.top + from.height / 2)) + 'px) scale(.15)';
+      ball.style.opacity = '.25';
+    });
+    setTimeout(function () { ball.remove(); bumpCartFab(); }, 620);
+  } catch (e) { /* анимация не должна ломать добавление */ }
+}
+function bumpCartFab() {
+  var c = document.getElementById('cart-fab-count');
+  if (!c) return;
+  c.classList.remove('bump');
+  void c.offsetWidth; // перезапуск анимации
+  c.classList.add('bump');
 }
 
 /* Панель корзины + степперы (делегирование) + конфиг онлайн-оплаты */
@@ -2067,7 +2198,7 @@ function renderMenu(items) {
   renderMenuHits(items);
   if (!items || !items.length) {
     grid.innerHTML = '<p style="grid-column:1 / -1; text-align:center; color:var(--gray); padding:30px 0;">' +
-      'Меню временно недоступно. Позвоните нам: +7 (495) 120-45-67</p>';
+      'Меню временно недоступно. Позвоните нам: ' + escHtml(SHOP_PHONE) + '</p>';
     return;
   }
   MENU_ITEMS = items;
@@ -2094,6 +2225,8 @@ function renderMenu(items) {
     '</article>';
   }).join('');
   applyMenuFilter(currentCat);
+  /* карточки плавно появляются при прокрутке до них */
+  if (window.revealWatch) grid.querySelectorAll('.menu-card').forEach(function (c) { window.revealWatch(c); });
 }
 
 document.querySelectorAll('.tab-btn').forEach(function (btn) {
@@ -2117,26 +2250,127 @@ fetch('/api/menu')
 
 
 /* ─────────────────────────────────────────────────────────
-   6. Появление элементов при скролле (IntersectionObserver)
+   5b. Карточка блюда (bottom-sheet): клик по блюду в меню
+   ───────────────────────────────────────────────────────── */
+var Dish = (function () {
+  var overlay = document.getElementById('dish-overlay');
+  var current = null, qty = 1;
+
+  function fmt(n) { return (Number(n) || 0).toLocaleString('ru-RU') + ' ₽'; }
+  function renderQty() {
+    var q = document.getElementById('dish-qty');
+    if (q) q.textContent = qty;
+    var addBtn = document.getElementById('dish-add');
+    if (addBtn && current) addBtn.textContent = 'В корзину · ' + fmt(Math.round(Number(current.price) || 0) * qty);
+  }
+
+  function open(id) {
+    current = (MENU_ITEMS || []).filter(function (m) { return m.id === id; })[0];
+    if (!current || !overlay) return;
+    qty = 1;
+    var media = document.getElementById('dish-media');
+    if (media) {
+      media.innerHTML = current.image
+        ? '<img src="' + escHtml(current.image) + '" alt="' + escHtml(current.name) + '">'
+        : '<div class="dish-emoji">' + escHtml(current.emoji || '🌯') + '</div>';
+    }
+    var nameEl = document.getElementById('dish-name');
+    if (nameEl) nameEl.textContent = current.name;
+    var badges = document.getElementById('dish-badges');
+    if (badges) {
+      var b = '';
+      if (current.weight) b += '<span class="badge badge-weight">⚖️ ' + escHtml(current.weight) + '</span>';
+      if (current.spicy) b += '<span class="badge badge-spicy">' + escHtml(current.spicy) + '</span>';
+      if (current.hit) b += '<span class="badge badge-hit">' + escHtml(current.hit) + '</span>';
+      badges.innerHTML = b;
+      badges.style.display = b ? 'flex' : 'none';
+    }
+    var desc = document.getElementById('dish-desc');
+    if (desc) desc.textContent = current.desc || '';
+    renderQty();
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    if (overlay) overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  if (overlay) {
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    var closeBtn = document.getElementById('dish-close');
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    var dec = document.getElementById('dish-dec');
+    if (dec) dec.addEventListener('click', function () { qty = Math.max(1, qty - 1); renderQty(); });
+    var inc = document.getElementById('dish-inc');
+    if (inc) inc.addEventListener('click', function () { qty = Math.min(99, qty + 1); renderQty(); });
+    var addBtn = document.getElementById('dish-add');
+    if (addBtn) addBtn.addEventListener('click', function () {
+      if (!current) return;
+      Cart.addQty(current.id, current.name, Math.round(Number(current.price) || 0), qty);
+      trackOrder('dish-sheet');
+      close();
+      bumpCartFab();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  }
+  return { open: open, close: close };
+})();
+
+/* Открытие карточки: делегируем клики по карточкам меню (кнопки работают как раньше) */
+(function () {
+  function onCardClick(e) {
+    if (e.target.closest('button')) return;
+    var card = e.target.closest('.menu-card');
+    if (card && card.dataset.id) Dish.open(card.dataset.id);
+  }
+  var g = document.getElementById('menu-grid');
+  if (g) g.addEventListener('click', onCardClick);
+  var h = document.getElementById('menu-hits');
+  if (h) h.addEventListener('click', onCardClick);
+})();
+
+
+/* ─────────────────────────────────────────────────────────
+   6. Плавное появление при скролле (IntersectionObserver)
+   Лёгкое: только CSS-переходы, без библиотек. После появления
+   класс снимается, чтобы не мешать hover-анимациям карточек.
    ───────────────────────────────────────────────────────── */
 (function () {
-  if (!('IntersectionObserver' in window)) {
-    /* fallback: сразу показываем всё */
-    document.querySelectorAll('.fade-in').forEach(function (el) {
-      el.classList.add('visible');
-    });
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* авторазметка: заголовки и крупные блоки секций появляются плавно */
+  document.querySelectorAll('.section-title, .section-sub, .adv-card, .delivery-block, .order-form-wrap, .hero-stat')
+    .forEach(function (el) { el.classList.add('fade-in'); });
+
+  function finish(el) {
+    el.classList.add('visible');
+    /* через длительность перехода возвращаем элементу его обычные transition */
+    setTimeout(function () { el.classList.remove('fade-in', 'visible'); }, 700);
+  }
+
+  if (reduced || !('IntersectionObserver' in window)) {
+    document.querySelectorAll('.fade-in').forEach(function (el) { el.classList.remove('fade-in'); });
+    window.revealWatch = function () {};
     return;
   }
+
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+        finish(entry.target);
         io.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.10 });
+  }, { threshold: 0.10, rootMargin: '0px 0px -6% 0px' });
 
   document.querySelectorAll('.fade-in').forEach(function (el) { io.observe(el); });
+
+  /* для динамически отрисованных элементов (карточки меню) */
+  window.revealWatch = function (el) {
+    el.classList.add('fade-in');
+    io.observe(el);
+  };
 })();
 
 
@@ -2241,7 +2475,12 @@ var Account = (function () {
           return '<div class="tk-step ' + cls + '"><div class="dot">' + (i < idx ? '✓' : s.icon) + '</div>' +
             '<div><div class="t1">' + s.t1 + '</div><div class="t2">' + s.t2 + '</div></div></div>';
         }).join('') + '</div>';
-        if (data.yandexTrackUrl) {
+        if (data.track === 'delivered') {
+          /* финальный статус: заказ выдан/доставлен — клиент видит это сразу (SSE) */
+          html += '<div class="tk-done-banner">🎉 ' +
+            (data.fulfillment === 'pickup' ? 'Заказ выдан!' : 'Заказ доставлен!') +
+            ' Приятного аппетита.</div>';
+        } else if (data.yandexTrackUrl) {
           html += '<div style="text-align:center; margin-top:14px"><a class="btn btn-gold" href="' + esc(data.yandexTrackUrl) + '" target="_blank" rel="noopener">📍 Курьер на карте</a></div>';
         }
       }

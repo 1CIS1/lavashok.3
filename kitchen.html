@@ -875,7 +875,7 @@
           '<div><div class="rc-no">#'+o.id+(o.name?' · '+esc(o.name):'')+'</div>'+
           '<div class="rc-lbl">'+readyLabel(o)+'</div></div>'+
           '<button class="rc-btn" data-ready-back="'+o.id+'" title="Вернуть в готовку">↩ В работу</button>'+
-          '<button class="rc-btn fin" data-ready-done="'+o.id+'">'+(isPickup(o)?'✓ Вручён':'✓ Доставлен')+'</button>'+
+          '<button class="rc-btn fin" data-ready-done="'+o.id+'">'+(isPickup(o)?'✓ Выдать заказ':'✓ Доставлен')+'</button>'+
         '</div>';
       }).join('');
       row.querySelectorAll('button[data-ready-back]').forEach(function(b){
@@ -2127,6 +2127,7 @@
           f('Заголовок (title)','set-seoTitle',s.seoTitle,'Шаурма с доставкой в Москве — ЛавашОК','50–60 символов, с городом и «доставка».')+
           ta('Описание (description)','set-seoDesc',s.seoDescription,'Заказать шаурму и лаваш с доставкой…','120–160 символов.')+
           ta('Ключевые слова','set-seoKeywords',s.seoKeywords,'шаурма доставка, заказать шаурму, лаваш…','Через запятую.')+
+          f('ID счётчика Яндекс.Метрики','set-metrika',s.yandexMetrikaId,'12345678','Только цифры. Заполните — счётчик и цели подключатся на сайте автоматически.')+
         '</div>'+
         '<div class="set-card">'+
           '<h2 style="font-size:1.2rem;font-weight:900;margin-bottom:4px">Бонусы и уровни</h2>'+
@@ -2241,6 +2242,7 @@
         deliveryZones:zones,
         city:g('set-city'), seoTitle:g('set-seoTitle'),
         seoDescription:g('set-seoDesc'), seoKeywords:g('set-seoKeywords'),
+        yandexMetrikaId:g('set-metrika').replace(/\D/g,''),
         loyaltyEnabled:document.getElementById('set-loyalty').checked,
         loyaltyTiers:tiers,
         loyaltyRedeemMaxPercent:Number(g('set-loyaltyRedeemMax'))||0,

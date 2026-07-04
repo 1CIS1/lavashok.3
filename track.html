@@ -1,139 +1,17 @@
 <!DOCTYPE html>
 <html lang="ru">
+<!-- Страница упразднена: отслеживание заказа живёт в личном кабинете на главной.
+     Сервер редиректит /track → /?track=…, этот файл — подстраховка на случай
+     прямого открытия файла. Можно удалить вместе с index-old-design-backup.html. -->
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="noindex" />
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex">
   <title>Статус заказа · ЛавашОК</title>
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <style>
-    :root { --red:#C0251C; --gold:#FFB800; --dark:#1A1A1A; --gray:#666; --done:#16a34a; }
-    * { box-sizing:border-box; margin:0; padding:0; }
-    body { font-family:'Segoe UI',Arial,sans-serif; color:var(--dark);
-      background:linear-gradient(135deg,#fffbec,#fdf0ef); min-height:100vh;
-      display:flex; align-items:center; justify-content:center; padding:20px; }
-    .card { background:#fff; border-radius:24px; box-shadow:0 16px 50px rgba(192,37,28,.15);
-      max-width:480px; width:100%; padding:34px 30px; border-top:5px solid var(--gold); }
-    .head { text-align:center; margin-bottom:24px; }
-    .head .logo { font-size:1.4rem; font-weight:900; color:var(--red); }
-    .head .logo span { color:var(--gold); }
-    .head .ord { color:var(--gray); font-size:.9rem; margin-top:6px; }
-
-    .steps { display:flex; flex-direction:column; gap:0; margin:10px 0 8px; }
-    .step { display:flex; align-items:flex-start; gap:14px; position:relative; padding-bottom:22px; }
-    .step:last-child { padding-bottom:0; }
-    .step .dot { width:34px; height:34px; border-radius:50%; background:#eee; color:#bbb;
-      display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; z-index:1; transition:.2s; }
-    .step:not(:last-child)::before { content:''; position:absolute; left:16px; top:34px; bottom:0; width:2px; background:#eee; }
-    .step.done:not(:last-child)::before { background:var(--done); }
-    .step.done .dot { background:var(--done); color:#fff; }
-    .step.current .dot { background:var(--red); color:#fff; box-shadow:0 0 0 5px rgba(192,37,28,.15); }
-    .step .txt { padding-top:5px; }
-    .step .t1 { font-weight:800; font-size:1rem; }
-    .step.pending .t1 { color:#bbb; }
-    .step .t2 { font-size:.82rem; color:var(--gray); }
-
-    .canceled { text-align:center; padding:16px; background:#fdecea; color:var(--red); border-radius:14px; font-weight:700; }
-    .meta { margin-top:20px; padding-top:16px; border-top:1px solid #f0e0de; display:flex; justify-content:space-between; font-size:.9rem; color:var(--gray); }
-    .meta b { color:var(--dark); }
-    .loading, .err { text-align:center; color:var(--gray); padding:30px 0; }
-    .err { color:var(--red); }
-    .ya-btn { display:inline-block; padding:13px 26px; border-radius:50px; background:#FFCC00; color:#1a1a1a; font-weight:800; text-decoration:none; transition:background .15s; }
-    .ya-btn:hover { background:#ffd633; }
-    .foot { text-align:center; margin-top:18px; }
-    .foot a { color:var(--red); font-weight:700; text-decoration:none; }
-    .upd { text-align:center; font-size:.75rem; color:#bbb; margin-top:12px; }
-  </style>
+  <script>
+    location.replace('/?track=' + encodeURIComponent(new URLSearchParams(location.search).get('t') || ''));
+  </script>
 </head>
 <body>
-  <div class="card">
-    <div class="head">
-      <div class="logo">😉 Лаваш<span>О</span>К</div>
-      <div class="ord" id="ord"></div>
-    </div>
-    <div id="content"><div class="loading">Загружаем статус заказа…</div></div>
-    <div class="foot"><a href="/">← На главную</a></div>
-    <div class="upd" id="upd"></div>
-  </div>
-
-  <script>
-    var STAGES_DELIVERY = [
-      { id:'accepted',   t1:'Заказ принят',        t2:'Мы получили вашу заявку',        icon:'✓' },
-      { id:'cooking',    t1:'Готовим',             t2:'Повара взялись за дело',         icon:'🍳' },
-      { id:'delivering', t1:'Курьер в пути',       t2:'Заказ передан курьеру',           icon:'🛵' },
-      { id:'delivered',  t1:'Доставлен',           t2:'Приятного аппетита!',            icon:'🎉' }
-    ];
-    var STAGES_PICKUP = [
-      { id:'accepted',   t1:'Заказ принят',         t2:'Мы получили вашу заявку',        icon:'✓' },
-      { id:'cooking',    t1:'Готовим',              t2:'Повара взялись за дело',         icon:'🍳' },
-      { id:'delivering', t1:'Готов к самовывозу',   t2:'Можно забирать заказ',            icon:'🏃' },
-      { id:'delivered',  t1:'Забрали',              t2:'Приятного аппетита!',            icon:'🎉' }
-    ];
-    var token = new URLSearchParams(location.search).get('t') || '';
-    var attempts = 0;
-
-    function fmt(n){ return (Number(n)||0).toLocaleString('ru-RU') + ' ₽'; }
-    function fmtTime(iso){ if(!iso) return ''; var d=new Date(iso); if(isNaN(d)) return '';
-      var p=function(n){return (n<10?'0':'')+n;}; return p(d.getDate())+'.'+p(d.getMonth()+1)+' '+p(d.getHours())+':'+p(d.getMinutes()); }
-
-    function render(data){
-      document.getElementById('ord').textContent = 'Заказ #' + data.id;
-      var content = document.getElementById('content');
-      if (data.track === 'canceled') {
-        content.innerHTML = '<div class="canceled">Заказ отменён. Если это ошибка — позвоните нам: +7 (495) 120-45-67</div>';
-      } else {
-        var STAGES = data.fulfillment === 'pickup' ? STAGES_PICKUP : STAGES_DELIVERY;
-        var curIdx = Math.max(0, STAGES.map(function(s){return s.id;}).indexOf(data.track));
-        content.innerHTML = '<div class="steps">' + STAGES.map(function(s, i){
-          var cls = i < curIdx ? 'done' : (i === curIdx ? 'current' : 'pending');
-          var icon = (i < curIdx) ? '✓' : s.icon;
-          return '<div class="step ' + cls + '">' +
-            '<div class="dot">' + icon + '</div>' +
-            '<div class="txt"><div class="t1">' + s.t1 + '</div><div class="t2">' + s.t2 + '</div></div>' +
-          '</div>';
-        }).join('') + '</div>';
-      }
-      if (data.track !== 'canceled' && data.yandexTrackUrl) {
-        content.innerHTML += '<div style="text-align:center;margin-top:18px">' +
-          '<a class="ya-btn" href="' + String(data.yandexTrackUrl).replace(/"/g, '%22') + '" target="_blank" rel="noopener">📍 Отследить курьера в Яндексе</a></div>';
-      }
-      var meta = '<div class="meta"><span>Позиций: <b>' + (data.itemsCount || 0) + '</b></span>' +
-        '<span>Сумма: <b>' + fmt(data.total) + '</b></span>' +
-        '<span>' + fmtTime(data.createdAt) + '</span></div>';
-      content.innerHTML += meta;
-      var now = new Date(); var p = function(n){return (n<10?'0':'')+n;};
-      document.getElementById('upd').textContent = 'Обновлено ' + p(now.getHours()) + ':' + p(now.getMinutes()) + ':' + p(now.getSeconds());
-    }
-
-    function poll(){
-      if (!token) { document.getElementById('content').innerHTML = '<div class="err">Не указан код заказа.</div>'; return; }
-      fetch('/api/track?t=' + encodeURIComponent(token))
-        .then(function(r){ if(r.status===404) throw new Error('notfound'); if(!r.ok) throw new Error('http'); return r.json(); })
-        .then(function(res){
-          if(!res.ok) throw new Error('bad');
-          render(res);
-          if (res.track !== 'delivered' && res.track !== 'canceled' && attempts < 720) {
-            attempts++; setTimeout(poll, 5000);
-          }
-        })
-        .catch(function(e){
-          if (e.message === 'notfound') {
-            document.getElementById('content').innerHTML = '<div class="err">Заказ не найден. Проверьте ссылку.</div>';
-            return;
-          }
-          attempts++; if (attempts < 10) setTimeout(poll, 5000);
-        });
-    }
-    /* Мгновенные обновления статуса через SSE (опрос остаётся фолбэком). */
-    if (token && window.EventSource) {
-      try {
-        var es = new EventSource('/api/track/stream?t=' + encodeURIComponent(token));
-        es.addEventListener('update', function (e) {
-          try { render(JSON.parse(e.data)); } catch (err) {}
-        });
-      } catch (e) {}
-    }
-    poll();
-  </script>
+  <p>Перенаправляем на страницу заказа… <a href="/">На главную</a></p>
 </body>
 </html>

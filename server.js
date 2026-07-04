@@ -121,11 +121,14 @@ app.use(helmet({
       'default-src': ["'self'"],
       'script-src': ["'self'", "'unsafe-inline'", 'https://mc.yandex.ru'],
       'script-src-attr': ["'unsafe-inline'"],   // разрешаем inline-обработчики onclick=...
-      'style-src': ["'self'", "'unsafe-inline'"],
+      /* fonts.googleapis.com обязателен: без него Google Fonts блокируются и сайт падает на системный шрифт */
+      'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      'font-src': ["'self'", 'https://fonts.gstatic.com', 'data:'],
       'img-src': ["'self'", 'data:', 'https:'],
       'connect-src': ["'self'", 'https://mc.yandex.ru'],
       'form-action': ["'self'"],
-      'frame-src': ["'self'", 'https://yookassa.ru', 'https://yoomoney.ru'],
+      /* yandex.ru — для встроенной карты (виджет Яндекс.Карт в контактах) */
+      'frame-src': ["'self'", 'https://yookassa.ru', 'https://yoomoney.ru', 'https://yandex.ru'],
       'upgrade-insecure-requests': null
     }
   },
@@ -327,8 +330,24 @@ app.get('/api/track/stream', function (req, res) {
 });
 
 /* ── Публичный сайт ──────────────────────────────────────── */
+/* Плейсхолдер https://ВАШ-ДОМЕН в OG-тегах подменяем реальным доменом
+   (PUBLIC_URL или хост запроса) — превью ссылок в мессенджерах работает сразу. */
+let indexHtmlCache = null;
 app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  const base = (process.env.PUBLIC_URL || (req.protocol + '://' + req.get('host'))).replace(/\/+$/, '');
+  try {
+    if (!indexHtmlCache || process.env.NODE_ENV !== 'production') {
+      indexHtmlCache = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+    }
+    res.type('html').send(indexHtmlCache.split('https://ВАШ-ДОМЕН').join(base));
+  } catch (e) {
+    res.sendFile(path.join(__dirname, 'index.html'));
+  }
+});
+
+/* Публичная оферта (ссылка из футера). Текст-шаблон — заполните реквизиты. */
+app.get('/oferta', function (req, res) {
+  res.sendFile(path.join(__dirname, 'oferta.html'));
 });
 
 app.get('/api/config', function (req, res) {
@@ -456,11 +475,19 @@ app.get('/api/account/me', requireCustomer, function (req, res) {
     };
   });
 
-  /* Активный заказ для вкладки «Текущий заказ» (свой токен клиенту отдавать безопасно). */
+  /* Активный заказ для вкладки «Текущий заказ» (свой токен клиенту отдавать безопасно).
+     Если активного нет — показываем выданный/доставленный СЕГОДНЯ заказ,
+     чтобы клиент увидел финальный статус «Заказ выдан», открыв кабинет. */
   const activeStages = ['accepted', 'cooking', 'delivering'];
-  const cur = my.find(function (o) {
+  let cur = my.find(function (o) {
     return activeStages.indexOf(o.track || 'accepted') !== -1 && o.status !== 'canceled';
   });
+  if (!cur) {
+    const todayKey = localDateKey(new Date());
+    cur = my.find(function (o) {
+      return (o.track || '') === 'delivered' && o.createdAt && localDateKey(new Date(o.createdAt)) === todayKey;
+    });
+  }
 
   /* Профиль для автозаполнения формы заказа — из последних заказов клиента.
      Служебную приписку «[Зона доставки: …]» из комментария убираем. */
@@ -532,6 +559,7 @@ app.get('/sitemap.xml', function (req, res) {
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
     '  <url><loc>' + base + '/</loc><lastmod>' + today + '</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>\n' +
     '  <url><loc>' + base + '/privacy</loc><lastmod>' + today + '</lastmod><changefreq>monthly</changefreq><priority>0.2</priority></url>\n' +
+    '  <url><loc>' + base + '/oferta</loc><lastmod>' + today + '</lastmod><changefreq>monthly</changefreq><priority>0.2</priority></url>\n' +
     '</urlset>\n'
   );
 });
@@ -1152,6 +1180,7 @@ const settingsSchema = z.object({
   seoTitle: z.string().max(160).optional(),                       // П.7
   seoDescription: z.string().max(320).optional(),                 // П.7
   seoKeywords: z.string().max(500).optional(),                    // П.7
+  yandexMetrikaId: z.string().max(20).optional(),                 // счётчик Метрики (только цифры)
   loyaltyEnabled: z.boolean().optional(),                         // лояльность
   loyaltyPercent: z.coerce.number().min(0).max(50).optional(),    // лояльность
   smsEnabled: z.boolean().optional(),                             // SMS
