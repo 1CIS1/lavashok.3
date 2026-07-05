@@ -56,17 +56,16 @@
     .bdg.paid{background:#10351f;color:#46d17f} .bdg.wait{background:#3a2f12;color:#ffce4d} .bdg.cash{background:#22304a;color:#9ec3ff}
     .bdg.delivery{background:#22304a;color:#9ec3ff} .bdg.pickup{background:#2a2313;color:var(--gold)}
     .bdg.st-accepted{background:#1c2f55;color:#8fb3ff} .bdg.st-cooking{background:#3a2c10;color:#ffb340}
-    .bdg.st-ready{background:#10351f;color:#46d17f}
+    .bdg.st-ready{background:#10351f;color:#46d17f} .bdg.st-pre{background:#2a2145;color:#b4a6ff}
 
-    /* «Готовы / выданы сегодня» — зелёная зона под очередью, статусы можно переключать */
-    .ready-wrap { padding-top:0; }
-    .ready-title { font-size:.82rem; font-weight:800; color:#46d17f; text-transform:uppercase; letter-spacing:.04em; margin-bottom:10px; }
-    .ready-row { display:flex; gap:10px; flex-wrap:wrap; }
-    .ready-card { background:var(--card); border:1px solid var(--line); border-left:6px solid var(--green); border-radius:11px; padding:10px 14px; display:flex; align-items:center; gap:12px; }
-    .ready-card .rc-no { font-weight:900; font-size:1.05rem; }
-    .ready-card .rc-lbl { font-size:.78rem; font-weight:800; color:#46d17f; }
-    .ready-card .rc-btn { border:none; border-radius:7px; padding:7px 11px; font-weight:700; font-size:.78rem; cursor:pointer; background:#243041; color:#cfe0f0; }
-    .ready-card .rc-btn.fin { background:var(--green); color:#fff; }
+    /* Лента предзаказов */
+    .preorders { align-items:stretch; }
+    .pre-card { background:#1c242e; border:1px solid var(--line); border-left:4px solid #8b7cf2; border-radius:10px; padding:9px 13px; display:flex; flex-direction:column; gap:2px; max-width:320px; }
+    .pre-card.unpaid { opacity:.55; border-left-style:dashed; }
+    .pre-card .pc-top { font-weight:900; }
+    .pre-card .pc-items { font-size:.82rem; color:#8aa0b6; }
+    .pre-card .pc-meta { font-size:.78rem; font-weight:700; color:#b4a6ff; }
+    .pre-card .pc-btn { margin-top:7px; font-size:.8rem; padding:6px 10px; }
     .ocmt { margin:0 16px 10px; background:#2a2113; color:#ffe1a6; border-radius:8px; padding:9px 12px; font-size:1rem; font-weight:700; }
     .ozone { margin:0 16px 10px; color:#9ec3ff; font-size:1.05rem; font-weight:900; }
     .items { padding:4px 16px 8px; flex:1; }
@@ -82,6 +81,8 @@
     .oact { display:flex; gap:10px; padding:12px 16px; border-top:1px solid var(--line); }
     .oact .btn { flex:1; font-size:1rem; }
     .oact .btn-print { flex:none; padding:10px 14px; background:#243041; color:#cfe0f0; }
+    .oact .btn-back { flex:none; padding:10px 14px; background:#243041; color:#cfe0f0; }
+    .ord.ready { border-left-color:var(--green); }
     .oact .btn-cancel { flex:none; padding:10px 14px; background:#3a2330; color:#ffb4c4; }
     .b-work { background:#243041; color:#fff; }
     .b-done { background:var(--green); color:#fff; }
@@ -357,7 +358,8 @@
     #admin-drawer .tier-row { grid-template-columns:1.4fr 1fr .8fr auto; }
     @media (max-width:600px){ #admin-drawer .tier-row { grid-template-columns:1fr 1fr; } }
     #admin-drawer .card-row { display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1.2fr auto; gap:10px; align-items:center; }
-    #admin-drawer .card-row input.adj-input { width:90px; border:1px solid var(--line); border-radius:8px; padding:9px 10px; font-size:.88rem; background:var(--bg); color:var(--dark); }
+    #admin-drawer .card-row input.adj-input, #admin-drawer .at-row input.adj-input { width:90px; border:1px solid var(--line); border-radius:8px; padding:9px 10px; font-size:.88rem; background:var(--bg); color:var(--dark); }
+    #admin-drawer .at-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:12px; padding-top:12px; border-top:1px dashed var(--line); font-size:.86rem; }
     @media (max-width:900px){ #admin-drawer .card-row { grid-template-columns:1fr 1fr; } }
     #admin-drawer .cust-row { display:grid; grid-template-columns:1.1fr 1fr .7fr 1fr 1fr 1fr auto; gap:10px; align-items:center; }
     @media (max-width:1000px){ #admin-drawer .cust-row { grid-template-columns:1fr 1fr; } }
@@ -410,13 +412,10 @@
     <input type="search" id="ksearch" placeholder="🔎 Номер заказа или телефон…" oninput="onSearchInput()">
   </div>
   <div class="daystats" id="daystats"></div>
+  <!-- Предзаказы: оплаченные ждут своего времени и сами попадают в очередь за «целевое время готовки» -->
+  <div class="summary preorders" id="preorders" style="display:none"></div>
   <div class="summary" id="summary" style="display:none"></div>
   <div class="wrap"><div class="grid" id="grid"></div></div>
-  <!-- Заказы в статусе «Выдан курьеру / Готов к выдаче» — можно вернуть в работу или завершить -->
-  <div class="wrap ready-wrap" id="ready-wrap" style="display:none">
-    <div class="ready-title">✅ Готовы / выданы сегодня</div>
-    <div class="ready-row" id="ready-row"></div>
-  </div>
   <div class="upd" id="upd"></div>
 
   <!-- Стоп-лист -->
@@ -726,13 +725,36 @@
     }
     function doneLabel(o){ return isPickup(o) ? 'Готово → к выдаче' : 'Готово → курьеру'; }
 
-    /* Бейдж текущего статуса на карточке: синий «Принят» / оранжевый «Готовится» */
+    /* Бейдж статуса: синий «Принят» / оранжевый «Готовится» / зелёный «Готов к выдаче» */
     function statusBadge(o){
       var t=o.track||'accepted';
+      if(t==='delivering') return '<span class="bdg st-ready">'+readyLabel(o)+'</span>';
       if(t==='cooking') return '<span class="bdg st-cooking">🍳 Готовится</span>';
       return '<span class="bdg st-accepted">🕓 Принят</span>';
     }
     function readyLabel(o){ return isPickup(o) ? '🏃 Готов к выдаче' : '🛵 Выдан курьеру'; }
+
+    /* ── Предзаказы (самовывоз к времени, предоплата) ── */
+    function isPre(o){ return !!o.preorderAt; }
+    /* момент, когда пора начинать готовить: время выдачи минус целевое время готовки */
+    function preStartTs(o){ return new Date(o.preorderAt).getTime() - TARGET_MIN*60000; }
+    function isUnpaidPre(o){ return isPre(o) && o.payment==='online' && o.paymentStatus!=='succeeded'; }
+    /* предзаказ «спит» в ленте ожидания: не оплачен либо готовить ещё рано */
+    function isWaitingPre(o){
+      if(!isPre(o) || (o.track||'accepted')!=='accepted') return false;
+      return isUnpaidPre(o) || preStartTs(o) > Date.now();
+    }
+    /* точка отсчёта таймера карточки: у предзаказа — момент «пора готовить», не создание */
+    function clockStart(o){
+      if(isPre(o)) return new Date(Math.max(new Date(o.createdAt).getTime(), preStartTs(o))).toISOString();
+      return o.createdAt;
+    }
+    function preTimeLabel(o){
+      var d=new Date(o.preorderAt); if(isNaN(d)) return '';
+      var p=function(n){return (n<10?'0':'')+n;};
+      var t=p(d.getHours())+':'+p(d.getMinutes());
+      return d.toDateString()===new Date().toDateString() ? t : p(d.getDate())+'.'+p(d.getMonth()+1)+' '+t;
+    }
 
     function setWayFilter(w){
       wayFilter=w;
@@ -760,25 +782,41 @@
     /* Усиленный сигнал: пока есть просроченные заказы и звук включён — напоминаем на каждом
        обновлении экрана (каждые ~20 сек), а не только один раз при поступлении заказа. */
     function checkLateAlarm(active){
-      var hasLate = active.some(function(o){ return elapsed(o.createdAt) > TARGET_MIN; });
+      var hasLate = active.some(function(o){ return elapsed(clockStart(o)) > TARGET_MIN; });
       if(hasLate) beep();
     }
 
     function render(){
-      var active = orders.filter(function(o){ var t=o.track||'accepted'; return t==='accepted'||t==='cooking'; })
+      /* Будущие/неоплаченные предзаказы — в отдельной ленте, в очередь не попадают. */
+      var upcoming = orders.filter(isWaitingPre)
+        .sort(function(a,b){ return new Date(a.preorderAt)-new Date(b.preorderAt); });
+      renderPre(upcoming);
+
+      /* В очереди все незакрытые заказы, включая «готов к выдаче» (delivering) —
+         кнопка выдачи находится прямо на карточке, ходить в админку не нужно. */
+      var active = orders.filter(function(o){
+          var t=o.track||'accepted';
+          return (t==='accepted'||t==='cooking'||t==='delivering') && !isWaitingPre(o);
+        })
         .sort(function(a,b){
-          var la = elapsed(a.createdAt) > TARGET_MIN, lb = elapsed(b.createdAt) > TARGET_MIN;
+          var da=(a.track||'accepted')==='delivering', db=(b.track||'accepted')==='delivering';
+          if(da !== db) return da ? 1 : -1;   // готовые к выдаче — в конец очереди
+          var la = elapsed(clockStart(a)) > TARGET_MIN, lb = elapsed(clockStart(b)) > TARGET_MIN;
           if(la !== lb) return la ? -1 : 1;   // просроченные заказы — наверх списка
-          return new Date(a.createdAt)-new Date(b.createdAt);
+          return new Date(clockStart(a))-new Date(clockStart(b));
         });
       document.getElementById('cnt').textContent = active.length;
-      checkLateAlarm(active);
+      /* просрочка тревожит только то, что ещё готовится */
+      checkLateAlarm(active.filter(function(o){ return (o.track||'accepted')!=='delivering'; }));
 
       var shown = active.filter(matchesFilters);
 
-      // сводка «что готовить» — по видимым (после фильтра) заказам
+      // сводка «что готовить» — по видимым (после фильтра) заказам; готовые к выдаче не считаем
       var agg={};
-      shown.forEach(function(o){ (o.items||[]).forEach(function(it){ agg[it.name]=(agg[it.name]||0)+it.qty; }); });
+      shown.forEach(function(o){
+        if((o.track||'accepted')==='delivering') return;
+        (o.items||[]).forEach(function(it){ agg[it.name]=(agg[it.name]||0)+it.qty; });
+      });
       var keys=Object.keys(agg).sort(function(a,b){return agg[b]-agg[a];});
       var sumEl=document.getElementById('summary');
       if(keys.length){ sumEl.style.display='flex'; sumEl.innerHTML='<span class="lbl">Готовить:</span>'+keys.map(function(k){return '<span class="chip"><b>'+agg[k]+'×</b> '+esc(k)+'</span>';}).join(''); }
@@ -788,30 +826,43 @@
       if(!shown.length){ grid.innerHTML='<div class="empty" style="grid-column:1/-1"><span class="em">😌</span>'+(active.length?'Ничего не найдено по фильтру':'Новых заказов нет')+'</div>'; return; }
 
       grid.innerHTML=shown.map(function(o){
-        var min=elapsed(o.createdAt);
+        var t=o.track||'accepted';
+        var isReady = t==='delivering'; // приготовлен: ждёт выдачи клиенту / уже у курьера
+        var min=Math.max(0, elapsed(clockStart(o))); // у предзаказа отсчёт с «пора готовить»
         var left=TARGET_MIN-min;
-        var tcls = left>5?'green':(left>=0?'yellow':'red');
-        var sub = left>=0 ? ('цель '+TARGET_MIN+' мин · ещё '+left) : ('просрочка +'+(-left)+' мин');
+        var tcls = isReady ? 'green' : (left>5?'green':(left>=0?'yellow':'red'));
+        var sub = isReady ? 'приготовлен' : (left>=0 ? ('цель '+TARGET_MIN+' мин · ещё '+left) : ('просрочка +'+(-left)+' мин'));
+        if(isPre(o) && !isReady) sub = 'выдать к '+preTimeLabel(o);
         var ord=checks[o.id]||{};
         var its=o.items||[];
         var doneCnt=0;
-        var itemsHtml=its.map(function(it,idx){
-          var ck=!!ord[idx]; if(ck) doneCnt++;
-          return '<label class="kitem'+(ck?' done':'')+'"><input type="checkbox" data-oid="'+o.id+'" data-idx="'+idx+'"'+(ck?' checked':'')+'>'+
-            '<span class="nm">'+esc(it.name)+'</span><span class="q">×'+it.qty+'</span></label>';
-        }).join('') || '<div class="kitem"><span class="nm" style="color:#6b7886">состав не указан</span></div>';
+        var itemsHtml = isReady
+          ? (its.map(function(it){
+              return '<div class="kitem"><span class="nm">'+esc(it.name)+'</span><span class="q">×'+it.qty+'</span></div>';
+            }).join('') || '<div class="kitem"><span class="nm" style="color:#6b7886">состав не указан</span></div>')
+          : (its.map(function(it,idx){
+              var ck=!!ord[idx]; if(ck) doneCnt++;
+              return '<label class="kitem'+(ck?' done':'')+'"><input type="checkbox" data-oid="'+o.id+'" data-idx="'+idx+'"'+(ck?' checked':'')+'>'+
+                '<span class="nm">'+esc(it.name)+'</span><span class="q">×'+it.qty+'</span></label>';
+            }).join('') || '<div class="kitem"><span class="nm" style="color:#6b7886">состав не указан</span></div>');
         var allDone = its.length>0 && doneCnt===its.length;
-        var workBtn = (o.track||'accepted')==='accepted' ? '<button class="btn b-work" data-act="cook" data-id="'+o.id+'">▶ В работу</button>' : '';
+        var workBtn = t==='accepted' ? '<button class="btn b-work" data-act="cook" data-id="'+o.id+'">▶ В работу</button>' : '';
         var allBtn = its.length ? '<button class="btn all-ready" data-allready="'+o.id+'"'+(allDone?' disabled':'')+'>✅ Все готово</button>' : '';
-        return '<div class="ord '+((o.track||'accepted')==='cooking'?'cooking':'')+' '+(left<0?'late':'')+'">'+
+        /* главная кнопка: до готовности — «Готово → …», после — «✓ Выдать заказ / Доставлен» */
+        var mainBtn = isReady
+          ? '<button class="btn btn-back" data-act="back" data-id="'+o.id+'" title="Вернуть в готовку">↩</button>'+
+            '<button class="btn b-done" data-act="finish" data-id="'+o.id+'">'+(isPickup(o)?'✓ Выдать заказ':'✓ Доставлен')+'</button>'
+          : '<button class="btn b-done" data-act="done" data-id="'+o.id+'"'+(its.length&&!allDone?' disabled':'')+'>'+doneLabel(o)+'</button>';
+        return '<div class="ord '+(t==='cooking'?'cooking':'')+(isReady?' ready':'')+' '+(left<0&&!isReady?'late':'')+'">'+
+
           '<div class="oh"><span class="onum">#'+o.id+(o.name?' · '+esc(o.name):'')+'</span>'+
             '<span class="otime '+tcls+'"><div class="big">'+min+' мин</div><div class="sub">'+sub+'</div></span></div>'+
-          '<div class="obadges">'+statusBadge(o)+fulfillBadge(o)+payBadge(o)+'</div>'+
+          '<div class="obadges">'+statusBadge(o)+(isPre(o)?'<span class="bdg st-pre">⏰ к '+preTimeLabel(o)+'</span>':'')+fulfillBadge(o)+payBadge(o)+'</div>'+
           (!isPickup(o)&&o.zone?'<div class="ozone">📍 '+esc(o.zone)+'</div>':'')+
           (o.comment?'<div class="ocmt">📝 '+esc(o.comment)+'</div>':'')+
           '<div class="items">'+itemsHtml+'</div>'+
-          (its.length?'<div class="prog">Готово '+doneCnt+' / '+its.length+' '+allBtn+'</div>':'')+
-          '<div class="oact">'+workBtn+'<button class="btn b-done" data-act="done" data-id="'+o.id+'"'+(its.length&&!allDone?' disabled':'')+'>'+doneLabel(o)+'</button>'+
+          (!isReady&&its.length?'<div class="prog">Готово '+doneCnt+' / '+its.length+' '+allBtn+'</div>':'')+
+          '<div class="oact">'+workBtn+mainBtn+
           '<button class="btn btn-print" data-print="'+o.id+'" title="Печать талона">🖨</button>'+
           '<button class="btn btn-cancel" data-cancel="'+o.id+'" title="Отменить заказ">✖</button></div>'+
         '</div>';
@@ -829,7 +880,8 @@
         b.addEventListener('click', function(){
           if(b.disabled) return;
           var id=b.getAttribute('data-id');
-          setTrack(id, b.getAttribute('data-act')==='cook'?'cooking':'delivering');
+          var stageMap={ cook:'cooking', back:'cooking', done:'delivering', finish:'delivered' };
+          setTrack(id, stageMap[b.getAttribute('data-act')] || 'cooking');
         });
       });
       grid.querySelectorAll('button[data-print]').forEach(function(b){
@@ -855,34 +907,27 @@
       });
       var now=new Date(); var p=function(n){return (n<10?'0':'')+n;};
       document.getElementById('upd').textContent='Обновлено '+p(now.getHours())+':'+p(now.getMinutes())+':'+p(now.getSeconds());
-      renderReady();
     }
 
-    /* Зелёная зона: сегодняшние заказы «Выдан курьеру / Готов к выдаче».
-       Можно вернуть в работу (оранжевый) или завершить (доставлен/получен). */
-    function renderReady(){
-      var wrap=document.getElementById('ready-wrap');
-      var row=document.getElementById('ready-row');
-      if(!wrap||!row) return;
-      var today=new Date().toDateString();
-      var ready=orders.filter(function(o){
-        return (o.track||'')==='delivering' && new Date(o.createdAt).toDateString()===today;
-      }).sort(function(a,b){ return new Date(b.updatedAt||b.createdAt)-new Date(a.updatedAt||a.createdAt); });
-      if(!ready.length){ wrap.style.display='none'; row.innerHTML=''; return; }
-      wrap.style.display='block';
-      row.innerHTML=ready.map(function(o){
-        return '<div class="ready-card">'+
-          '<div><div class="rc-no">#'+o.id+(o.name?' · '+esc(o.name):'')+'</div>'+
-          '<div class="rc-lbl">'+readyLabel(o)+'</div></div>'+
-          '<button class="rc-btn" data-ready-back="'+o.id+'" title="Вернуть в готовку">↩ В работу</button>'+
-          '<button class="rc-btn fin" data-ready-done="'+o.id+'">'+(isPickup(o)?'✓ Выдать заказ':'✓ Доставлен')+'</button>'+
+    /* Лента предзаказов: ждут своего времени или оплаты. «▶ Готовить сейчас» — досрочно в очередь. */
+    function renderPre(list){
+      var wrap=document.getElementById('preorders');
+      if(!wrap) return;
+      if(!list.length){ wrap.style.display='none'; wrap.innerHTML=''; return; }
+      wrap.style.display='flex';
+      wrap.innerHTML='<span class="lbl">⏰ Предзаказы ('+list.length+')</span>'+list.map(function(o){
+        var startIn=Math.ceil((preStartTs(o)-Date.now())/60000);
+        var items=(o.items||[]).map(function(it){ return esc(it.name)+' ×'+it.qty; }).join(', ');
+        var unpaid=isUnpaidPre(o);
+        return '<div class="pre-card'+(unpaid?' unpaid':'')+'">'+
+          '<div class="pc-top">#'+o.id+' · к '+preTimeLabel(o)+(o.name?' · '+esc(o.name):'')+'</div>'+
+          '<div class="pc-items">'+(items||'состав не указан')+'</div>'+
+          '<div class="pc-meta">'+(unpaid?'⏳ ждёт оплаты':(startIn>0?'в очередь через '+startIn+' мин':'пора готовить'))+'</div>'+
+          (unpaid?'':'<button class="btn b-work pc-btn" data-prestart="'+o.id+'">▶ Готовить сейчас</button>')+
         '</div>';
       }).join('');
-      row.querySelectorAll('button[data-ready-back]').forEach(function(b){
-        b.addEventListener('click', function(){ setTrack(b.getAttribute('data-ready-back'),'cooking'); });
-      });
-      row.querySelectorAll('button[data-ready-done]').forEach(function(b){
-        b.addEventListener('click', function(){ setTrack(b.getAttribute('data-ready-done'),'delivered'); });
+      wrap.querySelectorAll('button[data-prestart]').forEach(function(b){
+        b.addEventListener('click', function(){ setTrack(b.getAttribute('data-prestart'),'cooking'); });
       });
     }
 
@@ -932,7 +977,8 @@
         '.kv{font-size:14px;margin:3px 0}hr{border:none;border-top:2px solid #000;margin:10px 0}</style></head><body>'+
         '<h1>🌯 Талон — Заказ #'+o.id+'</h1>'+
         '<div class="muted">'+fmtDate(o.createdAt)+'</div>'+
-        '<div class="way">'+way+'</div><hr>'+
+        '<div class="way">'+way+'</div>'+
+        (o.preorderAt?'<div class="way">⏰ Предзаказ — выдать к '+fmtDate(o.preorderAt)+'</div>':'')+'<hr>'+
         '<table><thead><tr><th style="text-align:left">Блюдо</th><th>Кол.</th></tr></thead><tbody>'+(rows||'<tr><td colspan="2">—</td></tr>')+'</tbody></table>'+
         (o.comment?'<div class="kv"><b>Адрес/коммент:</b> '+esc(o.comment)+'</div>':'')+
         '<div class="kv"><b>Оплата:</b> '+pay+'</div>'+
@@ -1473,6 +1519,7 @@
         '<div class="kv"><span class="k">Телефон</span><span class="v">'+esc(o.phone||'—')+'</span></div>'+
         '<div class="kv"><span class="k">Оплата</span><span class="v">'+(o.payment==='online'?'Онлайн':'При получении')+'</span></div>'+
         '<div class="kv"><span class="k">Статус оплаты</span><span class="v">'+paymentStatusLabel(o.paymentStatus)+'</span></div>'+
+        (o.preorderAt?'<div class="kv"><span class="k">⏰ Предзаказ</span><span class="v">выдать к '+admFmtDate(o.preorderAt)+'</span></div>':'')+
         '<div class="kv"><span class="k">Создан</span><span class="v">'+admFmtDate(o.createdAt)+'</span></div>'+
         (o.comment?'<div class="kv"><span class="k">Адрес/коммент</span><span class="v">'+esc(o.comment)+'</span></div>':'')+
         (utm?'<div class="kv"><span class="k">Источник</span><span class="v">'+esc(utm)+'</span></div>':'')+
@@ -2113,6 +2160,15 @@
           f('WhatsApp (только цифры)','set-whatsapp',s.whatsapp,'74951204567')+
           f('Telegram (логин без @)','set-telegram',s.telegram,'lavashok')+
           f('Бесплатная доставка от, ₽','set-free',s.freeDeliveryFrom,'500')+
+          '<label class="switch-row" style="margin-top:6px">'+
+            '<input type="checkbox" id="set-preorder"'+(s.preorderEnabled!==false?' checked':'')+'>'+
+            '<span class="switch-ui"></span><b>⏰ Предзаказ на самовывоз (оплата онлайн)</b>'+
+          '</label>'+
+          '<div style="display:flex;gap:12px;flex-wrap:wrap">'+
+            f('Минимум минут до времени выдачи','set-preorderLead',(s.preorderLeadMin==null?20:s.preorderLeadMin),'20')+
+            f('Дней вперёд для предзаказа','set-preorderDays',(s.preorderMaxDays==null?2:s.preorderMaxDays),'2')+
+          '</div>'+
+          '<div class="set-hint">Работает только при настроенной онлайн-оплате ЮKassa. Оплаченный предзаказ ждёт в ленте «⏰ Предзаказы» на кухне и сам попадает в очередь за «целевое время готовки» до выбранного часа.</div>'+
         '</div>'+
         '<div class="set-card">'+
           '<h2 style="font-size:1.2rem;font-weight:900;margin-bottom:4px">Зоны доставки</h2>'+
@@ -2234,6 +2290,9 @@
         brand:g('set-brand'), phone:g('set-phone'), address:g('set-address'), hours:g('set-hours'),
         whatsapp:g('set-whatsapp'), telegram:g('set-telegram'),
         freeDeliveryFrom:Number(g('set-free'))||0,
+        preorderEnabled:document.getElementById('set-preorder').checked,
+        preorderLeadMin:Number(g('set-preorderLead'))||20,
+        preorderMaxDays:Number(g('set-preorderDays'))||2,
         ordersOpen:document.getElementById('set-ordersOpen').checked,
         ordersClosedMsg:g('set-closedMsg'),
         scheduleEnabled:document.getElementById('set-scheduleEnabled').checked,
@@ -2397,22 +2456,48 @@
         return (c.cardNo||'').toLowerCase().indexOf(q)!==-1 || (qDigits && (c.phone||'').indexOf(qDigits)!==-1);
       });
       var rows=list.map(function(c){
-        return '<div class="menu-edit-card card-row">'+
-          '<div><div style="font-weight:900;font-size:1.05rem">💳 '+esc(c.cardNo||'')+'</div></div>'+
-          '<div>'+esc(c.phone||'')+
-            (c.hasAccount?'<div style="color:#16a34a;font-size:.78rem;font-weight:700">🔑 есть кабинет</div>':'')+
-            '<button class="btn btn-ghost" style="padding:2px 8px;font-size:.78rem;margin-top:4px" onclick="'+(c.hasAccount?'if(confirm(\'Выдать новый пароль? Старый перестанет работать.\')) ':'')+'makeAccount(\''+esc(c.phone||'')+'\')">'+(c.hasAccount?'Новый пароль':'Завести кабинет')+'</button>'+
+        var at=c.autoTopup||{};
+        return '<div class="menu-edit-card">'+
+          '<div class="card-row">'+
+            '<div><div style="font-weight:900;font-size:1.05rem">💳 '+esc(c.cardNo||'')+'</div></div>'+
+            '<div>'+esc(c.phone||'')+
+              (c.hasAccount?'<div style="color:#16a34a;font-size:.78rem;font-weight:700">🔑 есть кабинет</div>':'')+
+              '<button class="btn btn-ghost" style="padding:2px 8px;font-size:.78rem;margin-top:4px" onclick="'+(c.hasAccount?'if(confirm(\'Выдать новый пароль? Старый перестанет работать.\')) ':'')+'makeAccount(\''+esc(c.phone||'')+'\')">'+(c.hasAccount?'Новый пароль':'Завести кабинет')+'</button>'+
+            '</div>'+
+            '<div>'+(c.tierName?esc(c.tierName):'<span style="color:var(--gray)">—</span>')+'</div>'+
+            '<div>Баланс: <b>'+(Number(c.balance)||0).toLocaleString('ru-RU')+' ₽</b></div>'+
+            '<div style="color:var(--gray);font-size:.85rem">Заказано всего: '+(Number(c.lifetimeSpend)||0).toLocaleString('ru-RU')+' ₽</div>'+
+            '<div style="display:flex;gap:6px">'+
+              '<input type="number" class="adj-input" data-phone="'+esc(c.phone||'')+'" placeholder="±баллы">'+
+              '<button class="btn btn-ghost" onclick="adjustCard(\''+esc(c.phone||'')+'\')">Применить</button>'+
+            '</div>'+
           '</div>'+
-          '<div>'+(c.tierName?esc(c.tierName):'<span style="color:var(--gray)">—</span>')+'</div>'+
-          '<div>Баланс: <b>'+(Number(c.balance)||0).toLocaleString('ru-RU')+' ₽</b></div>'+
-          '<div style="color:var(--gray);font-size:.85rem">Заказано всего: '+(Number(c.lifetimeSpend)||0).toLocaleString('ru-RU')+' ₽</div>'+
-          '<div style="display:flex;gap:6px">'+
-            '<input type="number" class="adj-input" data-phone="'+esc(c.phone||'')+'" placeholder="±баллы">'+
-            '<button class="btn btn-ghost" onclick="adjustCard(\''+esc(c.phone||'')+'\')">Применить</button>'+
+          '<div class="at-row" data-phone="'+esc(c.phone||'')+'">'+
+            '<label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:700">'+
+              '<input type="checkbox" class="at-en" style="width:17px;height:17px"'+(at.enabled?' checked':'')+'> 🔄 Автопополнение'+
+            '</label>'+
+            '<input type="number" class="adj-input at-am" min="50" placeholder="Сумма ₽" title="Сумма пополнения, ₽" value="'+(at.amount!=null?at.amount:500)+'">'+
+            '<input type="number" class="adj-input at-th" min="0" placeholder="Порог ₽" title="Пополнять при балансе ниже, ₽" value="'+(at.threshold!=null?at.threshold:100)+'">'+
+            '<button class="btn btn-ghost" onclick="saveCardAutoTopup(\''+esc(c.phone||'')+'\')">Сохранить</button>'+
+            '<span style="color:var(--gray);font-size:.76rem">пополняем на «сумму», когда баланс ниже «порога» — спишется после подключения рекуррентных платежей</span>'+
           '</div>'+
         '</div>';
       }).join('') || '<div class="empty">'+(q?'Ничего не найдено.':'Карт пока нет — появятся после первых заказов.')+'</div>';
       host.innerHTML=rows;
+    }
+    /* Автопополнение карты клиента (перенесено из личного кабинета — управляет оператор) */
+    function saveCardAutoTopup(phone){
+      var wrap=document.querySelector('.at-row[data-phone="'+phone+'"]');
+      if(!wrap) return;
+      var body={
+        enabled: !!wrap.querySelector('.at-en').checked,
+        amount: Number(wrap.querySelector('.at-am').value)||500,
+        threshold: Number(wrap.querySelector('.at-th').value)||0
+      };
+      fetch('/api/admin/loyalty-cards/'+encodeURIComponent(phone)+'/autotopup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+        .then(function(r){ if(!r.ok) throw new Error(); return r.json(); })
+        .then(function(){ toast('Автопополнение сохранено ✓'); fetchCards(); })
+        .catch(function(){ alert('Не удалось сохранить автопополнение.'); });
     }
     function adjustCard(phone){
       var row=document.querySelector('.adj-input[data-phone="'+phone+'"]');

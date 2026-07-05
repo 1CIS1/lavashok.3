@@ -231,13 +231,7 @@
   .acct-qr svg { display: block; width: 116px; height: 116px; }
   .acct-qr-none { font-size: .78rem; color: #8a4a44; text-align: center; }
   .acct-qr-hint { font-size: .82rem; opacity: .95; line-height: 1.45; }
-  .acct-edit-btn {
-    width: 100%; margin-top: 12px; background: transparent; border: 1.5px solid var(--line);
-    color: var(--text); border-radius: 10px; padding: 12px; font-weight: 700; cursor: pointer;
-  }
-  .acct-edit-btn:hover { border-color: var(--red); color: var(--red); }
-  #acct-edit { margin-top: 14px; border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--bg3); }
-  .acct-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  /* Редактирование карты перенесено в админку (/admin → Карты) */
   .acct-back { background: none; border: none; color: var(--red); font-weight: 700; cursor: pointer; padding: 0 0 14px; font-size: .95rem; }
   .acct-track-guest-btn {
     width: 100%; margin-top: 14px; background: var(--bg3); border: 1.5px solid var(--line);
@@ -484,9 +478,16 @@
   .form-note { text-align: center; color: var(--muted); font-size: .82rem; margin-top: 14px; }
 
   #form-success { display: none; text-align: center; padding: 30px 10px; }
+  #form-success.show { display: block; } /* без этого правила экран успеха (и номер заказа) не показывался */
   #form-success .success-icon { font-size: 4rem; margin-bottom: 14px; }
   #form-success h3 { font-size: 1.55rem; font-weight: 800; margin-bottom: 10px; color: var(--white); }
   #form-success p { color: var(--muted); }
+  .order-num-badge {
+    display: inline-block; margin-top: 12px; padding: 12px 22px;
+    background: var(--bg3); border: 1.5px dashed var(--red); border-radius: 12px;
+    color: var(--white); font-size: 1.05rem; font-weight: 800;
+  }
+  .order-num-badge b { color: var(--red); font-size: 1.25rem; letter-spacing: .04em; }
 
   /* ============================================================
      КОНТАКТЫ
@@ -1044,6 +1045,26 @@
             </label>
           </div>
           <div id="pickup-info" style="margin-top:8px; font-size:.9rem; display:none; color:#16a34a; font-weight:700;"></div>
+
+          <!-- Предзаказ к времени: только самовывоз, оплата онлайн (показывается из /api/config) -->
+          <div id="preorder-group" style="display:none; margin-top:12px">
+            <label class="form-label">Когда приготовить</label>
+            <div class="pay-methods">
+              <label class="pay-method">
+                <input type="radio" name="whenReady" value="asap" checked onchange="onWhenChange()">
+                <span>🔥 Как можно скорее</span>
+              </label>
+              <label class="pay-method">
+                <input type="radio" name="whenReady" value="preorder" onchange="onWhenChange()">
+                <span>⏰ Предзаказ к времени <span id="pre-pay-note" style="color:var(--muted); font-size:.85rem">(оплата онлайн)</span></span>
+              </label>
+            </div>
+            <div id="preorder-fields" style="display:none; margin-top:10px; gap:10px;">
+              <select id="pre-date" class="form-input" style="flex:1" onchange="fillPreTimes()"></select>
+              <select id="pre-time" class="form-input" style="flex:1"></select>
+            </div>
+            <div id="preorder-hint" style="display:none; margin-top:8px; font-size:.88rem; color:var(--muted)"></div>
+          </div>
         </div>
 
         <div class="form-group">
@@ -1313,28 +1334,7 @@
             <div class="acct-card-row"><span id="acct-tier-name">—</span><span id="acct-points">0 баллов</span></div>
           </div>
           <div id="acct-next-tier" class="form-note" style="text-align:left; margin-top:0"></div>
-
-          <button type="button" class="acct-edit-btn" id="acct-edit-btn" onclick="Account.toggleEdit()">✏️ Редактировать карту</button>
-          <div id="acct-edit" style="display:none">
-            <label class="pay-method" style="margin-bottom:12px">
-              <input type="checkbox" id="acct-at-enabled">
-              <span>🔄 Автопополнение баланса</span>
-            </label>
-            <div class="acct-edit-grid">
-              <div class="form-group" style="margin-bottom:12px">
-                <label class="form-label" for="acct-at-amount">Сумма пополнения, ₽</label>
-                <input type="number" id="acct-at-amount" class="form-input" min="50" step="50" placeholder="500">
-              </div>
-              <div class="form-group" style="margin-bottom:12px">
-                <label class="form-label" for="acct-at-threshold">Порог баланса, ₽</label>
-                <input type="number" id="acct-at-threshold" class="form-input" min="0" step="50" placeholder="100">
-              </div>
-            </div>
-            <button type="button" class="form-submit" style="padding:13px" onclick="Account.saveAutoTopup()">Сохранить</button>
-            <div class="acct-msg" id="acct-edit-msg"></div>
-            <p class="form-note" style="text-align:left">Когда баланс опустится ниже порога, карта пополнится на указанную сумму.
-              <span style="opacity:.7">Автосписание заработает после подключения рекуррентных платежей.</span></p>
-          </div>
+          <!-- Редактирование карты (баланс, автопополнение) — в админке: /admin → Карты -->
         </div>
 
         <!-- Вкладка «История» -->
@@ -1505,6 +1505,21 @@ document.getElementById('order-form').addEventListener('submit', function (e) {
     return;
   }
 
+  /* Предзаказ: слот обязателен, корзина не может быть пустой (оплата вперёд) */
+  var preorderAt = '';
+  if (isPreorderChosen()) {
+    var preSel = document.getElementById('pre-time');
+    if (!preSel || !preSel.value) {
+      alert('Выберите время, к которому приготовить предзаказ.');
+      return;
+    }
+    if (Cart.total() <= 0) {
+      alert('Для предзаказа добавьте блюда в корзину.');
+      return;
+    }
+    preorderAt = preSel.value;
+  }
+
   submitBtn.disabled = true;
   submitBtn.innerHTML = 'Отправляем…';
 
@@ -1527,6 +1542,7 @@ document.getElementById('order-form').addEventListener('submit', function (e) {
     items:        Cart.items(),
     promoCode:    appliedPromo ? appliedPromo.code : '',
     fulfillment:  fulfillment,
+    preorderAt:   preorderAt,
     zone:         fulfillment === 'pickup' ? '' : zoneName,
     pointsToUse:  (typeof getPointsToUse === 'function') ? getPointsToUse() : 0,
     website:      val('hp-website'),   // honeypot
@@ -1569,10 +1585,13 @@ function showSuccess(track, id, orderNo, pointsUsed, cardNo, pointsEarned) {
   if (id) {
     var n = document.getElementById('order-num');
     if (n) {
-      var txt = 'Ваш номер заказа: ' + (orderNo || ('#' + id));
-      if (Number(pointsUsed) > 0) txt += ' · списано бонусами: ' + Number(pointsUsed).toLocaleString('ru-RU') + ' ₽';
-      if (Number(pointsEarned) > 0) txt += ' · начислено бонусами: +' + Number(pointsEarned).toLocaleString('ru-RU') + ' ₽';
-      n.textContent = txt; n.style.display = 'block';
+      var no = orderNo || ('#' + id);
+      var extra = '';
+      if (Number(pointsUsed) > 0) extra += '<br><span style="font-weight:500; color:var(--muted)">Списано бонусами: ' + Number(pointsUsed).toLocaleString('ru-RU') + ' ₽</span>';
+      if (Number(pointsEarned) > 0) extra += '<br><span style="font-weight:500; color:var(--muted)">Начислено бонусами: +' + Number(pointsEarned).toLocaleString('ru-RU') + ' ₽</span>';
+      n.innerHTML = '<span class="order-num-badge">Номер заказа: <b>' + escHtml(no) + '</b></span>' + extra +
+        '<br><span style="font-weight:500; color:var(--muted); font-size:.85rem">Запомните его — по нему можно отследить заказ.</span>';
+      n.style.display = 'block';
     }
   }
   if (cardNo) {
@@ -1594,7 +1613,10 @@ function showSuccess(track, id, orderNo, pointsUsed, cardNo, pointsEarned) {
     if (w) w.style.display = 'block';
   }
   document.getElementById('order-form').style.display = 'none';
-  document.getElementById('form-success').classList.add('show');
+  var success = document.getElementById('form-success');
+  success.classList.add('show');
+  /* прокручиваем к экрану успеха, чтобы номер заказа точно был на виду */
+  try { success.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
 }
 
 function scrollToOrder() {
@@ -1678,6 +1700,100 @@ function embedMap(s) {
     encodeURIComponent(s.address) + '" loading="lazy" title="Карта: как нас найти"></iframe>';
 }
 
+/* ── Предзаказ на самовывоз к времени (оплата онлайн) — параметры приходят из /api/config ── */
+var PREORDER = { enabled: false, onlineOnly: false, leadMin: 20, maxDays: 2, scheduleEnabled: false, open: '', close: '' };
+
+function isPreorderChosen() {
+  var w = document.querySelector('input[name="whenReady"]:checked');
+  var f = document.querySelector('input[name="fulfillment"]:checked');
+  return !!(PREORDER.enabled && w && w.value === 'preorder' && f && f.value === 'pickup');
+}
+
+/* Предзаказ платится только онлайн: блокируем «при получении» и выбираем онлайн. */
+function applyPreorderPayment(on) {
+  var cashInput = document.querySelector('input[name="payment"][value="cash"]');
+  var onlineInput = document.querySelector('input[name="payment"][value="online"]');
+  var cashLabel = cashInput ? cashInput.closest('.pay-method') : null;
+  if (on) {
+    if (onlineInput) onlineInput.checked = true;
+    if (cashInput) cashInput.disabled = true;
+    if (cashLabel) cashLabel.style.opacity = '.45';
+  } else {
+    if (cashInput) cashInput.disabled = false;
+    if (cashLabel) cashLabel.style.opacity = '';
+  }
+  if (typeof Cart !== 'undefined') Cart.updateSubmitLabel();
+}
+
+function onWhenChange() {
+  var pre = isPreorderChosen();
+  var fields = document.getElementById('preorder-fields');
+  var hint = document.getElementById('preorder-hint');
+  var payNote = document.getElementById('pre-pay-note');
+  if (payNote) payNote.style.display = PREORDER.onlineOnly ? '' : 'none';
+  if (fields) fields.style.display = pre ? 'flex' : 'none';
+  if (hint) {
+    hint.style.display = pre ? 'block' : 'none';
+    hint.textContent = 'Приготовим точно к выбранному времени — придёте и сразу заберёте.' +
+      (PREORDER.onlineOnly ? ' Оплата — онлайн.' : '');
+  }
+  if (pre) fillPreDates();
+  /* предоплата обязательна, только когда настроена онлайн-оплата */
+  applyPreorderPayment(pre && PREORDER.onlineOnly);
+}
+
+function fillPreDates() {
+  var sel = document.getElementById('pre-date');
+  if (!sel) return;
+  var prev = sel.value;
+  var pd = function (n) { return (n < 10 ? '0' : '') + n; };
+  var opts = [];
+  for (var i = 0; i <= PREORDER.maxDays; i++) {
+    var d = new Date();
+    d.setDate(d.getDate() + i);
+    opts.push({
+      val: d.getFullYear() + '-' + pd(d.getMonth() + 1) + '-' + pd(d.getDate()),
+      label: i === 0 ? 'Сегодня' : (i === 1 ? 'Завтра' : d.toLocaleDateString('ru-RU'))
+    });
+  }
+  sel.innerHTML = opts.map(function (o) { return '<option value="' + o.val + '">' + o.label + '</option>'; }).join('');
+  if (prev && opts.some(function (o) { return o.val === prev; })) sel.value = prev;
+  fillPreTimes();
+}
+
+/* Слоты по 15 минут: в рамках расписания работы, для «сегодня» — не раньше, чем через leadMin. */
+function fillPreTimes() {
+  var dateSel = document.getElementById('pre-date');
+  var timeSel = document.getElementById('pre-time');
+  if (!dateSel || !timeSel) return;
+  var prev = timeSel.value;
+  var pd = function (n) { return (n < 10 ? '0' : '') + n; };
+  var now = new Date();
+  var minTs = now.getTime() + PREORDER.leadMin * 60000;
+  var parse = function (t) {
+    var m = /^(\d{1,2}):(\d{2})$/.exec(String(t || '').trim());
+    return m ? (parseInt(m[1], 10) * 60 + parseInt(m[2], 10)) : null;
+  };
+  var open = PREORDER.scheduleEnabled ? parse(PREORDER.open) : null;
+  var close = PREORDER.scheduleEnabled ? parse(PREORDER.close) : null;
+  var inSchedule = function (mins) {
+    if (open == null || close == null || open === close) return true;
+    return open < close ? (mins >= open && mins < close) : (mins >= open || mins < close);
+  };
+  var slots = [];
+  for (var m = 0; m < 24 * 60; m += 15) {
+    if (!inSchedule(m)) continue;
+    /* дата без Z — парсится как локальное время, как и ожидает клиент */
+    var slot = new Date(dateSel.value + 'T' + pd(Math.floor(m / 60)) + ':' + pd(m % 60) + ':00');
+    if (isNaN(slot.getTime()) || slot.getTime() < minTs) continue;
+    slots.push({ iso: slot.toISOString(), label: pd(Math.floor(m / 60)) + ':' + pd(m % 60) });
+  }
+  timeSel.innerHTML = slots.length
+    ? '<option value="">— время —</option>' + slots.map(function (s) { return '<option value="' + s.iso + '">' + s.label + '</option>'; }).join('')
+    : '<option value="">на этот день слотов нет</option>';
+  if (prev && slots.some(function (s) { return s.iso === prev; })) timeSel.value = prev;
+}
+
 /* Переключатель «Доставка / Самовывоз» — прячет зону доставки и показывает адрес самовывоза. */
 function onFulfillmentChange() {
   var checked = document.querySelector('input[name="fulfillment"]:checked');
@@ -1685,6 +1801,8 @@ function onFulfillmentChange() {
   var zoneGrp = document.getElementById('zone-group');
   var pickupInfo = document.getElementById('pickup-info');
   var commentLabel = document.getElementById('f-comment-label');
+  var preGrp = document.getElementById('preorder-group');
+  if (preGrp) preGrp.style.display = (pickup && PREORDER.enabled) ? 'block' : 'none';
   if (pickup) {
     if (zoneGrp) zoneGrp.style.display = 'none';
     if (commentLabel) commentLabel.textContent = 'Комментарий к заказу';
@@ -1697,7 +1815,11 @@ function onFulfillmentChange() {
     if (pickupInfo) pickupInfo.style.display = 'none';
     if (commentLabel) commentLabel.textContent = 'Адрес и комментарий';
     populateZoneSelect(DELIV_ZONES); // вернуть показ зоны, если они настроены
+    /* доставка — предзаказ недоступен: сбрасываем на «как можно скорее» */
+    var asap = document.querySelector('input[name="whenReady"][value="asap"]');
+    if (asap) asap.checked = true;
   }
+  onWhenChange();
 }
 function renderDeliveryZones(zones) {
   DELIV_ZONES = Array.isArray(zones) ? zones : [];
@@ -2119,6 +2241,16 @@ function bumpCartFab() {
         LOYALTY_PERCENT = Number(cfg.loyaltyPercent) || 0;
         checkLoyalty();
       }
+      if (cfg && cfg.preorderEnabled) {            // предзаказ на самовывоз
+        PREORDER.enabled = true;
+        PREORDER.onlineOnly = cfg.preorderOnlineOnly === true;
+        PREORDER.leadMin = Number(cfg.preorderLeadMin) || 20;
+        PREORDER.maxDays = Math.min(Math.max(parseInt(cfg.preorderMaxDays, 10) || 2, 1), 7);
+        PREORDER.scheduleEnabled = cfg.scheduleEnabled === true;
+        PREORDER.open = cfg.scheduleOpen || '';
+        PREORDER.close = cfg.scheduleClose || '';
+        onFulfillmentChange(); // показать блок, если самовывоз уже выбран
+      }
     })
     .catch(function () {});
 })();
@@ -2486,7 +2618,16 @@ var Account = (function () {
       }
       var dt = new Date();
       var p = function (n) { return (n < 10 ? '0' : '') + n; };
-      html += '<div class="tk-meta"><span>Позиций: <b>' + (data.itemsCount || 0) + '</b></span><span>Сумма: <b>' + fmt(data.total) + '</b></span></div>' +
+      var preTxt = '';
+      if (data.preorderAt) {
+        var pdt = new Date(data.preorderAt);
+        if (!isNaN(pdt.getTime())) {
+          var sameDay = pdt.toDateString() === dt.toDateString();
+          preTxt = '<span>⏰ К времени: <b>' + (sameDay ? '' : (p(pdt.getDate()) + '.' + p(pdt.getMonth() + 1) + ' ')) +
+            p(pdt.getHours()) + ':' + p(pdt.getMinutes()) + '</b></span>';
+        }
+      }
+      html += '<div class="tk-meta">' + preTxt + '<span>Позиций: <b>' + (data.itemsCount || 0) + '</b></span><span>Сумма: <b>' + fmt(data.total) + '</b></span></div>' +
         '<div class="tk-upd">Обновлено ' + p(dt.getHours()) + ':' + p(dt.getMinutes()) + ':' + p(dt.getSeconds()) + '</div>';
       el.innerHTML = html;
     }
@@ -2640,15 +2781,6 @@ var Account = (function () {
         : '';
     }
 
-    /* настройки автопополнения (не перезаписываем поле, пока клиент его редактирует) */
-    var at = d.autoTopup || {};
-    var en = document.getElementById('acct-at-enabled');
-    var am = document.getElementById('acct-at-amount');
-    var th = document.getElementById('acct-at-threshold');
-    if (en && document.activeElement !== en) en.checked = !!at.enabled;
-    if (am && document.activeElement !== am) am.value = at.amount != null ? at.amount : '';
-    if (th && document.activeElement !== th) th.value = at.threshold != null ? at.threshold : '';
-
     /* П.1 — история заказов: дата/время, состав, сумма, статус */
     var histEl = document.getElementById('acct-history');
     if (histEl) {
@@ -2718,40 +2850,7 @@ var Account = (function () {
       .catch(function () {});
   }
 
-  /* ── Автопополнение (п.2): сохраняем настройки; QR перерисовывается после сохранения ── */
-  function toggleEdit() {
-    var ed = document.getElementById('acct-edit');
-    var btn = document.getElementById('acct-edit-btn');
-    if (!ed) return;
-    var show = ed.style.display === 'none';
-    ed.style.display = show ? 'block' : 'none';
-    if (btn) btn.textContent = show ? '✕ Скрыть редактирование' : '✏️ Редактировать карту';
-  }
-  function saveAutoTopup() {
-    var msg = document.getElementById('acct-edit-msg');
-    var body = {
-      enabled: !!((document.getElementById('acct-at-enabled') || {}).checked),
-      amount: Number((document.getElementById('acct-at-amount') || {}).value) || 500,
-      threshold: Number((document.getElementById('acct-at-threshold') || {}).value) || 0
-    };
-    fetch('/api/account/autotopup', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    })
-      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
-      .then(function (res) {
-        if (!res.ok || !res.d.ok) throw new Error((res.d && res.d.error) || 'Не удалось сохранить настройки');
-        if (ME) ME.autoTopup = res.d.autoTopup;
-        renderQr(ME && ME.cardNo);
-        if (msg) {
-          msg.style.display = 'block'; msg.style.color = '#16a34a'; msg.textContent = '✓ Настройки сохранены';
-          setTimeout(function () { msg.style.display = 'none'; }, 2500);
-        }
-      })
-      .catch(function (e2) {
-        if (msg) { msg.style.display = 'block'; msg.style.color = 'var(--red)'; msg.textContent = (e2 && e2.message) || 'Ошибка'; }
-      });
-  }
+  /* Редактирование карты (баланс, автопополнение) перенесено в админку: /admin → «Карты». */
 
   /* Поиск заказа гостем: № заказа + телефон → трекинг прямо в панели */
   function lookup() {
@@ -2845,8 +2944,7 @@ var Account = (function () {
 
   return {
     open: open, close: close, showTab: showTab, showInnerTab: showInnerTab, showScreen: showScreen,
-    logout: logout, openRegisterWithPhone: openRegisterWithPhone,
-    toggleEdit: toggleEdit, saveAutoTopup: saveAutoTopup, reload: reload,
+    logout: logout, openRegisterWithPhone: openRegisterWithPhone, reload: reload,
     lookup: lookup, showLookup: Track.showLookup, startTrack: Track.start, backFromTrack: backFromTrack
   };
 })();

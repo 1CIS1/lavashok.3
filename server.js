@@ -57,13 +57,9 @@ function localDateKey(d) {
   return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
 }
 
-/* Приём заказов открыт: ручная кнопка (ordersOpen) И, если включено расписание,
-   текущее время сервера попадает в часы работы (scheduleOpen–scheduleClose). */
-function isOrdersOpenNow(s) {
-  if (s.ordersOpen === false) return false;
-  if (s.scheduleEnabled !== true) return true;
-  const now = new Date();
-  const mins = now.getHours() * 60 + now.getMinutes();
+/* Попадает ли момент d в часы работы (scheduleOpen–scheduleClose, локальное время сервера).
+   Используется и для «приём открыт сейчас», и для проверки времени предзаказа. */
+function isTimeInSchedule(d, s) {
   const parse = function (t) {
     const m = /^(\d{1,2}):(\d{2})$/.exec(String(t || '').trim());
     return m ? (parseInt(m[1], 10) * 60 + parseInt(m[2], 10)) : null;
@@ -71,8 +67,29 @@ function isOrdersOpenNow(s) {
   const open = parse(s.scheduleOpen);
   const close = parse(s.scheduleClose);
   if (open == null || close == null || open === close) return true; // не задано/некорректно — не блокируем
+  const mins = d.getHours() * 60 + d.getMinutes();
   if (open < close) return mins >= open && mins < close;
   return mins >= open || mins < close; // расписание через полночь, напр. 10:00–02:00
+}
+
+/* Приём заказов открыт: ручная кнопка (ordersOpen) И, если включено расписание,
+   текущее время сервера попадает в часы работы. */
+function isOrdersOpenNow(s) {
+  if (s.ordersOpen === false) return false;
+  if (s.scheduleEnabled !== true) return true;
+  return isTimeInSchedule(new Date(), s);
+}
+
+/* Параметры предзаказа с защитой от мусора в настройках.
+   onlineOnly: если ЮKassa настроена — предзаказ строго с предоплатой;
+   без неё разрешаем оплату при получении (иначе фича недоступна вовсе). */
+function preorderConf(s) {
+  return {
+    enabled: s.preorderEnabled !== false,
+    onlineOnly: yookassa.isConfigured(),
+    leadMin: Math.min(Math.max(parseInt(s.preorderLeadMin, 10) || 20, 10), 240),
+    maxDays: Math.min(Math.max(parseInt(s.preorderMaxDays, 10) || 2, 1), 7)
+  };
 }
 
 /* ── Конфигурация безопасности ───────────────────────────── */
@@ -298,6 +315,7 @@ function trackPayload(order) {
     createdAt: order.createdAt,
     payment: order.payment,
     fulfillment: order.fulfillment || 'delivery',
+    preorderAt: order.preorderAt || '',
     yandexTrackUrl: order.yandexTrackUrl || ''
   };
 }
@@ -352,6 +370,7 @@ app.get('/oferta', function (req, res) {
 
 app.get('/api/config', function (req, res) {
   const s = settings.get();
+  const pre = preorderConf(s);
   res.json({
     ok: true,
     onlinePayment: yookassa.isConfigured(),
@@ -360,7 +379,15 @@ app.get('/api/config', function (req, res) {
     ordersOpen: isOrdersOpenNow(s),                                       // П.9 + расписание
     ordersClosedMsg: s.ordersClosedMsg || '',                             // П.9
     loyaltyEnabled: s.loyaltyEnabled === true,                            // лояльность
-    loyaltyPercent: Number(s.loyaltyPercent) || 0
+    loyaltyPercent: Number(s.loyaltyPercent) || 0,
+    /* предзаказ на самовывоз + окно работы для построения слотов на клиенте */
+    preorderEnabled: pre.enabled,
+    preorderOnlineOnly: pre.onlineOnly,
+    preorderLeadMin: pre.leadMin,
+    preorderMaxDays: pre.maxDays,
+    scheduleEnabled: s.scheduleEnabled === true,
+    scheduleOpen: s.scheduleOpen || '',
+    scheduleClose: s.scheduleClose || ''
   });
 });
 
@@ -497,8 +524,6 @@ app.get('/api/account/me', requireCustomer, function (req, res) {
     ? String(lastCommented.comment).replace(/\n?\[Зона доставки:[^\]]*\]/g, '').trim()
     : '';
 
-  const prefs = customers.getPrefs(digits);
-
   res.json({
     ok: true,
     phone: digits,
@@ -514,27 +539,8 @@ app.get('/api/account/me', requireCustomer, function (req, res) {
       name: lastNamed ? lastNamed.name : '',
       phone: digits,
       lastComment: cleanComment
-    },
-    autoTopup: Object.assign({ enabled: false, amount: 500, threshold: 100 }, prefs.autoTopup || {})
+    }
   });
-});
-
-/* Настройки автопополнения бонусной карты.
-   ⚠ Сохраняется только настройка клиента. Реального списания денег нет:
-   для автопополнения нужен бэкенд-биллинг (сохранённый способ оплаты в ЮKassa
-   с рекуррентными платежами) — при подключении используйте эти сохранённые поля. */
-const autoTopupSchema = z.object({
-  enabled: z.boolean().optional().default(false),
-  amount: z.coerce.number().min(50).max(100000).optional().default(500),
-  threshold: z.coerce.number().min(0).max(100000).optional().default(100)
-}).strip();
-
-app.post('/api/account/autotopup', requireCustomer, function (req, res) {
-  const parsed = autoTopupSchema.safeParse(req.body || {});
-  if (!parsed.success) return res.status(400).json({ ok: false, error: 'Некорректные настройки автопополнения' });
-  const saved = customers.setPrefs(req.session.customerPhone, { autoTopup: parsed.data });
-  if (!saved) return res.status(400).json({ ok: false, error: 'Кабинет не найден' });
-  res.json({ ok: true, autoTopup: parsed.data });
 });
 
 /* robots.txt — что можно индексировать поисковикам (П.7). */
@@ -596,6 +602,7 @@ const orderSchema = z.object({
   comment: z.string().max(2000).optional().default(''),
   payment: z.enum(['cash', 'online']).optional().default('cash'),
   fulfillment: z.enum(['delivery', 'pickup']).optional().default('delivery'), // способ получения
+  preorderAt: z.string().max(40).optional().default(''),  // предзаказ: ISO-время готовности (только самовывоз)
   items: z.array(z.object({
     id: z.string().max(60),
     qty: z.coerce.number().int().min(1).max(99)
@@ -681,6 +688,34 @@ app.post('/api/order', async function (req, res) {
 
   const fulfillment = b.fulfillment === 'pickup' ? 'pickup' : 'delivery';
 
+  /* ── Предзаказ к времени: только самовывоз и только онлайн-оплата.
+     Все проверки — на сервере, значениям с клиента не доверяем. ── */
+  let preorderAt = '';
+  if (b.preorderAt) {
+    const pre = preorderConf(st);
+    if (!pre.enabled) return res.status(400).json({ ok: false, error: 'Предзаказ сейчас недоступен' });
+    if (fulfillment !== 'pickup') return res.status(400).json({ ok: false, error: 'Предзаказ доступен только для самовывоза' });
+    if (pre.onlineOnly && payment !== 'online') return res.status(400).json({ ok: false, error: 'Предзаказ оплачивается онлайн' });
+    const t = new Date(b.preorderAt);
+    if (isNaN(t.getTime())) return res.status(400).json({ ok: false, error: 'Некорректное время предзаказа' });
+    const nowTs = Date.now();
+    /* минута форы на заполнение формы, чтобы валидный слот не «протух» на границе */
+    if (t.getTime() < nowTs + (pre.leadMin - 1) * 60000) {
+      return res.status(400).json({ ok: false, error: 'Самое раннее время — через ' + pre.leadMin + ' мин. Выберите слот позже.' });
+    }
+    /* горизонт: до конца дня (сегодня + maxDays), чтобы вечерние слоты последнего дня были доступны */
+    const limit = new Date(nowTs);
+    limit.setDate(limit.getDate() + pre.maxDays);
+    limit.setHours(23, 59, 59, 999);
+    if (t.getTime() > limit.getTime()) {
+      return res.status(400).json({ ok: false, error: 'Предзаказ принимаем максимум на ' + pre.maxDays + ' дн. вперёд' });
+    }
+    if (st.scheduleEnabled === true && !isTimeInSchedule(t, st)) {
+      return res.status(400).json({ ok: false, error: 'В выбранное время мы не работаем — выберите другой слот' });
+    }
+    preorderAt = t.toISOString();
+  }
+
   /* Зона доставки (информативно) — дописываем в комментарий для оператора.
      При самовывозе зона не имеет смысла, даже если пришла с клиента — игнорируем. */
   let comment = b.comment.trim().slice(0, 2000);
@@ -701,6 +736,7 @@ app.post('/api/order', async function (req, res) {
     payment: payment,
     fulfillment: fulfillment,
     zone: zone,
+    preorderAt: preorderAt,
     paymentStatus: payment === 'online' ? 'pending' : 'not_required',
     track: 'accepted',
     trackToken: trackToken,
@@ -810,7 +846,7 @@ app.get('/api/payment-status', async function (req, res) {
       order.paymentStatus !== 'succeeded' && order.paymentStatus !== 'canceled') {
     try {
       const p = await yookassa.getPayment(order.paymentId);
-      if (p && p.status) store.update(order.id, { paymentStatus: p.status });
+      if (p && p.status) notifyOrderChanged(store.update(order.id, { paymentStatus: p.status }));
       return res.json({ ok: true, status: p.status, paid: p.paid === true, total: order.total });
     } catch (e) {
       return res.json({ ok: true, status: order.paymentStatus, total: order.total });
@@ -830,8 +866,10 @@ app.post('/api/yookassa-webhook', function (req, res) {
   }
   const obj = req.body && req.body.object;
   if (obj && obj.metadata && obj.metadata.orderId) {
-    store.update(obj.metadata.orderId, { paymentStatus: obj.status });
+    const updated = store.update(obj.metadata.orderId, { paymentStatus: obj.status });
     console.log('ЮKassa webhook: заказ #' + obj.metadata.orderId + ' → ' + obj.status);
+    /* будим кухню/админку по SSE — оплаченный предзаказ сразу виден в ленте */
+    notifyOrderChanged(updated);
   }
   res.json({ ok: true });
 });
@@ -1192,7 +1230,10 @@ const settingsSchema = z.object({
     deliveredPickup: z.string().max(300).optional(),
     canceled: z.string().max(300).optional()
   }).optional(),
-  kitchenTargetMin: z.coerce.number().min(1).max(180).optional()  // целевое время готовки для кухни
+  kitchenTargetMin: z.coerce.number().min(1).max(180).optional(),  // целевое время готовки для кухни
+  preorderEnabled: z.boolean().optional(),                         // предзаказ на самовывоз
+  preorderLeadMin: z.coerce.number().min(10).max(240).optional(),
+  preorderMaxDays: z.coerce.number().min(1).max(7).optional()
 }).strip();
 
 app.get('/api/admin/settings', requireAdmin, function (req, res) {
@@ -1364,16 +1405,37 @@ app.get('/api/admin/loyalty-cards', requireAdmin, function (req, res) {
   const s = settings.get();
   const cards = loyalty.listAll().map(function (c) {
     const tier = loyalty.tierFor(c.lifetimeSpend, s.loyaltyTiers);
+    const prefs = customers.getPrefs(c.phone);
     return {
       phone: c.phone,
       cardNo: c.cardNo,
       balance: c.balance,
       lifetimeSpend: c.lifetimeSpend,
       tierName: tier ? tier.name : '',
-      hasAccount: customers.exists(c.phone) // есть ли у клиента личный кабинет (пароль)
+      hasAccount: customers.exists(c.phone), // есть ли у клиента личный кабинет (пароль)
+      autoTopup: Object.assign({ enabled: false, amount: 500, threshold: 100 }, prefs.autoTopup || {})
     };
   }).sort(function (a, b) { return b.lifetimeSpend - a.lifetimeSpend; });
   res.json({ ok: true, cards: cards });
+});
+
+/* Автопополнение карты — настраивается оператором из админки («Карты»).
+   ⚠ Сохраняется только настройка. Реального списания денег нет: для него нужен
+   бэкенд-биллинг (сохранённый способ оплаты ЮKassa с рекуррентными платежами) —
+   при подключении используйте эти сохранённые поля. */
+const autoTopupSchema = z.object({
+  enabled: z.boolean().optional().default(false),
+  amount: z.coerce.number().min(50).max(100000).optional().default(500),
+  threshold: z.coerce.number().min(0).max(100000).optional().default(100)
+}).strip();
+
+app.post('/api/admin/loyalty-cards/:phone/autotopup', requireAdmin, function (req, res) {
+  const phone = String(req.params.phone || '').replace(/\D/g, '');
+  if (phone.length < 5) return res.status(400).json({ ok: false, error: 'Некорректный телефон' });
+  const parsed = autoTopupSchema.safeParse(req.body || {});
+  if (!parsed.success) return res.status(400).json({ ok: false, error: 'Некорректные настройки автопополнения' });
+  customers.setPrefs(phone, { autoTopup: parsed.data });
+  res.json({ ok: true, autoTopup: parsed.data });
 });
 
 const loyaltyAdjustSchema = z.object({
