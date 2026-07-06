@@ -2162,6 +2162,8 @@
             f('Долгота (lng)','set-lng',s.lng,'39.205272')+
           '</div>'+
           '<div class="set-hint">Координаты для карты на сайте и SEO. Найти свои: откройте заведение на yandex.ru/maps — в адресной строке будет <code>ll=долгота,широта</code>.</div>'+
+          f('Ключ Static Maps API (необязательно)','set-mapkey',s.yandexStaticApiKey,'Вставьте сюда ключ')+
+          '<div class="set-hint">Без ключа на сайте будет кликабельная карточка-ссылка на карту (без превью). Чтобы показывалась картинка карты — получите бесплатный ключ на yandex.ru/dev (раздел «Static API») и вставьте сюда.</div>'+
           f('WhatsApp (только цифры)','set-whatsapp',s.whatsapp,'74951204567')+
           f('Telegram (логин без @)','set-telegram',s.telegram,'lavashok')+
           f('Бесплатная доставка от, ₽','set-free',s.freeDeliveryFrom,'500')+
@@ -2294,6 +2296,7 @@
       var payload={
         brand:g('set-brand'), phone:g('set-phone'), address:g('set-address'), hours:g('set-hours'),
         lat:Number(g('set-lat'))||undefined, lng:Number(g('set-lng'))||undefined,
+        yandexStaticApiKey:g('set-mapkey'),
         whatsapp:g('set-whatsapp'), telegram:g('set-telegram'),
         freeDeliveryFrom:Number(g('set-free'))||0,
         preorderEnabled:document.getElementById('set-preorder').checked,

@@ -1205,6 +1205,7 @@ const settingsSchema = z.object({
   hours: z.string().max(120).optional(),
   lat: z.coerce.number().min(-90).max(90).optional(),
   lng: z.coerce.number().min(-180).max(180).optional(),
+  yandexStaticApiKey: z.string().max(80).optional(),
   whatsapp: z.string().max(40).optional(),
   telegram: z.string().max(60).optional(),
   freeDeliveryFrom: z.coerce.number().min(0).max(100000).optional(),

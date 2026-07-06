@@ -430,6 +430,13 @@
   .delivery-row-text { color: var(--muted); font-size: .94rem; }
   .freedel-bar { margin-top: 10px; height: 9px; border-radius: 999px; background: var(--line); overflow: hidden; }
   .freedel-bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--red), #ff8a4c); }
+  .zones-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+  .zones-table th { text-align: left; font-size: .8rem; color: var(--muted); font-weight: 700; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+  .zones-table td { padding: 10px; font-size: .92rem; color: var(--text); border-bottom: 1px solid var(--line); }
+  .zones-table tr:last-child td { border-bottom: none; }
+  @media (max-width: 480px) {
+    .zones-table th, .zones-table td { padding: 8px 6px; font-size: .82rem; }
+  }
 
   /* ============================================================
      ОТЗЫВЫ
@@ -706,9 +713,8 @@
     <!-- Личный кабинет: карта + история заказов -->
     <button class="account-btn" id="account-btn" type="button" aria-label="Личный кабинет" aria-haspopup="dialog" onclick="Account.open()">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <line x1="4" y1="7" x2="20" y2="7"></line>
-        <line x1="4" y1="12" x2="20" y2="12"></line>
-        <line x1="4" y1="17" x2="20" y2="17"></line>
+        <circle cx="12" cy="8" r="3.4"></circle>
+        <path d="M4.5 20c0-4.2 3.4-6.5 7.5-6.5s7.5 2.3 7.5 6.5"></path>
       </svg>
       <span class="account-btn-dot" id="account-btn-dot"></span>
     </button>
@@ -770,7 +776,7 @@
         <div class="hero-stat-label">Среднее время доставки</div>
       </div>
       <div class="hero-stat">
-        <div class="hero-stat-num">4.9 ⭐</div>
+        <div class="hero-stat-num">4.3 ⭐</div>
         <div class="hero-stat-label">Рейтинг на Яндекс.Картах</div>
       </div>
       <div class="hero-stat">
@@ -1700,29 +1706,36 @@ var SHOP_HOURS = '';
 var SHOP_PHONE = '+7 (980) 531-33-12'; // заменяется телефоном из настроек при загрузке
 
 /* Карта — на сайте два места (в контактах и у блока самовывоза), заполняем оба.
-   /map-widget/v1/ с "ll"/"pt" в URL не встраивается — это не настоящий формат
-   встраивания (Яндекс выдаёт такие ссылки только через «Поделиться» на сайте,
-   с собственным сгенерированным ID). Поэтому используем Static Maps API —
-   обычную картинку по координатам, официально принимает ll/pt/z как параметры.
-   Картинка кликабельна — по клику открывается настоящая интерактивная карта. */
+   Живая картинка карты (Static Maps API) с 2023х требует API-ключ — без него
+   Яндекс отклоняет запрос картинки, и вместо карты был бы просто пустой/битый
+   img. Поэтому: если ключ задан в настройках — показываем картинку карты;
+   если нет — надёжная кликабельная карточка со ссылкой (без внешней картинки,
+   поэтому не может "не загрузиться"). В обоих случаях клик ведёт на настоящую
+   интерактивную карту в новой вкладке. */
 function embedMap(s) {
   var hosts = document.querySelectorAll('.map-embed-placeholder, .map-placeholder');
   if (!hosts.length || !s) return;
-  var html = '';
-  if (s.lat && s.lng) {
-    var ll = s.lng + ',' + s.lat;
+  var hasPoint = s.lat && s.lng;
+  var ll = hasPoint ? (s.lng + ',' + s.lat) : '';
+  var mapUrl = hasPoint
+    ? 'https://yandex.ru/maps/?ll=' + encodeURIComponent(ll) + '&z=16&pt=' + encodeURIComponent(ll)
+    : (s.address ? 'https://yandex.ru/maps/?mode=search&text=' + encodeURIComponent(s.address) : '');
+  if (!mapUrl) return;
+
+  var html;
+  if (hasPoint && s.yandexStaticApiKey) {
     var imgSrc = 'https://static-maps.yandex.ru/1.x/?ll=' + encodeURIComponent(ll) +
-      '&z=16&l=map&size=650,450&pt=' + encodeURIComponent(ll) + ',pm2rdm';
-    var mapUrl = 'https://yandex.ru/maps/?ll=' + encodeURIComponent(ll) + '&z=16&pt=' + encodeURIComponent(ll);
+      '&z=16&l=map&size=650,450&pt=' + encodeURIComponent(ll) + ',pm2rdm' +
+      '&apikey=' + encodeURIComponent(s.yandexStaticApiKey);
     html = '<a href="' + mapUrl + '" target="_blank" rel="noopener" title="Открыть карту">' +
       '<img src="' + imgSrc + '" alt="Карта: как нас найти" loading="lazy"></a>';
-  } else if (s.address) {
-    var mapUrlByText = 'https://yandex.ru/maps/?mode=search&text=' + encodeURIComponent(s.address);
-    html = '<a href="' + mapUrlByText + '" target="_blank" rel="noopener" title="Открыть карту">' +
-      '<span style="font-size:2.2rem">🗺️</span><p style="margin-top:8px">' + s.address + '<br>' +
+  } else {
+    var addrLine = s.address ? (s.address + '<br>') : '';
+    html = '<a href="' + mapUrl + '" target="_blank" rel="noopener" title="Открыть карту">' +
+      '<span style="font-size:2.2rem">🗺️</span><p style="margin-top:8px">' + addrLine +
       '<small>Открыть на Яндекс.Картах ↗</small></p></a>';
   }
-  if (html) hosts.forEach(function (h) { h.innerHTML = html; });
+  hosts.forEach(function (h) { h.innerHTML = html; });
 }
 
 /* ── Предзаказ на самовывоз к времени (оплата онлайн) — параметры приходят из /api/config ── */
