@@ -504,8 +504,8 @@
   .contact-text strong { display: block; font-weight: 800; margin-bottom: 3px; color: var(--white); }
   .contact-text span, .contact-text a { color: var(--muted); }
   .contact-text a:hover { color: var(--red); }
-  .map-embed-placeholder, .map-placeholder { border-radius: var(--radius-lg); background: var(--bg3); border: 1px solid var(--line); display: grid; place-items: center; text-align: center; min-height: 320px; color: var(--muted); }
-  .map-embed-placeholder iframe, .map-placeholder iframe { width: 100%; height: 100%; border: 0; border-radius: var(--radius-lg); }
+  .map-embed-placeholder, .map-placeholder { position: relative; overflow: hidden; border-radius: var(--radius-lg); background: var(--bg3); border: 1px solid var(--line); display: grid; place-items: center; text-align: center; min-height: 320px; color: var(--muted); }
+  .map-embed-placeholder iframe, .map-placeholder iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: var(--radius-lg); }
 
   /* ============================================================
      ФУТЕР
