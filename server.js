@@ -1203,6 +1203,8 @@ const settingsSchema = z.object({
   phone: z.string().max(40).optional(),
   address: z.string().max(200).optional(),
   hours: z.string().max(120).optional(),
+  lat: z.coerce.number().min(-90).max(90).optional(),
+  lng: z.coerce.number().min(-180).max(180).optional(),
   whatsapp: z.string().max(40).optional(),
   telegram: z.string().max(60).optional(),
   freeDeliveryFrom: z.coerce.number().min(0).max(100000).optional(),
