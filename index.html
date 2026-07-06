@@ -178,6 +178,7 @@
   nav#site-nav > a { font-weight: 500; font-size: .96rem; color: var(--text); transition: color .15s; }
   nav#site-nav > a:not(.nav-phone):hover { color: var(--red); }
   .nav-phone { display: none !important; }
+  .nav-backdrop { display: none; }
 
   .header-phone {
     display: inline-flex; align-items: center; gap: 8px;
@@ -643,9 +644,16 @@
       position: fixed; top: 74px; right: 0; width: min(280px, 86%); height: calc(100vh - 74px);
       background: var(--bg2); border-left: 1px solid var(--line); flex-direction: column; align-items: flex-start;
       gap: 4px; padding: 24px; transform: translateX(110%); transition: transform .28s ease; box-shadow: var(--shadow-lg);
+      z-index: 100; overflow-y: auto;
     }
     nav#site-nav.open { transform: none; }
     nav#site-nav > a { width: 100%; padding: 12px 4px; font-size: 1.05rem; border-bottom: 1px solid var(--line); }
+    .nav-backdrop {
+      display: block; position: fixed; inset: 74px 0 0 0; background: rgba(0,0,0,.5);
+      opacity: 0; pointer-events: none; transition: opacity .28s ease; z-index: 99;
+    }
+    .nav-backdrop.open { opacity: 1; pointer-events: auto; }
+    body.nav-locked { overflow: hidden; }
     .nav-phone { display: flex !important; background: var(--red); color: #fff !important; justify-content: center; border-radius: 10px; margin-top: 12px; }
     /* Корзина на мобильных — липкая полоса во всю ширину внизу экрана */
     .cart-fab { left: 12px; right: 12px; bottom: 12px; border-radius: 14px; padding: 15px 20px; justify-content: space-between; font-size: 1rem; }
@@ -693,6 +701,7 @@
       <a href="#contacts">Контакты</a>
       <a href="tel:+79805313312" class="nav-phone js-tel" onclick="trackPhone('nav')">📞 <span class="js-phone">+7 (980) 531-33-12</span></a>
     </nav>
+    <div class="nav-backdrop" id="nav-backdrop" aria-hidden="true"></div>
 
     <!-- ↓ ЗАМЕНИТЕ номер телефона на свой (в двух местах: href и текст) -->
     <a href="tel:+79805313312"
@@ -2551,27 +2560,36 @@ var Dish = (function () {
 (function () {
   var burger = document.getElementById('burger');
   var header = document.querySelector('header');
-  if (!burger || !header) return;
+  var siteNav = document.getElementById('site-nav');
+  var backdrop = document.getElementById('nav-backdrop');
+  if (!burger || !header || !siteNav) return;
 
   function closeMenu() {
-    header.classList.remove('nav-open');
+    siteNav.classList.remove('open');
+    burger.classList.remove('nav-open');
+    document.body.classList.remove('nav-locked');
+    if (backdrop) backdrop.classList.remove('open');
     burger.setAttribute('aria-expanded', 'false');
   }
 
   burger.addEventListener('click', function (e) {
     e.stopPropagation();
-    var open = header.classList.toggle('nav-open');
+    var open = siteNav.classList.toggle('open');
+    burger.classList.toggle('nav-open', open);
+    document.body.classList.toggle('nav-locked', open);
+    if (backdrop) backdrop.classList.toggle('open', open);
     burger.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
 
   /* закрываем меню после клика по любой ссылке */
-  header.querySelectorAll('nav a').forEach(function (a) {
+  siteNav.querySelectorAll('a').forEach(function (a) {
     a.addEventListener('click', closeMenu);
   });
 
-  /* закрываем при клике вне шапки */
+  /* закрываем при клике по подложке или вне шапки/меню */
+  if (backdrop) backdrop.addEventListener('click', closeMenu);
   document.addEventListener('click', function (e) {
-    if (header.classList.contains('nav-open') && !header.contains(e.target)) {
+    if (siteNav.classList.contains('open') && !header.contains(e.target) && e.target !== backdrop) {
       closeMenu();
     }
   });
